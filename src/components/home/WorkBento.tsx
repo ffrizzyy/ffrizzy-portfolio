@@ -1,4 +1,4 @@
-import { PendingImage } from "@/components/shared/PendingImage";
+import { CoverImage } from "@/components/shared/CoverImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { Icon } from "@/components/shared/Icon";
 import { TagChip } from "@/components/ui/Chip";
@@ -22,14 +22,6 @@ const CELL_LAYOUT = [
   { span: "md:col-span-3", tone: "sunken" },
 ] as const;
 
-const COVER_SIZE: Record<string, { width: number; height: number }> = {
-  azzifa: { width: 1600, height: 1000 },
-  "portal-publik": { width: 1600, height: 1000 },
-  "aid-dashboard": { width: 1600, height: 1000 },
-  "rice-clustering": { width: 1600, height: 1000 },
-  "sat-set": { width: 1600, height: 1000 },
-};
-
 export function WorkBento() {
   return (
     <section id="work" className={LAYOUT.section}>
@@ -39,7 +31,6 @@ export function WorkBento() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-8">
           {featuredProjects.map((project, index) => {
             const layout = CELL_LAYOUT[index] ?? CELL_LAYOUT[0];
-            const size = COVER_SIZE[project.slug] ?? { width: 1600, height: 1000 };
             const isSignal = layout.tone === "signal";
             const isSunken = layout.tone === "sunken";
 
@@ -53,17 +44,16 @@ export function WorkBento() {
                     isSignal ? "bg-signal text-on-signal" : isSunken ? "bg-paper-sunken text-ink" : "bg-paper-raised text-ink",
                   )}
                 >
-                  <PendingImage
-                    src={project.cover}
-                    width={size.width}
-                    height={size.height}
-                    label={`${project.title} interface screenshot`}
-                    className={cn(
-                      "border-0 border-b-2 border-ink",
-                      isSignal && "bg-signal/20",
-                      isSunken && "bg-paper-raised",
-                    )}
-                  />
+                  {/* The cover artwork now exists, so the cell shows an image
+                      rather than an empty placeholder frame. A real screenshot
+                      dropped over the same path replaces it with no code change. */}
+                  <div className="relative aspect-[16/10] border-b-2 border-ink">
+                    <CoverImage
+                      src={project.cover}
+                      alt={`${project.title} cover`}
+                      sizes="(min-width: 768px) 45vw, 100vw"
+                    />
+                  </div>
 
                   <div className="flex flex-1 flex-col gap-3 p-5">
                     <h3 className="text-xl md:text-2xl">{project.title}</h3>

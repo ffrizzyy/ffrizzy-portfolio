@@ -164,6 +164,29 @@ Wired since the first draft: the **Leaflet report map** on the KITO case study
 and the **Recharts index charts** on the Sriwijaya Digital Conference case study,
 each behind a lazy boundary so neither library reaches the Home page.
 
+## Artwork
+
+Every image on the site is generated, not photographed, and the generator is in
+the repository:
+
+```
+python scripts/make-artwork.py
+```
+
+It draws the paper texture, one typographic cover per project, the portrait card,
+and the four Instagram cards. They are lettering and geometry on paper rather
+than imitations of a screenshot, which the spec forbids, and they exist so no slot
+is an empty grey box.
+
+**To put a real screenshot in, drop the file over the same path.** A project's
+cover is always `/images/<slug>.webp`, so replacing `public/images/azzifa.webp`
+with a capture of the app needs no code change. Case study galleries additionally
+look for `<slug>-2.webp` and `<slug>-3.webp`. The spec's section 14.2 lists what
+to capture for each project.
+
+One caveat worth stating plainly: as shipped, **no image on this site is a real
+screenshot**. They are all drawn stand-ins.
+
 Both were then rendered in headless Chrome and inspected as images, which is how
 two things were caught: the map and charts do draw, and **Recharts ignores
 `prefers-reduced-motion`**, so its marks animated for readers who asked for no

@@ -63,7 +63,14 @@ export const statSchema = z.object({
   computedFrom: z.enum(["events", "projects"]).optional(),
   kind: z.enum(["exact", "lower-bound"]),
   decimals: z.number().int().min(0).max(2).optional(),
+  /** A magnitude suffix, kept tight against the number: "K", "M". */
   suffix: z.string().optional(),
+  /**
+   * A trailing qualifier rendered smaller and muted, such as the "/ 4.00" that
+   * belongs to a GPA. Separate from `suffix` so it can be styled down instead of
+   * being glued to the digits, which made "3.97 / 4.00" wrap onto two lines.
+   */
+  qualifier: z.string().optional(),
   label: z.string(),
   detail: z.string(),
   method: z.string(),

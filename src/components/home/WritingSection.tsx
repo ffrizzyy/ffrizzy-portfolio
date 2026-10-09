@@ -1,6 +1,6 @@
 import { Carousel } from "@/components/shared/Carousel";
+import { CoverImage } from "@/components/shared/CoverImage";
 import { SectionHeading } from "@/components/shared/decor";
-import { PendingImage } from "@/components/shared/PendingImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { TagChip } from "@/components/ui/Chip";
@@ -47,13 +47,13 @@ export function WritingSection() {
         )}
       </div>
 
-      <PendingImage
-        src={item.cover}
-        width={1080}
-        height={1350}
-        ratio="aspect-[4/5]"
-        label={`${item.title} Instagram post cover`}
-      />
+      <div className="relative aspect-[4/5] border border-line">
+        <CoverImage
+          src={item.cover}
+          alt={`${item.title} Instagram post card`}
+          sizes="(min-width: 768px) 45vw, 100vw"
+        />
+      </div>
     </div>
   ));
 

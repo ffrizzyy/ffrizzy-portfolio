@@ -54,21 +54,28 @@ export function StatGrid() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className="num text-4xl leading-none text-ink md:text-6xl">
-                    {animates ? (
-                      <CountUp
-                        value={stat.value}
-                        decimals={stat.decimals ?? 0}
-                        suffix={stat.suffix ?? ""}
-                        lowerBound={stat.kind === "lower-bound"}
-                      />
-                    ) : (
-                      formatStat(stat.value, {
-                        decimals: stat.decimals ?? 0,
-                        suffix: stat.suffix ?? "",
-                        lowerBound: stat.kind === "lower-bound",
-                      })
-                    )}
+                  <p className="num flex items-baseline gap-2 text-4xl leading-none text-ink md:text-6xl">
+                    <span className="whitespace-nowrap">
+                      {animates ? (
+                        <CountUp
+                          value={stat.value}
+                          decimals={stat.decimals ?? 0}
+                          suffix={stat.suffix ?? ""}
+                          lowerBound={stat.kind === "lower-bound"}
+                        />
+                      ) : (
+                        formatStat(stat.value, {
+                          decimals: stat.decimals ?? 0,
+                          suffix: stat.suffix ?? "",
+                          lowerBound: stat.kind === "lower-bound",
+                        })
+                      )}
+                    </span>
+                    {/* The qualifier sits outside the counted number so the
+                        digits never wrap away from their unit. */}
+                    {stat.qualifier ? (
+                      <span className="text-xl text-ink-muted md:text-3xl">{stat.qualifier}</span>
+                    ) : null}
                   </p>
 
                   <a

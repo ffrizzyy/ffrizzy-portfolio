@@ -1,7 +1,7 @@
 import { siFigma, siGo, siPython } from "simple-icons";
 
 import { Sticker, TapedPhoto } from "@/components/shared/decor";
-import { PendingImage } from "@/components/shared/PendingImage";
+import { CoverImage } from "@/components/shared/CoverImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { CvLink } from "@/components/shared/TrackedLink";
@@ -66,14 +66,14 @@ export function Hero() {
         <Reveal delay={0.2} className="relative md:col-span-5">
           <div className="relative mx-auto max-w-sm md:ml-auto md:mr-0">
             <TapedPhoto rotate={-2}>
-              <PendingImage
-                src="/images/portrait.webp"
-                width={800}
-                height={1000}
-                ratio="aspect-[4/5]"
-                label="Portrait of Muhammad Farrel Al-Wafi Frizzy"
-                className="border-0"
-              />
+              <div className="relative aspect-[4/5]">
+                <CoverImage
+                  src="/images/portrait.webp"
+                  alt="Placeholder card standing in for the portrait of Muhammad Farrel Al-Wafi Frizzy"
+                  sizes="(min-width: 768px) 32vw, 80vw"
+                  priority
+                />
+              </div>
             </TapedPhoto>
 
             {STICKERS.map((sticker) => (

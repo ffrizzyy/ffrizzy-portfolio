@@ -212,6 +212,8 @@ export type WorkRow = {
   type: ProjectType;
   /** A content row points at a section anchor rather than a case study. */
   href: string;
+  /** Shown as a mono detail on the row. Absent for the content row. */
+  period?: string;
 };
 
 /** Explicit order so the grouping reads Build, Data, Research, Design. */
@@ -238,6 +240,7 @@ const projectRows: WorkRow[] = WORK_ROW_ORDER.map((slug) => {
     outcome: match.outcome,
     type: match.type,
     href: `/work/${match.slug}`,
+    period: match.period,
   };
 });
 

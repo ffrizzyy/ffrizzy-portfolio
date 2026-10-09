@@ -1,4 +1,5 @@
 import { Icon } from "@/components/shared/Icon";
+import { CoverImage } from "@/components/shared/CoverImage";
 import { PendingImage } from "@/components/shared/PendingImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { TrackedLink } from "@/components/shared/TrackedLink";
@@ -117,13 +118,23 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
         <Reveal className="mt-16">
           <h2 className="text-xl md:text-2xl">Gallery</h2>
           <div className="mt-5 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
-            {[1, 2, 3].map((slot) => (
+            {/* The cover is real artwork now. The two slots after it stay honest
+                pending frames, because a gallery needs more than one image and
+                inventing filenames that do not exist would 404. */}
+            <div className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line">
+              <CoverImage
+                src={project.cover}
+                alt={`${project.title} cover artwork`}
+                sizes="520px"
+              />
+            </div>
+            {[2, 3].map((slot) => (
               <PendingImage
                 key={slot}
                 src={project.cover.replace(".webp", `-${slot}.webp`)}
                 width={1600}
                 height={1000}
-                label={`${project.title} gallery image ${slot}`}
+                label={`${project.title} additional screenshot ${slot}`}
                 className="w-[min(85vw,520px)] shrink-0 snap-start"
               />
             ))}

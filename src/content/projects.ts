@@ -21,7 +21,7 @@ export const projects: Project[] = [
       { label: "Live app", href: "https://azzifa.up.railway.app" },
       { label: "GitHub", href: "https://github.com/ffrizzyy/azzifa" },
     ],
-    cover: "/images/azzifa-home.webp",
+    cover: "/images/azzifa.webp",
     caseStudy: {
       summary:
         "Azzifa is a journaling app that treats a mood log as data worth reading back. Entries are private by default, insights are generated weekly, and the AI provider is swappable through an environment variable.",
@@ -64,7 +64,7 @@ export const projects: Project[] = [
       { label: "GitHub", href: "https://github.com/Gedegok23/portal-publik" },
       { label: "LinkedIn article", href: "https://www.linkedin.com/" },
     ],
-    cover: "/images/portal-map.webp",
+    cover: "/images/portal-publik.webp",
     sampleData: true,
     caseStudy: {
       interactive: "kito-report-map",
@@ -136,7 +136,7 @@ export const projects: Project[] = [
     stack: ["Python", "IBM watsonx.ai", "Streamlit"],
     tags: ["Python", "watsonx.ai", "AI Prompting"],
     links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/H8-test-genai" }],
-    cover: "/images/watsonx.webp",
+    cover: "/images/watsonx-genai-app.webp",
     caseStudy: {
       summary:
         "A hands-on project from the IBM Generative AI and Machine Learning program with Hacktiv8, MSIB Batch 7. It covers calling a foundation model through its API from a local machine and then wrapping that in a Streamlit interface.",
@@ -160,7 +160,7 @@ export const projects: Project[] = [
     links: [
       { label: "Presentation video", href: "https://youtu.be/xWDXvl7IerM" },
     ],
-    cover: "/images/imdb-pipeline.webp",
+    cover: "/images/imdb-sentiment-bilstm.webp",
     caseStudy: {
       summary:
         "A five-person capstone from the IBM Generative AI and Machine Learning program, Batch 7. The model classifies the sentiment of an IMDB review from its text.",
@@ -186,7 +186,7 @@ export const projects: Project[] = [
     stack: ["RapidMiner", "K-Means"],
     tags: ["Machine Learning", "Data Analytics"],
     links: [],
-    cover: "/images/rice-clusters.webp",
+    cover: "/images/rice-clustering.webp",
     caseStudy: {
       summary:
         "A clustering study over 27 years of rice production data for Sumatra, from 1993 to 2020.",
@@ -208,7 +208,7 @@ export const projects: Project[] = [
     stack: ["TOPSIS", "SMART"],
     tags: ["Information Systems"],
     links: [],
-    cover: "/images/rice-clusters.webp",
+    cover: "/images/topsis-smart.webp",
     caseStudy: {
       summary:
         "A comparative study of two multi-criteria decision methods applied to the same regional rice-growth question.",
@@ -231,7 +231,7 @@ export const projects: Project[] = [
     stack: ["COBIT 2019 (DSS06)"],
     tags: ["Information Systems"],
     links: [],
-    cover: "/images/cobit.webp",
+    cover: "/images/cobit-audit.webp",
     caseStudy: {
       summary:
         "A COBIT 2019 capability assessment of the DSS06 process at a hospital, followed by a roadmap.",
@@ -276,7 +276,7 @@ export const projects: Project[] = [
     stack: ["Go"],
     tags: ["Backend Development with Go"],
     links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/redesign" }],
-    cover: "/images/sat-set.webp",
+    cover: "/images/redesign-challenge.webp",
     caseStudy: {
       summary:
         "The backend for a GDSC Redesign Challenge team entry that placed 2nd in 2024. My part was the backend.",

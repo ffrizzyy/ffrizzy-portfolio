@@ -1526,11 +1526,48 @@ Two findings came out of that run.
 Screenshots and DOM dumps from that run are working files under
 `.chrome-profile-*` and `.shots` at the workspace root. None of it is committed.
 
+### 13.8 Round 7: a browser audit, generated artwork, and the list rebuilt
+
+The site was audited in a real browser at 1440 and 390 wide, in both themes,
+section by section, with the theme switch, the project filter, the carousel, and
+the map filter all exercised rather than assumed. The method is `puppeteer-core`
+installed outside the repository at `.tools/pptr`, driving the installed Chrome,
+so it never becomes a shipped dependency.
+
+| Problem the audit found | Fix |
+|---|---|
+| Every image slot was a grey `ARTWORK PENDING` frame, and `public/textures/paper.webp` did not exist, so the texture layer 404'd on every page and the zine layer was invisible | `scripts/make-artwork.py` draws the paper texture, one cover per project, the portrait card, and four Instagram cards. These are drawn, not imitations of a screenshot, which is what 2.9 forbids |
+| Section 4.7 was twelve flat rows of text, with the type reduced to dim mono at the far right | Rebuilt as an index: position, a type icon from the set 2.13 already assigns, the outcome, and the type and period together, with the chips carrying their counts |
+| The GPA stat read `3.97 /` on one line and `4.00` on the next | The `/ 4.00` moved into a new `qualifier` field, rendered smaller and muted beside the number, so the digits can never wrap away from their unit |
+| Nine `cover:` paths named files that never existed, including `azzifa-home.webp`, `portal-map.webp`, and `rice-clusters.webp` | One cover per slug, `/images/<slug>.webp`, so the bento and the case studies resolve, and a real screenshot replaces a stand-in by filename alone |
+
+Two notes on method, because both cost time and both will recur:
+
+- **A headless element screenshot draws the fixed header over the element.** The
+  overlap that appears at the top of a section capture is an artifact, not a bug.
+  Measuring the geometry after a real nav click settles it: the heading lands at
+  201 px with the nav ending at 68 px, so it is clear.
+- **A test can rot while the code is fine.** The filter check matched a chip by
+  exact text, which broke the moment the chips gained counts, and it reported a
+  regression that did not exist. A test that keys on rendered text needs the same
+  care as the code it checks.
+
+After the round the audit reports no missing assets, and everything it exercises
+passes: theme switch, filter (12 rows to 4, with `?type=research` in the URL),
+carousel, and map filter (10 markers to 2), with no image missing alt text, no
+unlabelled control, exactly one `h1`, and no heading level skips.
+
+One caveat is recorded rather than fixed. Every cover is a drawn stand-in, so the
+site currently shows no real interface anywhere. Section 14.2 lists exactly what
+to capture and where each file goes.
+
 ---
 
 ## 14. Asset manifest (new)
 
 Every image the build expects, with the exact filename and the required size. Until a file exists at the listed path, its slot renders the `PendingImage` frame from section 2.9.
+
+**The table below is the original plan and is superseded for live paths.** What the build actually requests today is in 14.1 and 14.2, where each project's cover is `/images/<slug>.webp`. The names here that differ from that convention, such as `azzifa-home.webp` and `portal-map.webp`, are no longer referenced by any code.
 
 | Path | Size | Source | Notes |
 |---|---|---|---|
@@ -1554,6 +1591,40 @@ Every image the build expects, with the exact filename and the required size. Un
 | `public/Farrel-Frizzy-CV.pdf` | | CV export | Target of `/cv` |
 
 Compression rule: any source image over 400 KB is converted to WebP before it enters `public/`. The 7 MB deck originals never ship.
+
+### 14.1 Generated stand-ins, which exist now
+
+Section 2.9 forbids div-based fake screenshots, so the empty slots are not filled
+with imitation interfaces. They are filled with drawn typographic covers instead,
+produced by `scripts/make-artwork.py`: lettering, rules, and geometry on paper, in
+the design system's own language. Replacing one is a file drop at the same path
+with no code change.
+
+| Path | Size | What it is |
+|---|---|---|
+| `public/textures/paper.webp` | 1600 x 1000, 174 KB | Procedural paper fibre, drawn with numpy and Pillow |
+| `public/images/portrait.webp` | 800 x 1000 | A monogram card, captioned as a pending portrait |
+| `public/images/<slug>.webp` | 1600 x 1000 | One cover per project, eleven of them |
+| `public/images/ig-<slug>.webp` | 1080 x 1350 | Four Instagram post cards |
+
+### 14.2 Replacing them with real captures
+
+| Drop in at | What to capture |
+|---|---|
+| `public/images/azzifa.webp` | The journal's home screen |
+| `public/images/portal-publik.webp` | The report map and the agency scorecard |
+| `public/images/aid-dashboard.webp` | The Tableau dashboard |
+| `public/images/watsonx-genai-app.webp` | The Streamlit interface |
+| `public/images/imdb-sentiment-bilstm.webp` | Training output or a confusion matrix |
+| `public/images/rice-clustering.webp` | The cluster plot |
+| `public/images/topsis-smart.webp` | The ranking comparison |
+| `public/images/cobit-audit.webp` | The capability table |
+| `public/images/sat-set.webp` | The Figma dashboard frames |
+| `public/images/redesign-challenge.webp` | The API responding |
+| `public/images/sdc-2024.webp` | A photograph of the conference, once one is licensed |
+| `public/images/<slug>-2.webp` and `-3.webp` | Case study gallery extras. The layout already looks for these and shows labelled pending frames until they arrive |
+| `public/images/portrait.webp` | A real portrait |
+| `public/Farrel-Frizzy-CV.pdf` | The CV export, which turns the `/cv` download button live |
 
 ---
 
