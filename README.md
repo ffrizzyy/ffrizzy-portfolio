@@ -164,6 +164,15 @@ Wired since the first draft: the **Leaflet report map** on the KITO case study
 and the **Recharts index charts** on the Sriwijaya Digital Conference case study,
 each behind a lazy boundary so neither library reaches the Home page.
 
+Both were then rendered in headless Chrome and inspected as images, which is how
+two things were caught: the map and charts do draw, and **Recharts ignores
+`prefers-reduced-motion`**, so its marks animated for readers who asked for no
+motion. Both charts now pass `isAnimationActive={!reduceMotion}`.
+
+If you re-run a headless capture, force reduced motion
+(`--force-prefers-reduced-motion`). Without it you will photograph the charts
+mid-animation and they will look broken.
+
 ## Security
 
 Hardened against the OWASP Top 10 (2021). What is in place, and where:

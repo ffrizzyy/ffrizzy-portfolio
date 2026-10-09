@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "motion/react";
 import {
   Bar,
   BarChart,
@@ -63,6 +64,17 @@ const tooltipStyle = {
 };
 
 export function EvDciPanel() {
+  /**
+   * Recharts animates its marks with requestAnimationFrame and does not consult
+   * prefers-reduced-motion on its own, so every chart here has to opt out
+   * explicitly. Without this the draw-in animation runs for a reader who asked
+   * for no motion, which is a spec 2.8 violation and not a small one: the bars
+   * and the line are the substance of the chart, so it is exactly the motion
+   * that carries meaning.
+   */
+  const reduceMotion = useReducedMotion();
+  const animate = !reduceMotion;
+
   return (
     <div className="mt-6 flex flex-col gap-8 border-2 border-ink bg-paper-raised p-5 md:p-7">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -109,7 +121,7 @@ export function EvDciPanel() {
                   strokeWidth={2}
                   dot={{ r: 4, fill: "var(--signal)", stroke: "var(--signal)" }}
                   activeDot={{ r: 6 }}
-                  isAnimationActive
+                  isAnimationActive={animate}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -143,8 +155,8 @@ export function EvDciPanel() {
                     color: "var(--ink-muted)",
                   }}
                 />
-                <Bar dataKey="score2023" name="2023" fill="var(--line)" />
-                <Bar dataKey="score2024" name="2024">
+                <Bar dataKey="score2023" name="2023" fill="var(--line)" isAnimationActive={animate} />
+                <Bar dataKey="score2024" name="2024" isAnimationActive={animate}>
                   {PEERS.map((row) => (
                     <Cell
                       key={row.province}

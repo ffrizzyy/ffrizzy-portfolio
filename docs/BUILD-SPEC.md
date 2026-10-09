@@ -1492,6 +1492,40 @@ twelve rows.
 The rule this establishes: **a Client Component may import types from
 `lib/content`, never values.** Values come down as props.
 
+### 13.7 Rendering confirmed in a real browser
+
+Chrome will not start inside the project's confined shell. Its IPC uses Windows
+named pipes, so it exits with `FATAL:mojo platform_channel.cc: Access is denied`
+before drawing anything, and no combination of crash-reporter flags avoids it.
+Run headlessly with full access, the pages were rendered and inspected as images
+rather than inferred from HTML:
+
+- **The report map draws.** OpenStreetMap tiles resolve across Palembang, the
+  category-coloured circle markers are placed, Leaflet's zoom control and
+  attribution line are present, and the category filter chips render.
+- **Both index charts draw to completion.** The rank line connects all four
+  years with the reversed axis correctly placing 19th above 23rd, and the grouped
+  bars show 2023 against 2024 with South Sumatra highlighted in signal.
+- **The Home page is correct in dark mode**, which is also the evidence that the
+  pre-paint theme script runs: the floating bar has its top gap, the progress rule
+  sits under it, and the marker highlight, taped portrait, and stickers all place.
+
+Two findings came out of that run.
+
+1. **Recharts ignores `prefers-reduced-motion`.** Its marks animate with
+   `requestAnimationFrame` and it never consults the media query, so every chart
+   animated for a reader who had asked for no motion. That is a spec 2.8
+   violation, and it lands on the substance of the chart rather than on a
+   flourish, because the bars and the line *are* the data. Both charts now pass
+   `isAnimationActive={!reduceMotion}`.
+2. **A headless capture taken during the draw-in shows flat bars and a
+   half-drawn line.** That is a timing artifact, not a rendering fault, and it is
+   why the verification run forces reduced motion: it makes the capture
+   deterministic and doubles as the test for finding 1.
+
+Screenshots and DOM dumps from that run are working files under
+`.chrome-profile-*` and `.shots` at the workspace root. None of it is committed.
+
 ---
 
 ## 14. Asset manifest (new)
