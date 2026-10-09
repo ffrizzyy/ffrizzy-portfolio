@@ -67,6 +67,7 @@ export const projects: Project[] = [
     cover: "/images/portal-map.webp",
     sampleData: true,
     caseStudy: {
+      interactive: "kito-report-map",
       summary:
         "KITO is a citizen complaint system for Palembang. Residents describe a problem to a Telegram bot in everyday language, an AI agent sorts and redacts it, officers verify and close it, and the public portal shows what happened next. This case study covers the public portal, which is the part I built.",
       problem:
@@ -285,6 +286,55 @@ export const projects: Project[] = [
         "The repository name is vague and it has no README yet. Both are known cleanup items.",
     },
   },
+  {
+    slug: "sdc-2024",
+    title: "Sriwijaya Digital Conference 2024",
+    type: "design",
+    featured: false,
+    role: "Event concept and session author",
+    period: "Oct 2024",
+    outcome:
+      "Named the concept Generating Digital Understanding and wrote four session titles and themes for a national conference answering South Sumatra's falling digital rank.",
+    stack: ["Event Concept", "Copywriting", "Data Storytelling"],
+    tags: ["Content Writing", "Data Analytics"],
+    links: [],
+    cover: "/images/sdc-2024.webp",
+    caseStudy: {
+      interactive: "sdc-ev-dci",
+      summary:
+        "Sriwijaya Digital Conference 2024 was a national conference in Palembang, billed as The Biggest Digital Conference in South Sumatera. I wrote the event concept and the session titles and themes.",
+      problem:
+        "The East Ventures Digital Competitiveness Index for 2024 placed South Sumatra 22nd, down two places from the year before, with a score of 36.4 that had itself fallen from 37.6. The conference existed to answer that: to build digital understanding among young people in the province, especially university students and fresh graduates.",
+      approach:
+        "The concept was Generating Digital Understanding, shortened to GENDING, and it set the mission the sessions had to serve. Each session then carried a name that explains itself, so the programme reads as an argument rather than a list.",
+      outcome:
+        "Four sessions: Sriwij AI a, on artificial intelligence in modern society; Career Wireframe, on imagining, designing, and living a working life; Speak Up, on presence and voice; and Mind Your Business, on turning ideas into income.",
+      limitations:
+        "I wrote the concept and the sessions, not the whole event, and the execution belonged to the organising team. I have no attendance figure for the conference itself, so none is claimed here. The ranking figures are quoted from the index rather than reproduced in full.",
+      bullets: [
+        {
+          label: "The name does work",
+          text: "Generating Digital Understanding abbreviates to GENDING, so the concept is memorable as a word rather than only as a phrase.",
+        },
+        {
+          label: "Sriwij AI a",
+          text: "Sriwijaya means glorious victory, which is where the session name comes from: an AI session that reads as the city's own.",
+        },
+        {
+          label: "Speak Up",
+          text: "Chosen because up is a synonym of elevate, so the title and the theme carry each other.",
+        },
+        {
+          label: "Mind Your Business",
+          text: "A familiar English phrase that also reads as think about your business, which is why it fits an entrepreneurship session.",
+        },
+        {
+          label: "Who it was for",
+          text: "Minimum age 17, across the general public, school students, university students, employees, professionals, and communities.",
+        },
+      ],
+    },
+  },
 ];
 
 /** The five bento cells, in the exact order spec 4.3 requires. */
@@ -296,6 +346,8 @@ export const FEATURED_ORDER = [
   "sat-set",
 ] as const;
 
-/** Spec 2.7: the only section-end link. */
-export const WORK_FILTERS = ["all", "build", "data", "research", "design", "content"] as const;
-export type WorkFilter = (typeof WORK_FILTERS)[number];
+/**
+ * The filter vocabulary lives in src/lib/work-filters.ts. It moved out of this
+ * file because a Client Component importing it from here pulled this whole
+ * catalogue into the client bundle.
+ */

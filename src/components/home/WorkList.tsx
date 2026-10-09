@@ -1,37 +1,35 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SectionHeading } from "@/components/shared/decor";
 import { Chip } from "@/components/ui/Chip";
-import { WORK_FILTERS, type WorkFilter } from "@/content/projects";
-import { filterWorkRows, isWorkFilter } from "@/lib/content";
+import { FILTER_LABELS, isWorkFilter, WORK_FILTERS, type WorkFilter } from "@/lib/work-filters";
+import type { WorkRow } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /**
- * Spec 4.7 everything I have built. Filter chips as a radio group, eleven
- * hairline-divided rows, and an empty state with a working reset.
+ * Spec 4.7 everything I have built. Filter chips as a radio group, hairline
+ * divided rows, and an empty state with a working reset.
+ *
+ * The rows arrive as a prop from the Server Component rather than being imported
+ * here. That is deliberate: importing them from the content layer dragged every
+ * project and its case study prose into the client bundle, so each visitor
+ * downloaded all eleven write-ups to render a list of titles. Only the filter
+ * vocabulary and the WorkRow type are imported now, and the type is erased at
+ * build time.
  *
  * Filter state lives in the URL as ?type=research so a view is shareable. It is
- * written with history.replaceState rather than the Next router, which keeps
- * this component out of a useSearchParams Suspense boundary and avoids a
+ * written with history.replaceState rather than the Next router, which keeps this
+ * component out of a useSearchParams Suspense boundary and avoids a
  * static-render bailout for a filter that never needs a server round trip.
  *
  * Row reordering uses Motion layout plus AnimatePresence, which spec 2.8 asks
  * for, and collapses to an instant swap under prefers-reduced-motion.
  */
-const FILTER_LABELS: Record<WorkFilter, string> = {
-  all: "All",
-  build: "Build",
-  data: "Data",
-  research: "Research",
-  design: "Design",
-  content: "Content",
-};
-
-export function WorkList() {
+export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
   const [filter, setFilter] = useState<WorkFilter>("all");
   const reduceMotion = useReducedMotion();
 
@@ -50,7 +48,10 @@ export function WorkList() {
     window.history.replaceState(null, "", url);
   };
 
-  const rows = filterWorkRows(filter);
+  const rows = useMemo(
+    () => (filter === "all" ? allRows : allRows.filter((row) => row.type === filter)),
+    [allRows, filter],
+  );
 
   return (
     <section id="all" className={`${LAYOUT.section} border-t border-line`}>
@@ -117,12 +118,7 @@ export function WorkList() {
                 >
                   <span className="text-base font-medium text-ink">{row.title}</span>
                   <span className="text-sm text-ink-muted">{row.outcome}</span>
-                  <span
-                    className={cn(
-                      "num text-xs uppercase tracking-[0.14em] text-ink-muted",
-                      "md:text-right",
-                    )}
-                  >
+                  <span className="num text-xs uppercase tracking-[0.14em] text-ink-muted md:text-right">
                     {FILTER_LABELS[row.type]}
                   </span>
                 </a>

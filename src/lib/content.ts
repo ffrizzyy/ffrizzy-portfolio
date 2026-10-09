@@ -26,7 +26,8 @@ import {
   type Tool,
   type WritingItem,
 } from "@/content/schema";
-import { FEATURED_ORDER, projects, WORK_FILTERS, type WorkFilter } from "@/content/projects";
+import { FEATURED_ORDER, projects } from "@/content/projects";
+import { isWorkFilter, WORK_FILTERS, type WorkFilter } from "@/lib/work-filters";
 import {
   awards as rawAwards,
   certifications as rawCerts,
@@ -225,6 +226,7 @@ const WORK_ROW_ORDER = [
   "topsis-smart",
   "cobit-audit",
   "sat-set",
+  "sdc-2024",
 ];
 
 const projectRows: WorkRow[] = WORK_ROW_ORDER.map((slug) => {
@@ -255,9 +257,10 @@ export function filterWorkRows(filter: WorkFilter): WorkRow[] {
   return workRows.filter((row) => row.type === filter);
 }
 
-export function isWorkFilter(value: string): value is WorkFilter {
-  return (WORK_FILTERS as readonly string[]).includes(value);
-}
+// Re-exported so server callers keep a single import for this list. Client
+// Components must import it from work-filters instead, which is why that module
+// exists.
+export { isWorkFilter, WORK_FILTERS, type WorkFilter };
 
 /* ------------------------------------------------------------------ *
  * Lookups                                                             *

@@ -34,7 +34,7 @@ No environment variables are required to run it. With no secrets the contact
 route validates the payload and returns a labelled development response instead
 of sending mail. Copy `.env.example` to `.env.local` when you want real delivery.
 
-## Three things about this checkout that will bite you if you change them
+## Four things about this checkout that will bite you if you change them
 
 **1. `pnpm-workspace.yaml` sets `nodeLinker: hoisted`, and it is load-bearing.**
 
@@ -61,6 +61,18 @@ written out by hand. Interpolating it, as in
 never sees while scanning, so no CSS is generated and the rule silently does
 nothing. If you change `navTotal`, change the hero too, or the nav will overlap
 the hero by the difference.
+
+**4. A Client Component may import types from `lib/content`, never values.**
+
+`lib/content.ts` validates and assembles the whole catalogue, case study prose
+included. A Client Component importing a value from it drags that entire
+catalogue into the JavaScript every visitor downloads. This actually happened:
+`WorkList` imported its rows from there, and the KITO case study text could be
+found inside a chunk the Home page executes.
+
+The rule is that values come down as props from a Server Component. The one
+shared vocabulary a client needs, the `#all` filter list, lives in
+`src/lib/work-filters.ts`, which holds no project data by design.
 
 ## Where content lives
 
@@ -143,13 +155,14 @@ spec document tracks the same list.
 These are in the spec and intentionally unfinished, listed so nothing looks
 accidentally done:
 
-- **Leaflet map and Recharts charts.** The packages are installed, but the
-  Portal Publik case study's interactive map and trend chart are not wired. That
-  page currently renders the full written case study without the demos.
 - **ESLint, Playwright, and Lighthouse CI.** The spec lists them as quality
   gates. `tsc --noEmit` is the gate that runs here. Installing Playwright also
   pulls browser binaries, which is why it was left out.
 - **GitHub metadata fetching** and **Sentry**, both marked optional in the spec.
+
+Wired since the first draft: the **Leaflet report map** on the KITO case study
+and the **Recharts index charts** on the Sriwijaya Digital Conference case study,
+each behind a lazy boundary so neither library reaches the Home page.
 
 ## Security
 

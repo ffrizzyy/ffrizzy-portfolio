@@ -9,7 +9,7 @@ import { WorkBento } from "@/components/home/WorkBento";
 import { WorkList } from "@/components/home/WorkList";
 import { WritingSection } from "@/components/home/WritingSection";
 import { reportMissingAssets } from "@/lib/assets.server";
-import { projectList, writingList } from "@/lib/content";
+import { projectList, workRows, writingList } from "@/lib/content";
 
 /**
  * Spec 3 and 4: one long page with the ten sections in a fixed order.
@@ -39,7 +39,8 @@ export default function Home() {
       <SkillsMap />
       <ContentGrowth />
       <KitoSection />
-      <WorkList />
+      {/* Rows are handed down so the client bundle never imports the catalogue. */}
+      <WorkList rows={workRows} />
       <WritingSection />
       <AboutSection />
       <ContactForm />

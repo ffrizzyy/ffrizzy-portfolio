@@ -2,6 +2,8 @@ import { Icon } from "@/components/shared/Icon";
 import { PendingImage } from "@/components/shared/PendingImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { TrackedLink } from "@/components/shared/TrackedLink";
+import { EvDciPanel } from "@/components/work/EvDciPanel";
+import { ReportMap } from "@/components/work/ReportMap";
 import { TagChip } from "@/components/ui/Chip";
 import type { Project } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
@@ -90,6 +92,23 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
                   </div>
                 ))}
               </dl>
+            </Reveal>
+          ) : null}
+
+          {/* Interactive pieces are declared by name in the content module and
+              resolved here, so the content stays data and the heavy libraries
+              load only on the case study that asks for them. */}
+          {detail?.interactive === "kito-report-map" ? (
+            <Reveal>
+              <h2 className="text-xl md:text-2xl">The map, on sample data</h2>
+              <ReportMap />
+            </Reveal>
+          ) : null}
+
+          {detail?.interactive === "sdc-ev-dci" ? (
+            <Reveal>
+              <h2 className="text-xl md:text-2xl">The data behind the concept</h2>
+              <EvDciPanel />
             </Reveal>
           ) : null}
         </div>

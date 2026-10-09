@@ -25,6 +25,12 @@ export const caseStudySchema = z.object({
   limitations: z.string().optional(),
   /** Extra detail blocks, rendered as a definition-style list. */
   bullets: z.array(z.object({ label: z.string(), text: z.string() })).optional(),
+  /**
+   * Names the interactive piece this case study renders. The components are
+   * client leaves loaded lazily, so the heavy libraries reach only the case
+   * study that needs them and never the Home page.
+   */
+  interactive: z.enum(["kito-report-map", "sdc-ev-dci"]).optional(),
 });
 
 export const projectSchema = z.object({

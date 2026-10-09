@@ -1453,6 +1453,45 @@ carries its creation time in its high bits and the shortcode is that id encoded
 in base64, so the real post date is recoverable without asking. All four writing
 slides now show theirs.
 
+### 13.6 Round 6: the map, the charts, and the bundle regression they exposed
+
+| Before | Now | Why |
+|---|---|---|
+| Leaflet and Recharts installed but unwired | A sample report map on the KITO case study, and two index charts on a new SDC case study | Spec 5.1 asked for both, and the conference deck supplied real figures to plot |
+| 11 projects | 12, adding `sdc-2024` | Its own case study is the right home for the concept work and the index data behind it |
+| A chart with nothing real to show | The charts plot the deck's own figures: South Sumatra ranked 21st, 23rd, 19th, and 22nd from 2021 to 2024, and the 2024 peer scores | A chart of real numbers is worth more than a mock trend line, and the deck is a primary source |
+| Two accessibility obligations unmet | Both interactive pieces carry a summary and a data table behind a disclosure | Spec 2.11 requires a text equivalent for a map and a chart |
+
+**Implementation notes that matter.**
+
+- Rank is plotted on a **reversed** axis on the trend chart. Rank 1 is the best
+  result, so a normal axis would draw an improvement as a fall.
+- The map uses `CircleMarker`, not Leaflet's default `Marker`. The default marker
+  loads PNG icon assets whose URLs break under a bundler, which is the usual
+  reason a Leaflet map appears as an empty grey box in Next.js.
+- The map is wrapped in a Client Component that calls `next/dynamic` with
+  `ssr: false`, because that option is only permitted inside a Client Component
+  and the case study layout is a Server Component.
+- The points are invented and the interface says so three times. Spec 5.1
+  requires mock data to be labelled rather than passed off as real reports.
+
+**The bundle regression, and the fix.** Loading the case study pages proved that
+`WorkList` was a Client Component importing the content layer. That pulled the
+entire project catalogue, every case study's prose included, plus Zod, into the
+JavaScript every visitor downloads. It was confirmed by finding the KITO case
+study text inside a chunk the Home page executes, and it contradicted the
+170 KB budget in spec 1.6.
+
+The fix moves the filter vocabulary into `src/lib/work-filters.ts`, which holds
+no project data, and passes the rows to `WorkList` as a prop from the Server
+Component instead of having it import them. The `WorkRow` type is imported as a
+type only, so it is erased at build time. After the change the catalogue prose is
+absent from every chunk the Home page executes, while the list still renders all
+twelve rows.
+
+The rule this establishes: **a Client Component may import types from
+`lib/content`, never values.** Values come down as props.
+
 ---
 
 ## 14. Asset manifest (new)
