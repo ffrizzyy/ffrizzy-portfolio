@@ -1396,3 +1396,79 @@ Every image the build expects, with the exact filename and the required size. Un
 | `public/Farrel-Frizzy-CV.pdf` | | CV export | Target of `/cv` |
 
 Compression rule: any source image over 400 KB is converted to WebP before it enters `public/`. The 7 MB deck originals never ship.
+
+---
+
+## 15. Security (added in round 3)
+
+Version 2 said nothing about security. This section is now normative: a change that
+weakens a control here is a regression, not a style choice.
+
+### 15.1 OWASP Top 10 coverage
+
+| OWASP 2021 | Control | Lives in |
+|---|---|---|
+| A01 Broken access control | The contact endpoint refuses cross-site submissions using `Sec-Fetch-Site`, then `Origin` versus `Host` | `src/app/api/contact/route.ts` |
+| A02 Cryptographic failures | HSTS `max-age=63072000; includeSubDomains`. No server-only secret reaches the client bundle | `next.config.ts` |
+| A03 Injection | Mail header values collapse to one line. Strict Zod schemas reject unknown fields. The JSON-LD payload is escaped before `dangerouslySetInnerHTML` | `src/lib/contact-schema.ts`, `src/app/layout.tsx` |
+| A04 Insecure design | Bounded rate-limit map, 8 KB body cap, 5 s verification timeout, silent-success honeypot | `src/app/api/contact/route.ts` |
+| A05 Security misconfiguration | OWASP header baseline. `X-Powered-By` suppressed. CSP with a per-request nonce, no `unsafe-inline` for scripts | `next.config.ts`, `src/proxy.ts` |
+| A06 Vulnerable components | `pnpm audit --prod` clean. Framework and renderer pinned exactly | `package.json` |
+| A07 Identification and authentication | Not applicable. No accounts, sessions, or credentials exist |
+| A08 Software and data integrity | Lockfile committed. One optional third-party script, origin-restricted. No SRI, for the reason in 15.4 | `src/app/layout.tsx` |
+| A09 Logging and monitoring | Security events are logged. Addresses and bodies are not | `src/app/api/contact/route.ts` |
+| A10 SSRF | One outbound request to a fixed Cloudflare URL. Any future configurable fetch needs an allowlist |
+
+### 15.2 The one accepted cost
+
+`script-src` no longer allows `'unsafe-inline'`. It carries a per-request nonce
+issued by `src/proxy.ts`, which is what Next.js 16 renamed Middleware to. **A nonce
+changes every request, so `/`, `/cv`, and `/work/[slug]` are served per request
+instead of being prerendered as static HTML**, and Next applies
+`Cache-Control: private, no-cache, no-store`. That caching change is load-bearing:
+a shared cache holding one visitor's page would hand the next visitor a stale
+nonce, and every script in that document would be blocked.
+
+This trades static rendering for the removal of `unsafe-inline`. It was accepted
+deliberately, and it is reversible in one action: delete `src/proxy.ts` and the
+site returns to prerendering with the weaker policy.
+
+Only these stay static, because they contain no script tag: `icon.png`,
+`apple-icon.png`, `opengraph-image.png`, `robots.txt`, `sitemap.xml`.
+
+### 15.3 Rules that must hold when you edit
+
+1. **The CSP is set in exactly one place.** `next.config.ts` must never also send a
+   `Content-Security-Policy`. Two policies are both enforced, and their
+   intersection silently breaks the site.
+2. **Next reads the nonce from the request header**, specifically
+   `headers['content-security-policy']`. The policy therefore has to be set on the
+   forwarded request as well as the response.
+3. **A library that injects a raw inline `<script>` must be given the nonce.** CSP
+   blocks a parser-inserted inline script with no nonce. next-themes does exactly
+   this with its pre-paint theme script, which is why `ThemeProvider` carries
+   `nonce={nonce}`. Without it the theme attribute is not set until hydration and
+   the flash returns. Verified: the served HTML went from 1 nonce-less script to 0
+   after that prop was added.
+4. **New third-party scripts go through `next/script`**, or their origin is added
+   to `script-src`. `strict-dynamic` means an allowlisted host is not enough on
+   its own for a parser-inserted tag.
+5. **The honeypot field must not be constrained to empty in the schema.** Doing so
+   makes a filled honeypot fail validation and answer 400, which tells the bot it
+   was caught. The route answers a silent success instead.
+
+### 15.4 Residual risks
+
+| Risk | Why it is accepted | How to close it |
+|---|---|---|
+| The rate limiter keys on `x-real-ip`, then the last `x-forwarded-for` entry | A portfolio has no durable store to count against. Turnstile does not depend on the header | Move the limit into the host's edge config or a KV store |
+| Turnstile is skipped when `TURNSTILE_SECRET_KEY` is unset | Keeps a fresh clone useful, per 1.4 | Set the key in production |
+| The analytics script carries no Subresource Integrity hash | Plausible serves an unversioned `script.js`, so a hash breaks on their next release | Self-host the script |
+| HSTS omits `preload` | It is a long-lived commitment over the domain and all subdomains | Add it once the domain is final |
+| The CSP keeps `style-src 'unsafe-inline'` | Style attributes cannot carry a nonce. This does not permit script execution | Nothing better exists without dropping inline styles entirely |
+
+### 15.5 Reporting
+
+`public/.well-known/security.txt` follows RFC 9116 with a contact and an expiry.
+`Canonical` and `Policy` are deliberately omitted until the production domain is
+fixed, because both require an absolute URL and a wrong one is worse than none.

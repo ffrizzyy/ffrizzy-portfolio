@@ -1,0 +1,10 @@
+# Security contact for this site, per RFC 9116 (OWASP A09: a way to report a
+# problem is part of a working security posture).
+#
+# Canonical and Policy lines are intentionally absent until the production
+# domain is fixed, because both require an absolute URL and a wrong one is
+# worse than none.
+
+Contact: mailto:m.farrel2222@gmail.com
+Expires: 2027-09-30T00:00:00.000Z
+Preferred-Languages: en, id

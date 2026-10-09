@@ -140,6 +140,67 @@ accidentally done:
   pulls browser binaries, which is why it was left out.
 - **GitHub metadata fetching** and **Sentry**, both marked optional in the spec.
 
+## Security
+
+Hardened against the OWASP Top 10 (2021). What is in place, and where:
+
+| OWASP | Control | Where |
+|---|---|---|
+| A01 Broken access control | The contact endpoint refuses cross-site submissions, using `Sec-Fetch-Site` and an `Origin` versus `Host` comparison | `src/app/api/contact/route.ts` |
+| A02 Cryptographic failures | Two-year HSTS with `includeSubDomains`. No server-only secret is readable by the client, confirmed by scanning the built chunks | `next.config.ts` |
+| A03 Injection | Mail header values are collapsed to a single line, unknown fields are rejected by a strict schema, and the JSON-LD payload is escaped before `dangerouslySetInnerHTML` | `src/lib/contact-schema.ts`, `src/app/layout.tsx` |
+| A04 Insecure design | Bounded rate limit, 8 KB body cap, 5s verification timeout, and a honeypot that returns a silent success | `src/app/api/contact/route.ts` |
+| A05 Security misconfiguration | Full OWASP header baseline, `X-Powered-By` suppressed, and a CSP with a per-request nonce and no `unsafe-inline` for scripts | `next.config.ts`, `src/proxy.ts` |
+| A06 Vulnerable components | `pnpm audit --prod` reports no known vulnerabilities; `next` and `react` are pinned exactly | `package.json` |
+| A07 Auth failures | Not applicable. There are no accounts, sessions, or passwords |
+| A08 Integrity failures | Lockfile committed; the single third-party script is optional and origin-restricted. See the residual risk below |
+| A09 Logging failures | Security events are logged. Addresses and message bodies are not | `src/app/api/contact/route.ts` |
+| A10 SSRF | The only outbound request is to a fixed Cloudflare verification URL. A future configurable fetch would need an allowlist |
+
+### The one real cost of this
+
+`script-src` no longer permits `'unsafe-inline'`. It uses a per-request nonce from
+`src/proxy.ts`. A nonce changes on every request, so **`/`, `/cv`, and
+`/work/[slug]` are now rendered per request rather than prerendered as static
+HTML**, and Next switches them to `Cache-Control: no-store`. That caching change
+is not optional: a cached page would carry a stale nonce and every script in it
+would be blocked.
+
+If you would rather have static rendering back, delete `src/proxy.ts`. You get
+prerendering, and unavoidably `script-src 'unsafe-inline'` with it.
+
+### Three ways to break the policy without noticing
+
+1. **A new third-party script will be blocked.** Adding a plain
+   `<script src="https://other.example">` fails under `strict-dynamic` and a
+   nonce policy. Load it through `next/script`, which receives the nonce, or add
+   its origin to `script-src` in `src/proxy.ts`.
+2. **A library that injects its own inline script needs a nonce.** This is
+   exactly what bit next-themes: its pre-paint theme script is a raw `<script>`,
+   and CSP blocks a parser-inserted inline script that has no nonce. It is passed
+   `nonce={nonce}` in `src/app/layout.tsx`. If the theme ever starts flashing on
+   load again, check that prop first.
+3. **Inline `style` attributes are still allowed.** Style attributes cannot carry
+   a nonce, so `style-src` keeps `'unsafe-inline'`. That does not permit script
+   execution.
+
+### Residual risks, stated rather than hidden
+
+- **The rate limiter trusts a header.** It keys on `x-real-ip` and otherwise the
+  last `x-forwarded-for` entry, so a client able to set those can evade the
+  limit. Turnstile is the control that does not depend on it, and a durable limit
+  belongs in the host's edge configuration. This was tested: with distinct
+  `x-real-ip` values each request gets its own bucket, and with a fixed value the
+  sixth request is refused with a 429.
+- **Turnstile is optional.** With no `TURNSTILE_SECRET_KEY` the spam check is
+  skipped entirely and only the honeypot and the rate limit remain. Set the key
+  in production.
+- **The analytics script has no SRI.** Plausible serves an unversioned
+  `script.js`, so an integrity hash would break on their next release. If that
+  outweighs the convenience, self-host the script.
+- **HSTS omits `preload`.** Adding it is a long-lived commitment covering the
+  domain and every subdomain, so it is your call, not mine.
+
 ## Verification status
 
 Verified on Node 24.21.0 with pnpm 11.7.0.

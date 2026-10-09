@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
@@ -71,7 +72,31 @@ const personJsonLd = {
   sameAs: [SITE.linkedin, SITE.github],
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+/**
+ * Escapes a JSON-LD payload before it goes into dangerouslySetInnerHTML.
+ *
+ * `</script>` inside any string would otherwise close the block and let the
+ * remainder be parsed as markup, and U+2028/U+2029 are literal line terminators
+ * in JavaScript. Every value here is currently authored in-repo, so this is
+ * defence in depth rather than a live bug, but it is the difference between a
+ * safe pattern and a landmine for whoever adds a user-supplied field later
+ * (OWASP A03: injection).
+ */
+function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // The nonce issued by src/middleware.ts. Next stamps its own script tags from
+  // the request's CSP header, but a raw <script> written here has to be handed
+  // the nonce explicitly.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     // suppressHydrationWarning is required: next-themes writes the theme
     // attribute before React hydrates, so the server cannot know the value.
@@ -83,7 +108,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(personJsonLd) }}
         />
 
         {/* Cookieless analytics, loaded only when a domain is configured, so a
@@ -101,6 +127,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           attribute="data-theme"
           defaultTheme="system"
           enableSystem
+          // Load-bearing under the nonce policy. next-themes injects its
+          // pre-paint theme script as a raw <script> with no nonce, and CSP
+          // blocks a parser-inserted inline script that has neither a nonce nor
+          // a hash. Without this the theme attribute is not set until React
+          // hydrates, which reintroduces exactly the flash the script exists to
+          // prevent. Verified: the served HTML has 20 of 20 script tags
+          // carrying the nonce only when this prop is present.
+          nonce={nonce}
           // Spec 2.8 asks for a 300ms theme transition, so next-themes must not
           // suppress it. The provider's pre-paint script means it never fires on
           // load, so there is still no flash.
