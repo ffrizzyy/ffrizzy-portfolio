@@ -1,0 +1,11 @@
+packages:
+  - "."
+
+# pnpm 11 no longer reads node-linker from .npmrc. It belongs here.
+#
+# Why hoisted: the default isolated layout creates node_modules/next as a
+# junction into pnpm's global virtual store. On this Windows setup Node could
+# not resolve Next's own dependencies (@next/env, @swc/helpers) through that
+# junction, so `next build` failed with MODULE_NOT_FOUND. Hoisted linking
+# produces a flat, junction-free tree that resolves normally.
+nodeLinker: hoisted

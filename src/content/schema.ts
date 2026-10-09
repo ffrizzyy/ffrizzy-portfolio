@@ -1,0 +1,161 @@
+import { z } from "zod";
+
+/**
+ * Content schemas. Spec 5.5: records are typed modules validated by Zod, so an
+ * invalid record fails `pnpm build` with a field-level error instead of
+ * rendering an empty box.
+ */
+
+export const PROJECT_TYPES = ["build", "data", "research", "design", "content"] as const;
+
+export const projectTypeSchema = z.enum(PROJECT_TYPES);
+export type ProjectType = z.infer<typeof projectTypeSchema>;
+
+export const linkSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1),
+});
+
+export const caseStudySchema = z.object({
+  /** 2 to 3 sentences. Spec 5.1 step 2. */
+  summary: z.string().optional(),
+  problem: z.string().optional(),
+  approach: z.string().optional(),
+  outcome: z.string().optional(),
+  limitations: z.string().optional(),
+  /** Extra detail blocks, rendered as a definition-style list. */
+  bullets: z.array(z.object({ label: z.string(), text: z.string() })).optional(),
+});
+
+export const projectSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  title: z.string().min(1),
+  type: projectTypeSchema,
+  featured: z.boolean(),
+  role: z.string().min(1),
+  period: z.string().min(1),
+  /** One line, real numbers only, 25 words or fewer. Spec 10.2. */
+  outcome: z.string().min(1),
+  /** Chips. Only the first 3 are shown on cards. */
+  stack: z.array(z.string()).min(1),
+  /** Skills. Drives the "Used in" lists in the skills map. Spec 4.4. */
+  tags: z.array(z.string()),
+  links: z.array(linkSchema),
+  cover: z.string().startsWith("/"),
+  /** True when any metric on the page is mock. Spec 7. */
+  sampleData: z.boolean().optional(),
+  caseStudy: caseStudySchema.optional(),
+});
+
+export type Project = z.infer<typeof projectSchema>;
+
+/** Spec 4.2. */
+export const statSchema = z.object({
+  id: z.enum(["gpa", "events", "projects", "followers", "views"]),
+  /** Ignored for computed stats, which derive their value from other content. */
+  value: z.number(),
+  computedFrom: z.enum(["events", "projects"]).optional(),
+  kind: z.enum(["exact", "lower-bound"]),
+  decimals: z.number().int().min(0).max(2).optional(),
+  suffix: z.string().optional(),
+  label: z.string(),
+  detail: z.string(),
+  method: z.string(),
+  asOf: z.string(),
+  icon: z.enum(["GraduationCap", "CalendarCheck", "Stack", "UserPlus", "Eye"]),
+  viz: z.enum(["ring", "ticks", "stack", "platforms", "phone"]),
+  href: z.string().startsWith("#"),
+});
+
+export type Stat = z.infer<typeof statSchema>;
+
+export const timelineEntrySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  org: z.string(),
+  kind: z.enum(["work", "leadership", "award"]),
+  start: z.string().regex(/^\d{4}-\d{2}$/),
+  end: z.union([z.string().regex(/^\d{4}-\d{2}$/), z.literal("present")]),
+  display: z.string(),
+  summary: z.string().optional(),
+});
+
+export type TimelineEntry = z.infer<typeof timelineEntrySchema>;
+
+export const eventSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  year: z.number().int(),
+  role: z.enum(["organizer", "coverage"]),
+});
+
+export type PortfolioEvent = z.infer<typeof eventSchema>;
+
+export const awardSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  org: z.string(),
+  year: z.number().int(),
+});
+
+export const certIssuerSchema = z.object({
+  issuer: z.string(),
+  items: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      year: z.number().int(),
+      credentialUrl: z.string().optional(),
+    }),
+  ),
+});
+
+export const growthSlideSchema = z.object({
+  id: z.string(),
+  org: z.string(),
+  role: z.string(),
+  peak: z.number(),
+  peakLabel: z.string(),
+  start: z.number(),
+  startLabel: z.string(),
+  subLine: z.string(),
+  sentence: z.string(),
+  posts: z.number().int(),
+});
+
+export const writingItemSchema = z.object({
+  id: z.string(),
+  platform: z.enum(["linkedin", "instagram"]),
+  title: z.string(),
+  description: z.string(),
+  /** Absent means the slide renders without an outbound link. Spec 4.8. */
+  url: z.string().url().optional(),
+  date: z.string().optional(),
+  cover: z.string().startsWith("/"),
+  language: z.enum(["id", "en"]).optional(),
+  featured: z.boolean().optional(),
+});
+
+export const skillSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  /** Rendered inside the Deep accordion. */
+  blurb: z.string(),
+});
+
+export const toolSchema = z.object({
+  /** Slug in simple-icons. A slug missing from the set is dropped. Spec 1.1. */
+  slug: z.string(),
+  name: z.string(),
+});
+
+/* Inferred types for every schema above. */
+export type Award = z.infer<typeof awardSchema>;
+export type CertIssuer = z.infer<typeof certIssuerSchema>;
+export type CertItem = z.infer<typeof certIssuerSchema>["items"][number];
+export type Skill = z.infer<typeof skillSchema>;
+export type Tool = z.infer<typeof toolSchema>;
+export type WritingItem = z.infer<typeof writingItemSchema>;
+export type GrowthSlide = z.infer<typeof growthSlideSchema>;
+export type CaseStudy = z.infer<typeof caseStudySchema>;
+export type ProjectLink = z.infer<typeof linkSchema>;

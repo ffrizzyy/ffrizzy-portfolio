@@ -1,0 +1,128 @@
+import { Icon } from "@/components/shared/Icon";
+import { PendingImage } from "@/components/shared/PendingImage";
+import { Reveal } from "@/components/shared/Reveal";
+import { TrackedLink } from "@/components/shared/TrackedLink";
+import { TagChip } from "@/components/ui/Chip";
+import type { Project } from "@/content/schema";
+import { ANALYTICS_EVENTS } from "@/lib/analytics";
+import { LAYOUT } from "@/lib/constants";
+
+/**
+ * Spec 5.1 case study template. Every section is optional in the data, so a
+ * featured project renders the full eight-part structure while a smaller
+ * project renders the short variant from the same component.
+ */
+export function CaseStudyLayout({ project, next }: { project: Project; next: Project }) {
+  const detail = project.caseStudy;
+
+  const sections: { label: string; body?: string }[] = [
+    { label: "Summary", body: detail?.summary },
+    { label: "Problem", body: detail?.problem },
+    { label: "Approach", body: detail?.approach },
+    { label: "Outcome", body: detail?.outcome },
+    { label: "Honest limitations", body: detail?.limitations },
+  ].filter((section) => Boolean(section.body));
+
+  return (
+    <article className={LAYOUT.section}>
+      <div className={LAYOUT.container}>
+        {/* 1. Header */}
+        <Reveal className="flex flex-col gap-5 border-b-2 border-ink pb-10">
+          <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
+            {project.type} · {project.period}
+          </p>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl">{project.title}</h1>
+          <p className="max-w-[65ch] text-base text-ink-muted">{project.role}</p>
+
+          <ul className="flex flex-wrap gap-2">
+            {project.stack.map((item) => (
+              <li key={item}>
+                <TagChip>{item}</TagChip>
+              </li>
+            ))}
+          </ul>
+
+          {project.sampleData ? (
+            <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">
+              Sample data
+            </p>
+          ) : null}
+
+          {project.links.length > 0 ? (
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              {project.links.map((link) => (
+                <li key={link.href}>
+                  <TrackedLink
+                    href={link.href}
+                    event={ANALYTICS_EVENTS.projectOutbound}
+                    eventProps={{ project: project.slug, label: link.label }}
+                    external={link.href.startsWith("http")}
+                    className="inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                  >
+                    {link.label}
+                    {link.href.startsWith("http") ? <Icon name="ArrowUpRight" size={18} /> : null}
+                  </TrackedLink>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </Reveal>
+
+        {/* 2 to 6. Summary, problem, approach, outcome, limitations */}
+        <div className="mt-12 flex flex-col gap-12">
+          {sections.map((section, index) => (
+            <Reveal key={section.label} delay={index * 0.05} className="max-w-[65ch]">
+              <h2 className="text-xl md:text-2xl">{section.label}</h2>
+              <p className="mt-3 text-base text-ink-muted">{section.body}</p>
+            </Reveal>
+          ))}
+
+          {detail?.bullets && detail.bullets.length > 0 ? (
+            <Reveal className="max-w-[65ch]">
+              <h2 className="text-xl md:text-2xl">Detail</h2>
+              <dl className="mt-4 flex flex-col gap-4">
+                {detail.bullets.map((bullet) => (
+                  <div key={bullet.label} className="border-t border-line pt-4">
+                    <dt className="font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">
+                      {bullet.label}
+                    </dt>
+                    <dd className="mt-2 text-base text-ink-muted">{bullet.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          ) : null}
+        </div>
+
+        {/* 7. Gallery, scroll-snap */}
+        <Reveal className="mt-16">
+          <h2 className="text-xl md:text-2xl">Gallery</h2>
+          <div className="mt-5 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
+            {[1, 2, 3].map((slot) => (
+              <PendingImage
+                key={slot}
+                src={project.cover.replace(".webp", `-${slot}.webp`)}
+                width={1600}
+                height={1000}
+                label={`${project.title} gallery image ${slot}`}
+                className="w-[min(85vw,520px)] shrink-0 snap-start"
+              />
+            ))}
+          </div>
+        </Reveal>
+
+        {/* 8. Next project */}
+        <div className="mt-16 border-t-2 border-ink pt-8">
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">Next project</p>
+          <a
+            href={`/work/${next.slug}`}
+            className="mt-3 inline-flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4 md:text-3xl"
+          >
+            {next.title}
+            <Icon name="ArrowUpRight" size={22} />
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}

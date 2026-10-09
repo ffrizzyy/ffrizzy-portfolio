@@ -1,0 +1,400 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Dark variant: next-themes writes data-theme on <html>, so the dark  *
+ * variant must be repointed at that attribute. Spec section 2.14.     *
+ * ------------------------------------------------------------------ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ------------------------------------------------------------------ *
+ * Raw tokens. Spec section 2.2.                                       *
+ * ------------------------------------------------------------------ */
+:root {
+  /* surfaces */
+  --paper: #eceded;
+  --paper-raised: #f5f6f6;
+  --paper-sunken: #dfe0e1;
+  /* ink */
+  --ink: #111214;
+  --ink-muted: #4a4d52;
+  --line: #c4c7ca;
+  /* accent (locked, used identically on every page) */
+  --signal: #e2683a;
+  --on-signal: #111214;
+  /* feedback */
+  --danger: #b3261e;
+  /* texture layer */
+  --texture-opacity: 0.55;
+  --texture-filter: none;
+  /* shape. --shadow-color is separate so the hard shadow can switch from ink
+     to signal in dark mode without restating the whole shadow. */
+  --shadow-color: var(--ink);
+  --hard-shadow: 4px 4px 0 0 var(--shadow-color);
+  --ease-out-zine: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] {
+  --paper: #0f1012;
+  --paper-raised: #17181b;
+  --paper-sunken: #0b0c0d;
+  --ink: #e9eaea;
+  --ink-muted: #a3a6ab;
+  --line: #2a2c30;
+  --signal: #e2683a;
+  --on-signal: #111214;
+  --danger: #f2b8b5;
+  --texture-opacity: 0.07;
+  --texture-filter: invert(1);
+  --hard-shadow: 4px 4px 0 0 var(--signal);
+}
+
+/* ------------------------------------------------------------------ *
+ * Token to utility bridge. "inline" is load-bearing: it keeps every   *
+ * value a live var() reference so the theme switch re-resolves.       *
+ * ------------------------------------------------------------------ */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-signal: var(--signal);
+  --color-on-signal: var(--on-signal);
+  --color-danger: var(--danger);
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-pill: 9999px;
+  --shadow-hard: var(--hard-shadow);
+  --ease-zine: var(--ease-out-zine);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base                                                                *
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    /* Spec 2.4: a jumped-to heading must not hide under the nav. */
+    scroll-padding-top: 80px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    /* Spec 2.8: the one theme transition, in one place. */
+    transition: background-color 300ms, color 300ms;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Every number on the site is mono and tabular. Spec 2.3. */
+  .num {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--signal);
+    color: var(--on-signal);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Zine layer. Spec 2.6: exactly three allowed places.                 *
+ * ------------------------------------------------------------------ */
+.texture-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background-image: url("/textures/paper.webp");
+  background-size: cover;
+  background-position: center;
+  opacity: var(--texture-opacity);
+  filter: var(--texture-filter);
+}
+
+.marker {
+  background-color: var(--signal);
+  color: var(--on-signal);
+  padding: 0 0.12em;
+  /* Keeps the highlight unbroken across a line wrap and avoids
+     clipping descenders. Spec 2.3. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* CSS tape strip: a semi-transparent rectangle with a clipped edge.
+   No hand-drawn SVG. Spec 2.6. */
+.tape {
+  position: absolute;
+  width: 96px;
+  height: 28px;
+  background-color: color-mix(in srgb, var(--signal) 55%, transparent);
+  clip-path: polygon(2% 0%, 98% 4%, 100% 96%, 0% 100%);
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tape {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion. Spec 2.8. CSS first; Motion only where CSS cannot.          *
+ * ------------------------------------------------------------------ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(var(--spin, 0deg));
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.06) rotate(var(--spin, 0deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--spin, 0deg));
+  }
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(40px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes draw-ring {
+  from {
+    stroke-dashoffset: var(--ring-full);
+  }
+  to {
+    stroke-dashoffset: var(--ring-offset);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Default reveal: a plain on-load animation. Upgraded to a
+   scroll-driven timeline wherever the browser supports it. */
+.reveal {
+  animation: reveal-up 700ms var(--ease-out-zine) both;
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+}
+
+.reveal-fade {
+  animation: fade-up 350ms var(--ease-out-zine) both;
+}
+
+.strip-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 30s linear infinite;
+}
+
+.strip-viewport:hover .strip-track,
+.strip-viewport:focus-within .strip-track {
+  animation-play-state: paused;
+}
+
+.slide-panel {
+  animation: slide-in-right 600ms var(--ease-out-zine) both;
+}
+
+.grow-bar {
+  transform-origin: bottom;
+  animation: bar-grow 1000ms var(--ease-out-zine) both;
+}
+
+.sticker-pop {
+  animation: pop-in 600ms var(--ease-out-zine) both;
+}
+
+/* Stat illustrations. Spec 4.2: the ring arc draws, ticks grow up from the
+   axis, stack segments grow left to right, and account dots light up in order. */
+.ring-draw {
+  animation: draw-ring 1000ms var(--ease-out-zine) both;
+}
+
+.tick-grow {
+  transform-origin: bottom;
+  animation: bar-grow 700ms var(--ease-out-zine) both;
+}
+
+.dot-on {
+  animation: fade-up 400ms var(--ease-out-zine) both;
+}
+
+@keyframes bar-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.stack-grow {
+  animation: bar-grow-x 800ms var(--ease-out-zine) both;
+}
+
+/* Timeline progress line. Spec 2.8: scaleY, driven by scroll where supported.
+   Without a scroll timeline the animation has no duration, so it completes
+   immediately and the line renders full, which is the spec's stated fallback. */
+@keyframes rail-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.rail-progress {
+  transform-origin: top;
+  animation: rail-fill linear both;
+  animation-timeline: view();
+  animation-range: entry 20% cover 70%;
+}
+
+/* Page transitions between routes. Spec 2.8: CSS only, progressive
+   enhancement, so a browser without support just navigates normally. */
+@view-transition {
+  navigation: auto;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion. Spec 2.8 enforcement note: one block, not a check   *
+ * scattered through every component.                                  *
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Spec 2.8: page transitions are disabled, not shortened. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .strip-track {
+    animation: none !important;
+  }
+
+  /* Revealed elements must land in their final state, not at opacity 0. */
+  .reveal,
+  .reveal-fade,
+  .slide-panel,
+  .grow-bar,
+  .sticker-pop,
+  .ring-draw,
+  .tick-grow,
+  .dot-on,
+  .stack-grow {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .grow-bar,
+  .tick-grow,
+  .stack-grow {
+    transform: none !important;
+  }
+
+  /* The progress line shows in full rather than tracking scroll. */
+  .rail-progress {
+    animation: none !important;
+    transform: none !important;
+    scale: 1 !important;
+  }
+}
