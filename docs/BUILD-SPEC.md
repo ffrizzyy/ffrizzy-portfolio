@@ -1190,6 +1190,12 @@ Version 1 listed these flat, which made it impossible to tell what actually bloc
 
 GitHub "About" field. Each option is about 120 characters or less, so it is not cut off in pinned cards.
 
+**`ffrizzy-portfolio`** (the site itself. Set the Website field once it is deployed)
+- **A, concise (this is the one currently set):** Personal portfolio: AI web apps, data dashboards, and content that grows audiences. Next.js, TypeScript, Tailwind.
+- **B, outcome-led:** The projects I have built, the data I have analyzed, and the audiences I helped grow, in one place.
+- **C, technical:** Next.js 16 portfolio: nonce-based CSP, Zod-validated content, print-ready CV, generated favicon and share cards.
+- Topics: `portfolio` `nextjs` `typescript` `tailwindcss` `react` `design-system` `personal-website`
+
 **`azzifa`** (set the Website field to azzifa.up.railway.app)
 - **A, concise:** AI-assisted mood journal with weekly pattern insights and shared streaks. Express, SQLite, any major AI provider.
 - **B, outcome-led:** A journal that notices your mood patterns each week. Photo notes, shared streaks, and a swappable AI provider.
