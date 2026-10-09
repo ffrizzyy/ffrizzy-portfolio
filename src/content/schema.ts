@@ -98,6 +98,14 @@ export const awardSchema = z.object({
   year: z.number().int(),
 });
 
+export const educationSchema = z.object({
+  id: z.string(),
+  institution: z.string(),
+  degree: z.string(),
+  detail: z.string(),
+  display: z.string(),
+});
+
 export const certIssuerSchema = z.object({
   issuer: z.string(),
   items: z.array(
@@ -151,6 +159,7 @@ export const toolSchema = z.object({
 
 /* Inferred types for every schema above. */
 export type Award = z.infer<typeof awardSchema>;
+export type Education = z.infer<typeof educationSchema>;
 export type CertIssuer = z.infer<typeof certIssuerSchema>;
 export type CertItem = z.infer<typeof certIssuerSchema>["items"][number];
 export type Skill = z.infer<typeof skillSchema>;

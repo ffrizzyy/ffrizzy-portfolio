@@ -23,6 +23,7 @@ pnpm build       # runs the copy check, then the production build
 pnpm start       # serve the production build
 pnpm typecheck   # tsc --noEmit, the authoritative type gate
 pnpm check:copy  # spec 2.10: fails on any em-dash or en-dash in src/
+python scripts/make-icons.py  # regenerate favicon, apple icon, and OG cards
 ```
 
 `pnpm build` deliberately runs `check:copy` first. Spec 2.10 bans em-dashes and
@@ -33,7 +34,7 @@ No environment variables are required to run it. With no secrets the contact
 route validates the payload and returns a labelled development response instead
 of sending mail. Copy `.env.example` to `.env.local` when you want real delivery.
 
-## Two things about this checkout that will bite you if you change them
+## Three things about this checkout that will bite you if you change them
 
 **1. `pnpm-workspace.yaml` sets `nodeLinker: hoisted`, and it is load-bearing.**
 
@@ -51,6 +52,15 @@ Phosphor v2's `IconBase` calls `useContext`, so importing
 `@phosphor-icons/react` from a Server Component throws. That file is the single
 `"use client"` boundary which re-exports the allowed icon set. Add new icons
 there, not by importing the package directly into a component.
+
+**3. A Tailwind arbitrary value must be a literal string in the source.**
+
+The hero is `min-h-[calc(100dvh-68px)]` and that `68px` is `LAYOUT.navTotal`
+written out by hand. Interpolating it, as in
+`` `min-h-[calc(100dvh-${LAYOUT.navTotal}px)]` ``, produces a class name Tailwind
+never sees while scanning, so no CSS is generated and the rule silently does
+nothing. If you change `navTotal`, change the hero too, or the nav will overlap
+the hero by the difference.
 
 ## Where content lives
 
@@ -87,6 +97,14 @@ The full list of expected paths and sizes is section 14 of
 `docs/BUILD-SPEC.md`. In development, the Home page also logs a single
 warning listing every missing asset.
 
+Artwork that is not a photograph is already committed, because it is generated
+rather than photographed: `src/app/icon.png`, `src/app/apple-icon.png`,
+`src/app/opengraph-image.png`, and one share card per project under `public/og/`.
+Regenerate them all with `python scripts/make-icons.py`, which renders real
+Bricolage Grotesque letterforms with Pillow. It makes no network request once the
+font is cached under `scripts/.fonts/`, so `next build` never depends on a font
+CDN.
+
 ## Deviations from the spec
 
 Recorded so a deliberate change is not mistaken for a mistake. Section 13 of the
@@ -102,7 +120,12 @@ spec document tracks the same list.
 | Brand logos in native colour | Ink at rest, signal on hover | Spec 2.2 exempts logos, but spec 4.4 specifically asks the strip to turn signal on hover. The more specific rule wins |
 | CSS `@property` count-up | `IntersectionObserver` plus `requestAnimationFrame` | The CSS counter can only paint through `content`, so the real number would never be in the DOM. This keeps the final value as real text at all times |
 | `content/projects/*.ts` | One `content/projects.ts` registry | With MDX gone, a single registry is the natural equivalent and avoids ten near-identical files |
-| Analytics through a script tag | `track()` no-op wrapper | The Plausible script is not wired yet; events are already dispatched at the four spec'd call sites |
+| Analytics through a script tag | Conditionally loaded Plausible plus the `track()` wrapper | The script loads only when `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set, so a clone with no secrets makes no third-party request at all |
+| Spec 2.7 nav: 64px, not sticky | Fixed, rounded, translucent glass bar that compacts on scroll and marks the current section | Requested directly, and spec 5.3 had already listed a sticky header as a later addition. Both the compact state and the active section come from IntersectionObserver, so spec 2.8's ban on scroll listeners still holds and nothing runs per frame |
+| Spec 2.5: no blur | `backdrop-filter` on the floating nav and the mobile sheet only | The glass request. Blur is confined to those two surfaces and is never used as the blur glow that 2.5 bans |
+| Spec 3: `/cv` redirects to the PDF | `/cv` is a real page | There is no PDF yet, HTML is searchable and linkable where a PDF is not, and one source of truth cannot drift the way a second document does. The page exports itself through the browser print pipeline and links a hosted PDF automatically once one exists |
+| Spec 2.10: numbered eyebrows banned | Kept the ban; no section indices added | Techy styling was done with mono micro-labels, the scroll rule, and the glass bar instead, so the eyebrow budget stays unspent |
+| Spec 4.4 broad-skill chips | Static spans, not buttons | They are labels, not controls. The first version was a button with `pointer-events-none`, which silently disabled the hover state it declared |
 
 ## Not built yet
 
@@ -112,8 +135,6 @@ accidentally done:
 - **Leaflet map and Recharts charts.** The packages are installed, but the
   Portal Publik case study's interactive map and trend chart are not wired. That
   page currently renders the full written case study without the demos.
-- **`next/og` Open Graph images.** Metadata is in place; generated images are not.
-- **The Plausible or Vercel analytics script.** Event call sites exist.
 - **ESLint, Playwright, and Lighthouse CI.** The spec lists them as quality
   gates. `tsc --noEmit` is the gate that runs here. Installing Playwright also
   pulls browser binaries, which is why it was left out.

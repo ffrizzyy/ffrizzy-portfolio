@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   awardSchema,
   certIssuerSchema,
+  educationSchema,
   eventSchema,
   growthSlideSchema,
   projectSchema,
@@ -13,6 +14,7 @@ import {
   writingItemSchema,
   type Award,
   type CertIssuer,
+  type Education,
   type PortfolioEvent,
   type Project,
   type ProjectType,
@@ -27,6 +29,7 @@ import {
   awards as rawAwards,
   certifications as rawCerts,
   deepSkills as rawSkills,
+  education as rawEducation,
   events as rawEvents,
   extraSkillUsage,
   growthSlides as rawGrowth,
@@ -46,6 +49,7 @@ export const projectList: Project[] = z.array(projectSchema).parse(projects);
 export const timelineList: TimelineEntry[] = z.array(timelineEntrySchema).parse(rawTimeline);
 export const eventList: PortfolioEvent[] = z.array(eventSchema).parse(rawEvents);
 export const awardList: Award[] = z.array(awardSchema).parse(rawAwards);
+export const educationList: Education[] = z.array(educationSchema).parse(rawEducation);
 export const certList: CertIssuer[] = z.array(certIssuerSchema).parse(rawCerts);
 export const languages = rawLanguages;
 export const growthList = z.array(growthSlideSchema).parse(rawGrowth);

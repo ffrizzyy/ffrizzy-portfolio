@@ -9,8 +9,15 @@ import { cn } from "@/lib/utils";
  */
 
 /** Spec 2.3: emphasis is the marker highlight or bold of the same family. */
-export function MarkerHighlight({ children }: { children: ReactNode }) {
-  return <span className="marker">{children}</span>;
+export function MarkerHighlight({
+  children,
+  sweep = false,
+}: {
+  children: ReactNode;
+  /** Sweeps in from the left instead of appearing. Hero only. */
+  sweep?: boolean;
+}) {
+  return <span className={cn("marker", sweep && "marker-sweep")}>{children}</span>;
 }
 
 /**

@@ -20,3 +20,7 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 .verify/
+
+# Font cache for scripts/make-icons.py. Re-downloaded on demand; the PNGs that
+# script produces are committed.
+scripts/.fonts/

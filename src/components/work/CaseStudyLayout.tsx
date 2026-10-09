@@ -116,10 +116,10 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">Next project</p>
           <a
             href={`/work/${next.slug}`}
-            className="mt-3 inline-flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4 md:text-3xl"
+            className="group mt-3 inline-flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4 md:text-3xl"
           >
             {next.title}
-            <Icon name="ArrowUpRight" size={22} />
+            <Icon name="ArrowUpRight" size={22} className="nudge" />
           </a>
         </div>
       </div>

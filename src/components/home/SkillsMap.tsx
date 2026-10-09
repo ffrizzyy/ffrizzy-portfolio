@@ -2,7 +2,7 @@ import { Accordion } from "@/components/shared/Accordion";
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
 import { ToolStrip } from "@/components/shared/ToolStrip";
-import { Chip } from "@/components/ui/Chip";
+import { TagChip } from "@/components/ui/Chip";
 import { broadSkills } from "@/content/site";
 import { skillsMap } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
@@ -54,9 +54,12 @@ export function SkillsMap() {
             <ul className="flex flex-wrap gap-2.5">
               {broadSkills.map((skill) => (
                 <li key={skill}>
-                  <Chip className="pointer-events-none hover:border-ink hover:bg-signal hover:text-on-signal">
+                  {/* These are labels, not controls, so they render as a span.
+                      The previous version used a button with pointer-events-none,
+                      which silently disabled the hover state it declared. */}
+                  <TagChip className="h-9 gap-2 px-4 font-sans text-sm font-medium text-ink-muted transition-colors duration-200 ease-zine hover:border-ink hover:bg-signal hover:text-on-signal">
                     {skill}
-                  </Chip>
+                  </TagChip>
                 </li>
               ))}
             </ul>

@@ -26,21 +26,32 @@ const STICKERS = [
 
 export function Hero() {
   return (
-    <section className={`relative ${LAYOUT.section} min-h-[100dvh] pt-16 md:pt-24`}>
+    /* min-height subtracts the nav offset (LAYOUT.navTotal) so the hero still
+       lands inside one viewport with the floating bar above it. Tailwind cannot
+       read a computed value here, so 68px is written literally and kept in sync
+       with LAYOUT.navTotal. */
+    <section className={`relative ${LAYOUT.section} min-h-[calc(100dvh-68px)] pt-6 md:pt-12`}>
       <div className={`${LAYOUT.container} grid grid-cols-1 items-center gap-12 md:grid-cols-12 md:gap-8`}>
         <div className="md:col-span-7">
-          <Reveal as="h1" className="text-4xl md:text-5xl lg:text-6xl">
-            I build it, analyze it, and <MarkerHighlight>tell the story</MarkerHighlight>.
+          <Reveal className="mb-5 flex items-center gap-3">
+            <span aria-hidden className="h-px w-8 bg-signal" />
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+              information systems / ai / data
+            </p>
           </Reveal>
 
-          <Reveal delay={0.12} className={`mt-6 ${LAYOUT.measure} text-base text-ink-muted md:text-lg`}>
+          <Reveal as="h1" delay={0.1} className="text-4xl md:text-5xl lg:text-6xl">
+            I build it, analyze it, and <MarkerHighlight sweep>tell the story</MarkerHighlight>.
+          </Reveal>
+
+          <Reveal delay={0.2} className={`mt-6 ${LAYOUT.measure} text-base text-ink-muted md:text-lg`}>
             <p>
               Information Systems graduate (3.97 GPA) shipping AI web apps, data dashboards, and
               content that grows audiences.
             </p>
           </Reveal>
 
-          <Reveal delay={0.24} className="mt-10 flex flex-wrap items-center gap-4">
+          <Reveal delay={0.3} className="mt-10 flex flex-wrap items-center gap-4">
             <ButtonLink href="#work" variant="primary" size="md">
               View work
             </ButtonLink>

@@ -77,8 +77,9 @@
  * ------------------------------------------------------------------ */
 @layer base {
   html {
-    /* Spec 2.4: a jumped-to heading must not hide under the nav. */
-    scroll-padding-top: 80px;
+    /* Spec 2.4: a jumped-to heading must not hide under the nav. The nav is
+       fixed and floats, so this clears its height plus its top offset. */
+    scroll-padding-top: 96px;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -334,6 +335,86 @@
   animation-range: entry 20% cover 70%;
 }
 
+/* ------------------------------------------------------------------ *
+ * Navigation: a floating glass bar, its entrance, and scroll progress. *
+ * ------------------------------------------------------------------ */
+@keyframes nav-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nav-drop {
+  animation: nav-drop 600ms var(--ease-out-zine) both;
+}
+
+/* Glass surface. color-mix is what lets a single declaration serve both
+   themes; the plain rule before the @supports block keeps an older browser on
+   a solid surface rather than a transparent one. */
+.glass {
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+}
+
+@supports (background-color: color-mix(in srgb, red 50%, transparent)) {
+  .glass {
+    background-color: color-mix(in srgb, var(--paper) 72%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 12%, transparent);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+  }
+
+  /* Once content is scrolling underneath, the bar thickens so text stays legible. */
+  .glass-scrolled {
+    background-color: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+}
+
+/* Scroll progress rule. Pure CSS: no scroll listener, per spec 2.8. */
+@keyframes progress-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.scroll-progress {
+  transform-origin: left center;
+  animation: progress-x linear both;
+  animation-timeline: scroll(root block);
+}
+
+/* The marker highlight sweeps in from the left rather than just appearing. */
+@keyframes marker-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.marker-sweep {
+  animation: marker-sweep 700ms var(--ease-out-zine) 350ms both;
+}
+
+/* Micro-interaction: an arrow that steps forward when its row is hovered. */
+.nudge {
+  transition: transform 220ms var(--ease-out-zine);
+}
+
+.group:hover .nudge,
+.group:focus-visible .nudge {
+  transform: translate3d(3px, -3px, 0);
+}
+
 /* Page transitions between routes. Spec 2.8: CSS only, progressive
    enhancement, so a browser without support just navigates normally. */
 @view-transition {
@@ -370,7 +451,8 @@
     animation: none !important;
   }
 
-  /* Revealed elements must land in their final state, not at opacity 0. */
+  /* Revealed elements must land in their final state, not at opacity 0, and
+     the sweep must not leave a clipped highlight behind. */
   .reveal,
   .reveal-fade,
   .slide-panel,
@@ -379,10 +461,13 @@
   .ring-draw,
   .tick-grow,
   .dot-on,
-  .stack-grow {
+  .stack-grow,
+  .nav-drop,
+  .marker-sweep {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+    clip-path: none !important;
   }
 
   .grow-bar,
@@ -391,10 +476,51 @@
     transform: none !important;
   }
 
-  /* The progress line shows in full rather than tracking scroll. */
-  .rail-progress {
+  /* The progress lines show in full rather than tracking scroll. */
+  .rail-progress,
+  .scroll-progress {
     animation: none !important;
     transform: none !important;
     scale: 1 !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Print. The CV page is meant to be saved as a PDF from the browser,   *
+ * so the chrome, the texture, and anything interactive come out.       *
+ * ------------------------------------------------------------------ */
+@media print {
+  header,
+  footer,
+  .texture-layer,
+  .no-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  /* Keep an entry from being split across two pages. */
+  li,
+  article,
+  section {
+    break-inside: avoid;
+  }
+
+  .print-cv {
+    max-width: none !important;
+    padding: 0 !important;
   }
 }

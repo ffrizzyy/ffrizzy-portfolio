@@ -4,12 +4,17 @@
 //
 // The characters are written as escapes so this file cannot flag itself.
 import { readdir, readFile } from "node:fs/promises";
-import { extname, join, relative } from "node:path";
+import { dirname, extname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const EM_DASH = "\u2014";
 const EN_DASH = "\u2013";
 
-const ROOT = "src";
+// Resolved from this file, not from process.cwd(), so the check behaves the
+// same whether it is run from the project root, from a workspace root, or by a
+// CI step that happens to use a different working directory.
+const PROJECT_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(PROJECT_ROOT, "src");
 const EXTS = new Set([".ts", ".tsx", ".css"]);
 
 async function* walk(dir) {
@@ -29,7 +34,7 @@ for await (const file of walk(ROOT)) {
 
   lines.forEach((line, index) => {
     const kind = line.includes(EM_DASH) ? "em-dash" : line.includes(EN_DASH) ? "en-dash" : null;
-    if (kind) offenders.push(`${relative(process.cwd(), file)}:${index + 1}  ${kind}`);
+    if (kind) offenders.push(`${relative(PROJECT_ROOT, file)}:${index + 1}  ${kind}`);
   });
 }
 

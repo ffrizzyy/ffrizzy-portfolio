@@ -181,6 +181,17 @@ export const awards: Award[] = [
   { id: "uiux-1st", title: "1st Winner, UI/UX Competition", org: "Technology Euphoria", year: 2023 },
 ];
 
+/** Drives the Education block on the CV page, which spec 4.9 keeps off Home. */
+export const education = [
+  {
+    id: "unsri",
+    institution: "Universitas Sriwijaya",
+    degree: "Information Systems",
+    detail: "GPA 3.97 out of 4.00",
+    display: "Graduated Apr 2025",
+  },
+];
+
 export const certifications: CertIssuer[] = [
   {
     issuer: "IBM",

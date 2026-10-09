@@ -27,9 +27,12 @@ export const LAYOUT = {
   container: "mx-auto w-full max-w-7xl px-4 md:px-8",
   /** Spec 2.4: py-20 md:py-24 */
   section: "py-20 md:py-24",
-  /** Nav is 64px tall, never over 80px. */
-  navHeight: 64,
-  anchorOffset: 80,
+  /** Floating glass bar: 56px tall sitting 12px below the top edge. */
+  navHeight: 56,
+  navOffset: 12,
+  /** Total vertical space the fixed nav claims, used to pad page content. */
+  navTotal: 68,
+  anchorOffset: 96,
   /** Spec 2.3: 65ch measure for body copy. */
   measure: "max-w-[65ch]",
 } as const;
@@ -71,7 +74,7 @@ export const SITE = {
   wordmark: "ffrizzy",
   role: "Information Systems graduate",
   email: "m.farrel2222@gmail.com",
-  linkedin: "https://www.linkedin.com/in/muhammad-farrel-al-wafi-frizzy/",
+  linkedin: "https://www.linkedin.com/in/ffrizzy/",
   github: "https://github.com/ffrizzyy",
   cvPath: "/Farrel-Frizzy-CV.pdf",
   cvRoute: "/cv",

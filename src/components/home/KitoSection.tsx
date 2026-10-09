@@ -106,10 +106,10 @@ export function KitoSection() {
               </p>
               <a
                 href="/work/portal-publik"
-                className="inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
               >
                 Read the full case study
-                <Icon name="ArrowUpRight" size={18} />
+                <Icon name="ArrowUpRight" size={18} className="nudge" />
               </a>
             </div>
           </Reveal>

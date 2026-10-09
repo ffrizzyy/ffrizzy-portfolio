@@ -30,7 +30,18 @@ export async function generateMetadata({
       title: project.title,
       description: project.outcome,
       type: "article",
+      // One generated card per project, written by scripts/make-icons.py, so a
+      // shared link never falls back to a generic image.
+      images: [
+        {
+          url: `/og/${project.slug}.png`,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} case study card`,
+        },
+      ],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

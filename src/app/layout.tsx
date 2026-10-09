@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
 import { IconProvider } from "@/components/shared/Icon";
-import { SITE } from "@/lib/constants";
+import { LAYOUT, SITE } from "@/lib/constants";
 import "@/styles/globals.css";
 
 /**
@@ -36,6 +37,7 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -54,6 +56,7 @@ export const metadata: Metadata = {
       "Information Systems graduate shipping AI web apps, data dashboards, and content that grows audiences.",
     siteName: SITE.name,
   },
+  twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
 };
 
@@ -83,6 +86,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
 
+        {/* Cookieless analytics, loaded only when a domain is configured, so a
+            clone without secrets makes no third-party request at all. */}
+        {plausibleDomain ? (
+          <Script
+            defer
+            data-domain={plausibleDomain}
+            src="https://plausible.io/js/script.js"
+            strategy="afterInteractive"
+          />
+        ) : null}
+
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="system"
@@ -93,10 +107,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           disableTransitionOnChange={false}
         >
           <IconProvider>
+            {/* One-pixel sentinel. The fixed nav watches this to decide whether
+                the page has moved, which avoids a scroll listener entirely. */}
+            <div id="nav-sentinel" aria-hidden className="h-px w-full" />
+
             {/* Spec 2.11: skip link is the first focusable element. */}
             <a
               href="#main"
-              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:border-2 focus:border-ink focus:bg-signal focus:px-4 focus:py-2 focus:text-on-signal"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-pill focus:border-2 focus:border-ink focus:bg-signal focus:px-4 focus:py-2 focus:text-on-signal"
             >
               Skip to content
             </a>
@@ -106,7 +124,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <div aria-hidden className="texture-layer" />
 
             <Nav />
-            <main id="main">{children}</main>
+
+            {/* The nav floats over the page, so content starts below it. The
+                offset comes from the same constant the nav itself uses. */}
+            <main id="main" style={{ paddingTop: LAYOUT.navTotal }}>
+              {children}
+            </main>
+
             <Footer />
           </IconProvider>
         </ThemeProvider>
