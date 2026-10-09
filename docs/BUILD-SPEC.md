@@ -1367,12 +1367,53 @@ New motion added in round 2, all reduced-motion safe:
 Two notes for whoever edits the nav next:
 
 1. **`LAYOUT.navTotal` is duplicated as a literal.** The hero is
-   `min-h-[calc(100dvh-68px)]`, and that `68px` is `navTotal` written by hand,
+   `min-h-[calc(100dvh-76px)]`, and that `76px` is `navTotal` written by hand,
    because a Tailwind arbitrary value must be a literal string in the source or
    the scanner never generates the rule. Changing the constant without changing
    the hero makes the nav overlap the hero by the difference.
 2. **Content starts below the bar** via `main { padding-top: navTotal }`, applied
    as an inline style from the constant, so that one does stay in sync.
+
+### 13.3 Round 4: the CV becomes the source of truth
+
+The owner supplied the real CV. It corrected several things and exposed one
+conflict.
+
+| Before | Now | Why |
+|---|---|---|
+| 6 timeline entries, with roles missing entirely | 11 entries: 4 professional and 7 leadership, each with the CV's own bullets, locations, and dates | The CV has four professional roles where the site had two, and adds BEM KM Fasilkom and the earlier GDSC member term |
+| Home rail showed all six | Home shows a curated 7; the CV page shows all 11 in the CV's own two sections | Eleven entries on Home pushes everything below it out of reach |
+| 5 certifications, several with no source | The CV's real 7, grouped by issuer with month and year | The previous list contained fabricated entries: "watsonx.ai Foundations", "MSIB Batch 7 Program", "Data analysis coursework", and "Information Systems fundamentals" appeared in no source document. They were invented to fill the structure, and that is a correctness failure, not a placeholder |
+| IBM Generative AI and ML as a four-month experience entry | A certification, per the CV | Confirmed by the owner |
+| Education: institution, GPA, graduation date | Adds "Bachelor of Information Systems" and the two coursework bullets | Straight from the CV |
+| Broad skills: 7 loose terms including "IT" and "Creativity" | The CV's Content and Communications plus Leadership and Operations terms, 11 in total | "IT" and "Creativity" were not claims the CV makes |
+| Deep skills: 8 | 11, adding watsonx.ai, AI Prompting, and Data Visualization, each mapped to a project tag | Keeps the orphan check meaningful rather than decorative |
+| No professional summary | The CV's summary, transcribed | |
+
+**The conflict, recorded.** The CV states "3rd Winner, Redesign Challenge, GDSC
+2024". This spec (section 9.1, marked resolved) and everything already published
+say "2nd Winner". The owner confirmed **2nd is correct and the CV carries the
+typo**, so the site, this spec, and the project page all keep 2nd. If the CV is
+reissued, fix the CV rather than the site.
+
+**One deliberate omission.** The CV header lists a phone number. Section 9.1 says
+it is not published and the repository is public, so it appears nowhere: not on
+Home, not on the CV page, and not in any metadata. Confirmed by the owner. Email
+and LinkedIn remain the contact routes.
+
+**How the CV was read.** No PDF library was installed and the package index was
+unreachable, so the text was extracted with a standard-library script:
+decompress the FlateDecode content streams, then reassemble positioned text from
+the `TJ` and `Tj` operators grouped by Y coordinate. The text layer turned out to
+be simple-encoded, so no CMap work was needed.
+
+### 13.4 Round 4 bug fixes
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Nav links did nothing on `/cv` and on case study pages, stranding the reader on the page they were already on | The targets are anchors on the one long Home page, and off Home the links stayed bare fragments such as `#all`. A browser cannot scroll to an id that does not exist on that document, so the click was silently a no-op | Links become absolute (`/#all`) whenever the path is not `/` |
+| Nav sat flush against the top of the viewport | `LAYOUT.navOffset` was 12 but was never applied to the markup: the glass bar carried no top margin at all, so the constant was decorative | `mt-5` added, and the offsets corrected to `navOffset: 20`, `navTotal: 76`, `anchorOffset: 104` |
+| The tools strip looked cropped | The marquee is duplicated and translated by exactly `-50%`, which is seamless only while half the track is at least as wide as the viewport. With two copies the track came to about 1230px against a container of about 1216px, so as it scrolled the track ran out and left a few hundred pixels of empty space at the trailing edge | Six copies instead of two, putting half the track near 1850px, plus a gradient mask so a logo dissolves at the edge instead of being sliced mid-letterform |
 
 ---
 

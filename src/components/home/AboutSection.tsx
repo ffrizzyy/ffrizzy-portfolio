@@ -2,7 +2,7 @@ import { Accordion } from "@/components/shared/Accordion";
 import { Icon, type IconName } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { SectionHeading } from "@/components/shared/decor";
-import { awardList, certList, languages, timelineList } from "@/lib/content";
+import { aboutTimeline, awardList, certList, languages } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
 
 /**
@@ -28,7 +28,7 @@ export function AboutSection() {
         {group.items.map((item) => (
           <li key={item.id} className="flex items-baseline justify-between gap-4">
             <span className="text-sm text-ink">{item.name}</span>
-            <span className="num text-xs text-ink-muted">{item.year}</span>
+            <span className="num text-xs text-ink-muted">{item.date ?? item.year}</span>
           </li>
         ))}
       </ul>
@@ -96,16 +96,19 @@ export function AboutSection() {
                   className="rail-progress absolute -left-0.5 top-0 h-full w-0.5 bg-signal"
                 />
 
-                {timelineList.map((entry) => (
+                {aboutTimeline.map((entry) => (
                   <li key={entry.id} className="flex flex-col gap-1.5">
                     <span className="flex items-center gap-2">
                       <Icon name={KIND_ICON[entry.kind] ?? "Briefcase"} size={18} />
                       <span className="text-base font-medium text-ink">{entry.title}</span>
                     </span>
-                    <span className="text-sm text-ink-muted">{entry.org}</span>
+                    <span className="text-sm text-ink-muted">
+                      {entry.org}
+                      {entry.location ? `, ${entry.location}` : ""}
+                    </span>
                     <span className="num text-xs text-ink-muted">{entry.display}</span>
-                    {entry.summary ? (
-                      <span className="mt-1 text-sm text-ink-muted">{entry.summary}</span>
+                    {entry.bullets[0] ? (
+                      <span className="mt-1 text-sm text-ink-muted">{entry.bullets[0]}</span>
                     ) : null}
                   </li>
                 ))}

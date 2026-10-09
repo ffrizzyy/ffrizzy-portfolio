@@ -107,7 +107,7 @@ export const projects: Project[] = [
     outcome:
       "An interactive Tableau dashboard that makes social aid distribution data easy to read for the public.",
     stack: ["Tableau", "Excel"],
-    tags: ["Microsoft Excel", "Data Analytics"],
+    tags: ["Microsoft Excel", "Data Analytics", "Data Visualization"],
     links: [],
     cover: "/images/aid-dashboard.webp",
     caseStudy: {
@@ -133,7 +133,7 @@ export const projects: Project[] = [
     outcome:
       "A generative AI app on IBM watsonx.ai, from local API calls to a deployed Streamlit interface.",
     stack: ["Python", "IBM watsonx.ai", "Streamlit"],
-    tags: ["Python"],
+    tags: ["Python", "watsonx.ai", "AI Prompting"],
     links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/H8-test-genai" }],
     cover: "/images/watsonx.webp",
     caseStudy: {

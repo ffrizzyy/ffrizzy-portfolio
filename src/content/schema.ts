@@ -73,11 +73,15 @@ export const timelineEntrySchema = z.object({
   id: z.string(),
   title: z.string(),
   org: z.string(),
+  /** City, or "Remote", straight from the CV header for each role. */
+  location: z.string().optional(),
   kind: z.enum(["work", "leadership", "award"]),
   start: z.string().regex(/^\d{4}-\d{2}$/),
   end: z.union([z.string().regex(/^\d{4}-\d{2}$/), z.literal("present")]),
   display: z.string(),
   summary: z.string().optional(),
+  /** CV bullet points, verbatim in substance. */
+  bullets: z.array(z.string()).default([]),
 });
 
 export type TimelineEntry = z.infer<typeof timelineEntrySchema>;
@@ -104,6 +108,8 @@ export const educationSchema = z.object({
   degree: z.string(),
   detail: z.string(),
   display: z.string(),
+  location: z.string().optional(),
+  bullets: z.array(z.string()).default([]),
 });
 
 export const certIssuerSchema = z.object({
@@ -113,9 +119,21 @@ export const certIssuerSchema = z.object({
       id: z.string(),
       name: z.string(),
       year: z.number().int(),
+      /** Month and year, as the certificate states it. */
+      date: z.string().optional(),
       credentialUrl: z.string().optional(),
     }),
   ),
+});
+
+/**
+ * The CV's own skill taxonomy, used on the CV page. Distinct from the Home
+ * skills map, which is built around which projects a skill appears in.
+ */
+export const skillCategorySchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  items: z.array(z.string()),
 });
 
 export const growthSlideSchema = z.object({
@@ -163,6 +181,7 @@ export type Education = z.infer<typeof educationSchema>;
 export type CertIssuer = z.infer<typeof certIssuerSchema>;
 export type CertItem = z.infer<typeof certIssuerSchema>["items"][number];
 export type Skill = z.infer<typeof skillSchema>;
+export type SkillCategory = z.infer<typeof skillCategorySchema>;
 export type Tool = z.infer<typeof toolSchema>;
 export type WritingItem = z.infer<typeof writingItemSchema>;
 export type GrowthSlide = z.infer<typeof growthSlideSchema>;

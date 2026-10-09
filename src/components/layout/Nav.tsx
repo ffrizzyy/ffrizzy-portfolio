@@ -75,12 +75,27 @@ export function Nav() {
     return () => observer.disconnect();
   }, [pathname]);
 
+  /**
+   * The nav targets are anchors on the one long Home page. Off Home they have
+   * to become absolute links back to it.
+   *
+   * This was a real bug: on /cv and on a case study the links stayed as bare
+   * `#all` fragments, the browser could not scroll to an id that does not exist
+   * on that document, and nothing happened at all. The reader was stranded on
+   * the page they were already on.
+   */
+  const onHome = pathname === "/";
+  const hrefFor = (anchor: string) => (onHome ? anchor : `/${anchor}`);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-40">
-      <div className={cn(LAYOUT.container, "nav-drop")}>
+    <header className="fixed inset-x-0 top-0 z-40">      <div className={cn(LAYOUT.container, "nav-drop")}>
         <div
           className={cn(
-            "glass relative flex items-center justify-between gap-3 rounded-pill px-3 transition-[height,box-shadow,background-color] duration-300 ease-zine md:px-5",
+            // mt-5 is LAYOUT.navOffset (20px) spelled out. A Tailwind class has
+            // to be a literal string, so the constant cannot be interpolated
+            // here. Previously the bar carried no top margin at all, which is
+            // why it sat flush against the top edge.
+            "glass relative mt-5 flex items-center justify-between gap-3 rounded-pill px-3 transition-[height,box-shadow,background-color] duration-300 ease-zine md:px-5",
             scrolled ? "glass-scrolled h-12 shadow-[0_12px_34px_-16px_rgba(0,0,0,0.4)]" : "h-14",
           )}
         >
@@ -104,7 +119,7 @@ export function Nav() {
                 return (
                   <li key={link.href}>
                     <a
-                      href={link.href}
+                      href={hrefFor(link.href)}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
                         "relative block rounded-pill px-3 py-1.5 text-sm font-medium transition-colors duration-200 ease-zine",
@@ -169,7 +184,7 @@ export function Nav() {
                       {NAV_LINKS.map((link, index) => (
                         <li key={link.href}>
                           <a
-                            href={link.href}
+                            href={hrefFor(link.href)}
                             onClick={() => setOpen(false)}
                             className="flex items-baseline gap-3 rounded-[14px] px-3 py-2.5 transition-colors hover:bg-paper-sunken"
                           >

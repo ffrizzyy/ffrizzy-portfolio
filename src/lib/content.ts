@@ -7,6 +7,7 @@ import {
   eventSchema,
   growthSlideSchema,
   projectSchema,
+  skillCategorySchema,
   skillSchema,
   statSchema,
   timelineEntrySchema,
@@ -19,6 +20,7 @@ import {
   type Project,
   type ProjectType,
   type Skill,
+  type SkillCategory,
   type Stat,
   type TimelineEntry,
   type Tool,
@@ -31,11 +33,14 @@ import {
   deepSkills as rawSkills,
   education as rawEducation,
   events as rawEvents,
+  experience as rawExperience,
   extraSkillUsage,
   growthSlides as rawGrowth,
   languages as rawLanguages,
+  leadership as rawLeadership,
+  skillCategories as rawSkillCategories,
   stats as rawStats,
-  timeline as rawTimeline,
+  summary as rawSummary,
   tools as rawTools,
   writing as rawWriting,
 } from "@/content/site";
@@ -46,7 +51,12 @@ import {
  * ------------------------------------------------------------------ */
 
 export const projectList: Project[] = z.array(projectSchema).parse(projects);
-export const timelineList: TimelineEntry[] = z.array(timelineEntrySchema).parse(rawTimeline);
+export const experienceList: TimelineEntry[] = z.array(timelineEntrySchema).parse(rawExperience);
+export const leadershipList: TimelineEntry[] = z.array(timelineEntrySchema).parse(rawLeadership);
+export const summary: string = rawSummary;
+export const skillCategoryList: SkillCategory[] = z
+  .array(skillCategorySchema)
+  .parse(rawSkillCategories);
 export const eventList: PortfolioEvent[] = z.array(eventSchema).parse(rawEvents);
 export const awardList: Award[] = z.array(awardSchema).parse(rawAwards);
 export const educationList: Education[] = z.array(educationSchema).parse(rawEducation);
@@ -62,6 +72,38 @@ const slugs = projectList.map((p) => p.slug);
 const duplicateSlugs = slugs.filter((slug, index) => slugs.indexOf(slug) !== index);
 if (duplicateSlugs.length > 0) {
   throw new Error(`Duplicate project slugs: ${[...new Set(duplicateSlugs)].join(", ")}`);
+}
+
+/* ------------------------------------------------------------------ *
+ * The Home timeline is a curated subset of the CV.                    *
+ * ------------------------------------------------------------------ */
+
+const endKey = (entry: TimelineEntry) => (entry.end === "present" ? "9999-99" : entry.end);
+
+/**
+ * Eleven entries is the whole CV, and putting all of them on the Home rail
+ * pushes everything below it out of reach. Home shows the four professional
+ * roles and the three longest-running organizational ones, newest first; the CV
+ * page carries the complete list in the CV's own two sections.
+ */
+const ABOUT_TIMELINE_IDS = [
+  "palembang-digital",
+  "media-si",
+  "rhetoric-academy",
+  "gdsc-core",
+  "mvSlim",
+  "pln-op-har",
+  "niagahoster",
+];
+
+export const aboutTimeline: TimelineEntry[] = [...experienceList, ...leadershipList]
+  .filter((entry) => ABOUT_TIMELINE_IDS.includes(entry.id))
+  .sort((a, b) => endKey(b).localeCompare(endKey(a)));
+
+if (aboutTimeline.length !== ABOUT_TIMELINE_IDS.length) {
+  throw new Error(
+    `aboutTimeline is missing entries. Expected ${ABOUT_TIMELINE_IDS.length}, got ${aboutTimeline.length}.`,
+  );
 }
 
 /* ------------------------------------------------------------------ *

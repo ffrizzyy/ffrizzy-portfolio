@@ -27,12 +27,12 @@ export const LAYOUT = {
   container: "mx-auto w-full max-w-7xl px-4 md:px-8",
   /** Spec 2.4: py-20 md:py-24 */
   section: "py-20 md:py-24",
-  /** Floating glass bar: 56px tall sitting 12px below the top edge. */
+  /** Floating glass bar: 56px tall sitting 20px below the top edge. */
   navHeight: 56,
-  navOffset: 12,
+  navOffset: 20,
   /** Total vertical space the fixed nav claims, used to pad page content. */
-  navTotal: 68,
-  anchorOffset: 96,
+  navTotal: 76,
+  anchorOffset: 104,
   /** Spec 2.3: 65ch measure for body copy. */
   measure: "max-w-[65ch]",
 } as const;
@@ -73,6 +73,8 @@ export const SITE = {
   shortName: "ffrizzy",
   wordmark: "ffrizzy",
   role: "Information Systems graduate",
+  /** From the CV header. The phone number on that CV is deliberately not here. */
+  location: "Jakarta, Indonesia",
   email: "m.farrel2222@gmail.com",
   linkedin: "https://www.linkedin.com/in/ffrizzy/",
   github: "https://github.com/ffrizzyy",

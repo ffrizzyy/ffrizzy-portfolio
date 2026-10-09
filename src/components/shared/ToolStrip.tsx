@@ -35,40 +35,56 @@ const BRAND_ICONS: Record<string, { title: string; path: string }> = {
   figma: siFigma,
 };
 
+/**
+ * The track is duplicated and translated by exactly -50%, so the loop is
+ * seamless only while half the track is at least as wide as the viewport.
+ *
+ * That is why this is six copies and not two. With two, the whole track came to
+ * roughly 1230px against a container of about 1216px, so half of it was barely
+ * one viewport wide: as the animation ran, the track ran out and left a few
+ * hundred pixels of empty space at the trailing edge. Six copies put half the
+ * track at about 1850px, which clears the widest the container can get.
+ */
+const COPIES = 6;
+
 export function ToolStrip() {
   const available = toolList.filter((tool) => tool.slug in BRAND_ICONS);
 
   return (
-    <div className="strip-viewport overflow-hidden border-y-2 border-ink py-7">
-      {/* Two identical lists: the second is what makes the loop seamless, and
-          it is hidden from assistive tech so names are not announced twice. */}
-      <div className="strip-track">
-        {[0, 1].map((copy) => (
-          <ul
-            key={copy}
-            aria-hidden={copy === 1}
-            className="flex shrink-0 items-center gap-14 pr-14"
-          >
-            {available.map((tool) => {
-              const brand = BRAND_ICONS[tool.slug];
-              if (!brand) return null;
-              return (
-                <li key={tool.slug} className="text-ink transition-colors hover:text-signal">
-                  <svg
-                    viewBox="0 0 24 24"
-                    role={copy === 0 ? "img" : undefined}
-                    aria-label={copy === 0 ? tool.name : undefined}
-                    aria-hidden={copy === 1 ? true : undefined}
-                    className="size-8"
-                    fill="currentColor"
-                  >
-                    <path d={brand.path} />
-                  </svg>
-                </li>
-              );
-            })}
-          </ul>
-        ))}
+    /* Borders sit on the outer element and the mask on the inner one, so the
+       fade applies to the logos but not to the rules above and below them. */
+    <div className="border-y-2 border-ink">
+      <div className="strip-viewport strip-mask overflow-hidden py-7">
+        <div className="strip-track">
+          {Array.from({ length: COPIES }, (_, copy) => (
+            <ul
+              key={copy}
+              // Only the first copy is exposed to assistive tech, so the tool
+              // names are announced once rather than six times.
+              aria-hidden={copy > 0}
+              className="flex shrink-0 items-center gap-14 pr-14"
+            >
+              {available.map((tool) => {
+                const brand = BRAND_ICONS[tool.slug];
+                if (!brand) return null;
+                return (
+                  <li key={tool.slug} className="text-ink transition-colors hover:text-signal">
+                    <svg
+                      viewBox="0 0 24 24"
+                      role={copy === 0 ? "img" : undefined}
+                      aria-label={copy === 0 ? tool.name : undefined}
+                      aria-hidden={copy > 0 ? true : undefined}
+                      className="size-8"
+                      fill="currentColor"
+                    >
+                      <path d={brand.path} />
+                    </svg>
+                  </li>
+                );
+              })}
+            </ul>
+          ))}
+        </div>
       </div>
     </div>
   );

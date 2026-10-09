@@ -79,7 +79,7 @@
   html {
     /* Spec 2.4: a jumped-to heading must not hide under the nav. The nav is
        fixed and floats, so this clears its height plus its top offset. */
-    scroll-padding-top: 96px;
+    scroll-padding-top: 104px;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -268,6 +268,19 @@
   display: flex;
   width: max-content;
   animation: marquee-left 30s linear infinite;
+}
+
+/* Fades both ends of the strip. Without this a logo is sliced mid-letterform at
+   the container edge, which reads as a rendering bug rather than a marquee. */
+.strip-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 5%,
+    #000 95%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
 }
 
 .strip-viewport:hover .strip-track,

@@ -5,7 +5,7 @@ import { Icon } from "@/components/shared/Icon";
 import { PrintButton } from "@/components/shared/PrintButton";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { TagChip } from "@/components/ui/Chip";
-import { broadSkills } from "@/content/site";
+import type { TimelineEntry } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { findMissingAssets } from "@/lib/assets.server";
 import { LAYOUT, SITE } from "@/lib/constants";
@@ -13,10 +13,12 @@ import {
   awardList,
   certList,
   educationList,
+  experienceList,
   featuredProjects,
+  leadershipList,
+  skillCategoryList,
+  summary,
   languages,
-  skillsMap,
-  timelineList,
 } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -27,16 +29,20 @@ export const metadata: Metadata = {
 };
 
 /**
- * The CV page.
+ * The CV page, structured to mirror the CV document itself: professional
+ * experience and leadership experience as two separate sections, then
+ * education, selected work, certifications, skills, awards, and languages.
  *
- * Spec 3 originally made /cv a redirect to a PDF. This replaces that with a
- * real page for three reasons: there is no PDF yet, HTML is searchable and
- * linkable where a PDF is not, and one source of truth cannot drift the way a
- * separate document does. The page offers the browser's print pipeline as the
- * PDF exporter, and links a hosted PDF automatically once one exists.
+ * All of this content is transcribed from the CV. The one deliberate omission
+ * is the phone number in the CV header: the spec (section 9.1) says it is not
+ * published, and this repository is public, so email and LinkedIn are the
+ * contact routes.
  *
- * Print rules live in globals.css: nav, footer, texture, and buttons drop out so
- * what comes off the printer is the document itself.
+ * Spec 3 originally made /cv a redirect to a PDF. It is a page instead: there is
+ * no PDF yet, HTML is searchable and linkable where a PDF is not, and one source
+ * of truth cannot drift the way a second document does. The browser's print
+ * pipeline is the exporter, and a hosted PDF is linked automatically once one
+ * exists.
  */
 function CvSection({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -44,6 +50,32 @@ function CvSection({ title, children }: { title: string; children: ReactNode }) 
       <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
+  );
+}
+
+/** One role: title and dates on a line, org and place beneath, then the bullets. */
+function RoleEntry({ entry }: { entry: TimelineEntry }) {
+  return (
+    <li className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+        <span className="text-base font-medium text-ink">{entry.title}</span>
+        <span className="num text-xs text-ink-muted">{entry.display}</span>
+      </div>
+      <span className="text-sm text-ink-muted">
+        {entry.org}
+        {entry.location ? `, ${entry.location}` : ""}
+      </span>
+      {entry.bullets.length > 0 ? (
+        <ul className="mt-1 flex flex-col gap-1">
+          {entry.bullets.map((bullet) => (
+            <li key={bullet} className="flex gap-2.5 text-sm text-ink-muted">
+              <span aria-hidden className="mt-2 size-1 shrink-0 bg-signal" />
+              <span className="max-w-[68ch]">{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </li>
   );
 }
 
@@ -61,7 +93,7 @@ export default function CvPage() {
   return (
     <div className={`${LAYOUT.section} pb-24`}>
       <div className={`${LAYOUT.container} print-cv max-w-4xl`}>
-        {/* Header. Hidden chrome in print means the contact details have to be
+        {/* Header. Chrome is hidden in print, so the contact details have to be
             part of the document itself. */}
         <header className="flex flex-col gap-4 border-b-2 border-ink pb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -70,6 +102,7 @@ export default function CvPage() {
               <p className="mt-2 text-base text-ink-muted">
                 {SITE.role} / AI web apps, data dashboards, and content
               </p>
+              <p className="num mt-1 text-sm text-ink-muted">{SITE.location}</p>
             </div>
 
             <div className="no-print flex flex-wrap items-center gap-3">
@@ -111,48 +144,55 @@ export default function CvPage() {
           </ul>
         </header>
 
-        <CvSection title="Summary">
-          <p className="max-w-[65ch] text-base text-ink-muted">
-            Information Systems graduate from Universitas Sriwijaya (GPA 3.97 out of 4.00, Apr
-            2025) with three years across content, communications, data, and organizational
-            leadership. Comfortable on the creative side and the analytical side, and usually
-            working on something that needs both.
-          </p>
+        <CvSection title="Professional summary">
+          <p className="max-w-[68ch] text-base text-ink-muted">{summary}</p>
         </CvSection>
 
-        <CvSection title="Experience">
-          <ol className="flex flex-col gap-5">
-            {timelineList.map((entry) => (
-              <li key={entry.id} className="flex flex-col gap-1">
+        <CvSection title="Professional experience">
+          <ol className="flex flex-col gap-6">
+            {experienceList.map((entry) => (
+              <RoleEntry key={entry.id} entry={entry} />
+            ))}
+          </ol>
+        </CvSection>
+
+        <CvSection title="Leadership and organizational experience">
+          <ol className="flex flex-col gap-6">
+            {leadershipList.map((entry) => (
+              <RoleEntry key={entry.id} entry={entry} />
+            ))}
+          </ol>
+        </CvSection>
+
+        <CvSection title="Education">
+          <ol className="flex flex-col gap-6">
+            {educationList.map((entry) => (
+              <li key={entry.id} className="flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                  <span className="text-base font-medium text-ink">{entry.title}</span>
+                  <span className="text-base font-medium text-ink">{entry.institution}</span>
                   <span className="num text-xs text-ink-muted">{entry.display}</span>
                 </div>
-                <span className="text-sm text-ink-muted">{entry.org}</span>
-                {entry.summary ? (
-                  <span className="mt-0.5 max-w-[65ch] text-sm text-ink-muted">{entry.summary}</span>
+                <span className="text-sm text-ink-muted">
+                  {entry.degree}
+                  {entry.location ? `, ${entry.location}` : ""}
+                </span>
+                <span className="num text-sm text-ink-muted">{entry.detail}</span>
+                {entry.bullets.length > 0 ? (
+                  <ul className="mt-1 flex flex-col gap-1">
+                    {entry.bullets.map((bullet) => (
+                      <li key={bullet} className="flex gap-2.5 text-sm text-ink-muted">
+                        <span aria-hidden className="mt-2 size-1 shrink-0 bg-signal" />
+                        <span className="max-w-[68ch]">{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
                 ) : null}
               </li>
             ))}
           </ol>
         </CvSection>
 
-        <CvSection title="Education">
-          <ol className="flex flex-col gap-5">
-            {educationList.map((entry) => (
-              <li key={entry.id} className="flex flex-col gap-1">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                  <span className="text-base font-medium text-ink">{entry.institution}</span>
-                  <span className="num text-xs text-ink-muted">{entry.display}</span>
-                </div>
-                <span className="text-sm text-ink-muted">{entry.degree}</span>
-                <span className="num text-sm text-ink-muted">{entry.detail}</span>
-              </li>
-            ))}
-          </ol>
-        </CvSection>
-
-        <CvSection title="Selected work">
+        <CvSection title="Selected projects">
           <ol className="flex flex-col gap-5">
             {featuredProjects.map((project) => (
               <li key={project.slug} className="flex flex-col gap-2">
@@ -163,11 +203,9 @@ export default function CvPage() {
                   >
                     {project.title}
                   </a>
-                  <span className="num text-xs uppercase tracking-[0.14em] text-ink-muted">
-                    {project.type}
-                  </span>
+                  <span className="num text-xs text-ink-muted">{project.period}</span>
                 </div>
-                <p className="max-w-[65ch] text-sm text-ink-muted">{project.outcome}</p>
+                <p className="max-w-[68ch] text-sm text-ink-muted">{project.outcome}</p>
                 <ul className="flex flex-wrap gap-2">
                   {project.stack.slice(0, 4).map((item) => (
                     <li key={item}>
@@ -180,31 +218,43 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Skills">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="flex flex-col gap-3">
-              <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">Broad</p>
-              <ul className="flex flex-wrap gap-2">
-                {broadSkills.map((skill) => (
-                  <li key={skill}>
-                    <TagChip>{skill}</TagChip>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <CvSection title="Certifications">
+          <div className="flex flex-col gap-4">
+            {certList.map((group) => (
+              <div key={group.issuer} className="flex flex-col gap-1.5">
+                <p className="text-sm font-medium text-ink">{group.issuer}</p>
+                <ul className="flex flex-col gap-1">
+                  {group.items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex flex-wrap items-baseline justify-between gap-x-4"
+                    >
+                      <span className="text-sm text-ink-muted">{item.name}</span>
+                      <span className="num text-xs text-ink-muted">{item.date ?? item.year}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </CvSection>
 
-            <div className="flex flex-col gap-3">
-              <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">Deep</p>
-              <ul className="flex flex-col gap-1.5">
-                {skillsMap.map((entry) => (
-                  <li key={entry.skill.id} className="text-sm text-ink-muted">
-                    <span className="text-ink">{entry.skill.name}</span>
-                    {" / "}
-                    {entry.usedIn.length} {entry.usedIn.length === 1 ? "project" : "projects"}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <CvSection title="Skills">
+          <div className="flex flex-col gap-5">
+            {skillCategoryList.map((category) => (
+              <div key={category.id} className="flex flex-col gap-2">
+                <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">
+                  {category.label}
+                </p>
+                <ul className="flex flex-wrap gap-2">
+                  {category.items.map((item) => (
+                    <li key={item}>
+                      <TagChip>{item}</TagChip>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </CvSection>
 
@@ -224,24 +274,6 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Certifications">
-          <div className="flex flex-col gap-4">
-            {certList.map((group) => (
-              <div key={group.issuer} className="flex flex-col gap-1.5">
-                <p className="text-sm font-medium text-ink">{group.issuer}</p>
-                <ul className="flex flex-col gap-1">
-                  {group.items.map((item) => (
-                    <li key={item.id} className="flex flex-wrap items-baseline justify-between gap-x-4">
-                      <span className="text-sm text-ink-muted">{item.name}</span>
-                      <span className="num text-xs text-ink-muted">{item.year}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </CvSection>
-
         <CvSection title="Languages">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-muted">
             {languages.map((language) => (
@@ -255,9 +287,9 @@ export default function CvPage() {
         <div className="no-print mt-12 flex flex-wrap items-center gap-6 border-t border-line pt-6">
           <a
             href="/"
-            className="inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+            className="group inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
           >
-            <Icon name="ArrowUpRight" size={18} />
+            <Icon name="ArrowUpRight" size={18} className="nudge" />
             Back to the portfolio
           </a>
           <span className="font-mono text-xs text-ink-muted">

@@ -28,9 +28,9 @@ export function Hero() {
   return (
     /* min-height subtracts the nav offset (LAYOUT.navTotal) so the hero still
        lands inside one viewport with the floating bar above it. Tailwind cannot
-       read a computed value here, so 68px is written literally and kept in sync
+       read a computed value here, so 76px is written literally and kept in sync
        with LAYOUT.navTotal. */
-    <section className={`relative ${LAYOUT.section} min-h-[calc(100dvh-68px)] pt-6 md:pt-12`}>
+    <section className={`relative ${LAYOUT.section} min-h-[calc(100dvh-76px)] pt-6 md:pt-12`}>
       <div className={`${LAYOUT.container} grid grid-cols-1 items-center gap-12 md:grid-cols-12 md:gap-8`}>
         <div className="md:col-span-7">
           <Reveal className="mb-5 flex items-center gap-3">

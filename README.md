@@ -75,6 +75,15 @@ empty box.
 | `src/content/schema.ts` | The Zod schemas and inferred types |
 | `src/lib/content.ts` | Validation, computed stats, the derived skills map, and the `#all` row list |
 
+Experience, education, certifications, the professional summary, and the CV
+page's skill categories are transcribed from the owner's CV document. The Home
+About rail is a curated subset of seven; the CV page carries the full list of
+eleven roles in the CV's own two sections.
+
+**The phone number in the CV header is deliberately not published.** Spec 9.1
+says so and this repository is public, so it appears in no content module, no
+page, and no metadata. Email and LinkedIn are the contact routes.
+
 Derived rather than typed, so they cannot drift:
 
 - The **projects** stat counts `content/projects.ts`.
