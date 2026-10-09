@@ -42,9 +42,9 @@ export const stats: Stat[] = [
     computedFrom: "events",
     kind: "lower-bound",
     label: "events",
-    detail: "Organized or covered, 2022 to 2026",
+    detail: "Organized, covered, or spoken at, 2022 to 2026",
     method:
-      "Counted from the events list in content/site.ts. That list is still being completed, so the count is shown as a lower bound. Flagship events: Technology Euphoria Festival 2023 and Pesta Rakyat Sriwijaya 2023.",
+      "Counted from the stated totals in content/site.ts: 2 flagship festivals with over 2,000 attendees each (Technology Euphoria Festival 2023 and Pesta Rakyat Sriwijaya 2023), 1 national conference (Sriwijaya Digital Conference 2024), and 20 or more webinars, seminars, and sharing sessions across GDSC and BEM. The last figure is a floor, so the total is a lower bound.",
     asOf: "2026",
     icon: "CalendarCheck",
     viz: "ticks",
@@ -100,16 +100,28 @@ export const stats: Stat[] = [
  * ------------------------------------------------------------------ */
 
 /**
- * Honest and incomplete on purpose. Only two events can be named from the
- * source material, so the stat is rendered as a lower bound until this list is
- * filled in. See spec 9.2 item 3.
+ * The named events, which drive the tick illustration and its tooltips. Only the
+ * ones the owner named appear here; the rest of the total is accounted for in
+ * `eventTotals` rather than invented as individual rows.
  */
 export const events: PortfolioEvent[] = [
   { id: "techporiafest-2023", name: "Technology Euphoria Festival 2023", year: 2023, role: "organizer" },
   { id: "pesta-rakyat-2023", name: "Pesta Rakyat Sriwijaya 2023", year: 2023, role: "coverage" },
+  { id: "sdc-2024", name: "Sriwijaya Digital Conference 2024", year: 2024, role: "organizer" },
+  { id: "gdsc-sharing-2024", name: "Sharing Session on Media and Creative, GDSC", year: 2024, role: "organizer" },
 ];
 
-export const eventsListIsPartial = true;
+/**
+ * The full event count, stated by the owner: two flagship festivals each drawing
+ * over 2,000 attendees, one national conference, and more than twenty webinars,
+ * seminars, and sharing sessions across GDSC and BEM. The smaller figure is a
+ * stated floor rather than a count, so the total is a lower bound.
+ */
+export const eventTotals = {
+  festivals: 2,
+  conferences: 1,
+  smallerEvents: 20,
+} as const;
 
 /* ------------------------------------------------------------------ *
  * Summary. Lifted from the CV's professional summary.                 *
@@ -275,6 +287,33 @@ export const leadership: TimelineEntry[] = [
     display: "Mar 2022 to Jan 2023",
     bullets: [
       "Handled social media end to end, including publishing, copywriting, and event-planning support.",
+    ],
+  },
+  {
+    id: "sdc-concept",
+    title: "Event Concept and Session Author",
+    org: "Sriwijaya Digital Conference 2024",
+    location: "Palembang, Indonesia",
+    kind: "leadership",
+    start: "2024-10",
+    end: "2024-10",
+    display: "Oct 2024",
+    bullets: [
+      "Wrote the event concept name and the session titles and themes for a national conference billed as The Biggest Digital Conference in South Sumatera, held 19 to 20 October 2024 at Hotel Swarna Dwipa.",
+      "Sessions included Career Wireframe: Imagining, Designing, and Living Your Dream Career.",
+    ],
+  },
+  {
+    id: "gdsc-speaker",
+    title: "Speaker, Sharing Session on Media and Creative",
+    org: "Google Developer Student Clubs (GDSC), Universitas Sriwijaya",
+    location: "Palembang, Indonesia",
+    kind: "leadership",
+    start: "2024-05",
+    end: "2024-05",
+    display: "May 2024",
+    bullets: [
+      "One of the speakers for an internal GDSC sharing session on media and creative work.",
     ],
   },
 ];
@@ -499,6 +538,8 @@ export const writing: WritingItem[] = [
     platform: "instagram",
     title: "Google Maps",
     description: "Instagram carousel series on practical Google Maps features most people skip",
+    url: "https://www.instagram.com/p/Cnja7OeL4j6/",
+    date: "18 Jan 2023",
     cover: "/images/ig-maps.webp",
     language: "id",
   },
@@ -507,6 +548,8 @@ export const writing: WritingItem[] = [
     platform: "instagram",
     title: "Google Dorking",
     description: "Short Instagram explainer on advanced search operators, with examples",
+    url: "https://www.instagram.com/p/CpCeneDLa2o",
+    date: "24 Feb 2023",
     cover: "/images/ig-dorking.webp",
     language: "id",
   },
@@ -516,6 +559,7 @@ export const writing: WritingItem[] = [
     title: "Google Lens",
     description: "Instagram post on searching with a camera instead of words",
     url: "https://www.instagram.com/p/CsIFl4brYxQ/",
+    date: "12 May 2023",
     cover: "/images/ig-lens.webp",
     language: "id",
   },
@@ -525,6 +569,7 @@ export const writing: WritingItem[] = [
     title: "Google Translate",
     description: "Instagram post on getting more out of Google Translate",
     url: "https://www.instagram.com/p/C0YCra8LtML/",
+    date: "03 Dec 2023",
     cover: "/images/ig-translate.webp",
     language: "id",
   },

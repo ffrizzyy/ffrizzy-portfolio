@@ -32,6 +32,7 @@ import {
   certifications as rawCerts,
   deepSkills as rawSkills,
   education as rawEducation,
+  eventTotals,
   events as rawEvents,
   experience as rawExperience,
   extraSkillUsage,
@@ -74,21 +75,40 @@ if (duplicateSlugs.length > 0) {
   throw new Error(`Duplicate project slugs: ${[...new Set(duplicateSlugs)].join(", ")}`);
 }
 
-/* ------------------------------------------------------------------ *
- * The Home timeline is a curated subset of the CV.                    *
- * ------------------------------------------------------------------ */
+/**
+ * The owner's stated total: 2 flagship festivals, 1 national conference, and 20
+ * or more webinars, seminars, and sharing sessions. The last figure is a floor,
+ * so the sum is a floor too, which is why the stat keeps its lower-bound plus.
+ */
+export const eventsValue =
+  eventTotals.festivals + eventTotals.conferences + eventTotals.smallerEvents;
+
+// A named event cannot outnumber the stated total, which would mean one of the
+// two numbers is stale.
+if (eventList.length > eventsValue) {
+  throw new Error(
+    `More named events (${eventList.length}) than the stated total (${eventsValue}). ` +
+      "Update eventTotals in content/site.ts.",
+  );
+}
+
+/**
+ * The Home timeline is a curated subset of the CV.
+ */
 
 const endKey = (entry: TimelineEntry) => (entry.end === "present" ? "9999-99" : entry.end);
 
 /**
- * Eleven entries is the whole CV, and putting all of them on the Home rail
- * pushes everything below it out of reach. Home shows the four professional
- * roles and the three longest-running organizational ones, newest first; the CV
- * page carries the complete list in the CV's own two sections.
+ * Fourteen entries is the whole CV, and putting all of them on the Home rail
+ * pushes everything below it out of reach. Home shows the professional roles,
+ * the longest-running organizational ones, and the conference concept work,
+ * newest first; the CV page carries the complete list in the CV's own two
+ * sections.
  */
 const ABOUT_TIMELINE_IDS = [
   "palembang-digital",
   "media-si",
+  "sdc-concept",
   "rhetoric-academy",
   "gdsc-core",
   "mvSlim",
@@ -113,7 +133,7 @@ if (aboutTimeline.length !== ABOUT_TIMELINE_IDS.length) {
 
 export const statsResolved: Stat[] = z.array(statSchema).parse(
   rawStats.map((stat) => {
-    if (stat.computedFrom === "events") return { ...stat, value: eventList.length };
+    if (stat.computedFrom === "events") return { ...stat, value: eventsValue };
     if (stat.computedFrom === "projects") return { ...stat, value: projectList.length };
     return stat;
   }),

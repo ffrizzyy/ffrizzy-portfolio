@@ -24,6 +24,9 @@ export function WritingSection() {
   const slides = series.map((item) => (
     <div key={item.id} className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 md:p-8 lg:gap-12">
       <div className="flex flex-col gap-4">
+        {item.date ? (
+          <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">{item.date}</p>
+        ) : null}
         <h3 className="text-xl md:text-2xl">{item.title}</h3>
         <p className="text-base text-ink-muted">{item.description}</p>
 

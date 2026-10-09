@@ -1415,6 +1415,44 @@ be simple-encoded, so no CMap work was needed.
 | Nav sat flush against the top of the viewport | `LAYOUT.navOffset` was 12 but was never applied to the markup: the glass bar carried no top margin at all, so the constant was decorative | `mt-5` added, and the offsets corrected to `navOffset: 20`, `navTotal: 76`, `anchorOffset: 104` |
 | The tools strip looked cropped | The marquee is duplicated and translated by exactly `-50%`, which is seamless only while half the track is at least as wide as the viewport. With two copies the track came to about 1230px against a container of about 1216px, so as it scrolled the track ran out and left a few hundred pixels of empty space at the trailing edge | Six copies instead of two, putting half the track near 1850px, plus a gradient mask so a logo dissolves at the edge instead of being sliced mid-letterform |
 
+### 13.5 Round 5: events, the conference, and the last two links
+
+This closes the last two open items in section 9.2: item 3, the events total, and
+item 11, the Google Maps and Google Dorking post URLs.
+
+| Before | Now | Source |
+|---|---|---|
+| The events stat read `2+` because only two events could be named | `23+`: 2 flagship festivals with over 2,000 attendees each, 1 national conference, and 20 or more webinars, seminars, and sharing sessions across GDSC and BEM | Stated by the owner |
+| Two named events driving the tick chart | Six named events, adding Sriwijaya Digital Conference 2024 and the GDSC sharing session | Owner, plus the conference deck |
+| Two Instagram slides rendered with no link at all | All four carry their real post URL and date | URL from the owner, date decoded from the shortcode |
+| Nothing about the national conference | An "Event Concept and Session Author" role: authored the concept name and the session titles and themes for Sriwijaya Digital Conference 2024, billed as The Biggest Digital Conference in South Sumatera, held 19 to 20 October 2024 at Hotel Swarna Dwipa | Extracted from the pitch deck |
+| No speaking credit | A "Speaker, Sharing Session on Media and Creative" role for GDSC internals | Owner, dated from the post |
+
+**The events number is a floor, and it is still computed.** `eventTotals` holds
+the breakdown (2 festivals, 1 conference, 20 or more smaller events) and
+`lib/content.ts` sums it, so the stat is derived rather than typed and keeps its
+lower-bound plus. A build-time check refuses a state where more events are named
+individually than the stated total.
+
+**How the conference details were obtained.** The pitch deck is a presentation
+export: its fonts are subsets with custom encodings, and its resource
+dictionaries are packed into compressed object streams, so neither a resource
+name nor a font object can be trusted as a key. The text was recovered by
+collecting every ToUnicode CMap in the file and choosing, per text block, the
+CMap that decodes that block most like language, using the fact that the most
+frequent byte in prose is the space as the tie-breaker. That read 68 of 114
+blocks confidently, which was enough for the name, tagline, dates, and venue.
+
+It is not a full transcription, so the session list on the site is deliberately
+partial: only session titles that came out cleanly are quoted. The deck is not
+committed to the repository, being 46 MB and containing sponsor and internal
+material.
+
+**Instagram post dates** are decoded from the shortcodes. An Instagram media id
+carries its creation time in its high bits and the shortcode is that id encoded
+in base64, so the real post date is recoverable without asking. All four writing
+slides now show theirs.
+
 ---
 
 ## 14. Asset manifest (new)

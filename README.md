@@ -87,9 +87,11 @@ page, and no metadata. Email and LinkedIn are the contact routes.
 Derived rather than typed, so they cannot drift:
 
 - The **projects** stat counts `content/projects.ts`.
-- The **events** stat counts the events list. That list currently names only two
-  events, so the stat renders as a lower bound (`2+`) and says so in its method
-  text. Fill in the list and the stat follows.
+- The **events** stat sums the breakdown in `eventTotals`: 2 flagship festivals,
+  1 national conference, and 20 or more smaller events. The last figure is a
+  stated floor, so the stat keeps its lower bound and renders as `23+`. A
+  build-time check refuses a state where more events are named individually than
+  the stated total.
 - The **type breakdown** and the stacked-bar illustration come from the project
   types.
 - The skills map "Used in" lists come from each project's `tags`. A skill that
