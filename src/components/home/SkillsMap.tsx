@@ -48,7 +48,14 @@ export function SkillsMap() {
           <SectionHeading>Broad reach, deep tools.</SectionHeading>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-2">
+        {/* `items-start` is what keeps the two groups tight. A grid item stretches
+            to the row height by default, so the shorter group (Broad, a dozen
+            chips) was being pulled down to the height of the taller one (the Deep
+            accordion) and trailing tens of rems of empty track beneath itself.
+            With the items at their natural height the row is exactly as tall as
+            the accordion, and the gutter between the groups is the same 3rem the
+            rest of the page uses. */}
+        <div className="mt-12 grid grid-cols-1 items-start gap-x-12 gap-y-10 md:grid-cols-2">
           <Reveal className="flex flex-col gap-5">
             <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">Broad</h3>
             <ul className="flex flex-wrap gap-2.5">

@@ -319,9 +319,6 @@ export default function CvPage() {
             <Icon name="ArrowUpRight" size={18} className="nudge" />
             Back to the portfolio
           </a>
-          <span className="font-mono text-xs text-ink-muted">
-            Source: content modules in src/content, validated at build time.
-          </span>
         </div>
       </div>
     </div>

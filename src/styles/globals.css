@@ -175,7 +175,7 @@
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translate3d(0, 24px, 0);
+    transform: translate3d(0, 18px, 0);
   }
   to {
     opacity: 1;
@@ -247,16 +247,90 @@
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * Opening freeze. One run per page load, CSS only, no assets: the      *
+ * texture is an SVG turbulence filter written inline. Nothing here     *
+ * gates the content, and nothing is left in the layout afterwards.     *
+ * ------------------------------------------------------------------ */
+/* Four stops on a descending curve. The easing overshoots above 1 on purpose
+   (that is what makes the entrance snap), so the middle stops stay level rather
+   than peaking: a mid-value above the first one would read as a bright flash
+   before the thaw instead of a sheet of frost clearing. */
+@keyframes frost-clear {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.62;
+  }
+  40% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The turbulence is what makes the freeze read as frost rather than a plain
+   white sheet. It is a filter, not an image, so there is no asset to download
+   and the grain is generated at whatever size the viewport happens to be.
+   Without JavaScript, or before the first effect runs, the overlay is simply
+   absent: the frost is an enhancement over a page that is already complete. */
+.frost-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  /* Below the nav tier, "40" in Z. The fixed bars are chrome and stay crisp and
+     untinted, which also means the overlay never competes with the nav's own
+     glass backdrop-filter. */
+  z-index: 30;
+  pointer-events: none;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  /* Only the pale half of the noise survives, so the frost is a crust of small
+     white crystals rather than a grey wash over the whole page. */
+  filter: contrast(2.6) brightness(1.35) saturate(0);
+  /* The sheet has no backdrop-filter of its own. A backdrop blur is charged
+     against whatever is visible behind it and blurs that once; putting it on
+     the overlay as well would make the compositor do the same work twice, and
+     it would also pull the fixed nav into the effect. One blur, on the page
+     content below, is what the reader sees and all the effect needs. */
+}
+
+[data-frost="playing"] .frost-overlay {
+  display: block;
+  animation: frost-clear 1300ms var(--ease-out-zine) both;
+}
+
+/* The one part of the effect that touches the content. The blur runs on #main
+   rather than on the overlay, which keeps the fixed nav and the fixed mobile
+   bar sharp and out of the frozen layer, and it eases back to none so the last
+   frame leaves no filter behind. Small enough that the page is readable through
+   it from the very first frame. */
+[data-frost="playing"] #main {
+  filter: blur(5px);
+  transition: filter 1300ms var(--ease-out-zine);
+}
+
 /* Default reveal: a plain on-load animation. Upgraded to a
-   scroll-driven timeline wherever the browser supports it. */
+   scroll-driven timeline wherever the browser supports it.
+
+   The travel is shorter than the original 24px and the timeline finishes at 30%
+   of entry rather than 45%. The long range was what made the page feel like it
+   stopped between sections: the previous section's last block and the next
+   section's first block were both still near opacity 0 while a screenful of
+   reserved space sat between them. At 30% each block has settled well before it
+   reaches the middle of the viewport, so one section hands over to the next
+   without a band of blank page in between. */
 .reveal {
-  animation: reveal-up 700ms var(--ease-out-zine) both;
+  animation: reveal-up 620ms var(--ease-out-zine) both;
 }
 
 @supports (animation-timeline: view()) {
   .reveal {
     animation-timeline: view();
-    animation-range: entry 0% entry 45%;
+    animation-range: entry 0% entry 30%;
   }
 }
 
@@ -548,6 +622,19 @@
     transform: none !important;
     scale: 1 !important;
   }
+
+  /* The opening freeze is skipped, not shortened. The overlay is taken out of
+     the layout and the page is left unblurred, so reduced motion sees the
+     resting page on the first frame whatever the data attribute says. */
+  .frost-overlay {
+    display: none !important;
+    opacity: 0 !important;
+  }
+
+  [data-frost="playing"] #main {
+    filter: none !important;
+    transition: none !important;
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -558,6 +645,7 @@
   header,
   footer,
   .texture-layer,
+  .frost-overlay,
   .no-print {
     display: none !important;
   }

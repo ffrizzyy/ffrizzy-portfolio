@@ -3,7 +3,6 @@ import path from "node:path";
 
 import { Icon } from "@/components/shared/Icon";
 import { CoverImage } from "@/components/shared/CoverImage";
-import { PendingImage } from "@/components/shared/PendingImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { EvDciPanelDeferred } from "@/components/work/EvDciPanelDeferred";
@@ -58,12 +57,6 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
               </li>
             ))}
           </ul>
-
-          {project.sampleData ? (
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-muted">
-              Sample data
-            </p>
-          ) : null}
 
           {project.links.length > 0 ? (
             <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -144,13 +137,15 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
                 sizes="520px"
               />
             </div>
-            {/* Extra shots are read from disk rather than assumed. A slot shows a
-                real image the moment one is dropped at <slug>-2.webp or
-                <slug>-3.webp, and stays an honest pending frame until then,
-                instead of 404ing or being hardcoded as empty. */}
+            {/* Extra shots are read from disk rather than assumed. A slot renders
+                a real image the moment one is dropped at <slug>-2.webp or
+                <slug>-3.webp; while the file is absent the slot renders nothing
+                at all, so the row is the cover plus only the shots that exist
+                rather than a row of pending frames. */}
             {[2, 3].map((slot) => {
               const src = project.cover.replace(".webp", `-${slot}.webp`);
-              return galleryAssetExists(src) ? (
+              if (!galleryAssetExists(src)) return null;
+              return (
                 <div
                   key={slot}
                   className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line"
@@ -161,15 +156,6 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
                     sizes="520px"
                   />
                 </div>
-              ) : (
-                <PendingImage
-                  key={slot}
-                  src={src}
-                  width={1600}
-                  height={1000}
-                  label={`${project.title} additional screenshot ${slot}`}
-                  className="w-[min(85vw,520px)] shrink-0 snap-start"
-                />
               );
             })}
           </div>
