@@ -22,6 +22,19 @@ export const BREAKPOINTS = {
   "2xl": 1536,
 } as const;
 
+/**
+ * The site's public origin, normalised.
+ *
+ * A host dashboard will happily hand over "https://example.com/" with a trailing
+ * slash. Concatenating that with a path produced "https://example.com//work/azzifa"
+ * in the sitemap and in robots.txt, and a doubled slash is a different URL to a
+ * crawler, so the canonical URL it was told to index was not the one being served.
+ * Trimming here means the value can be pasted either way.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+).replace(/\/+$/, "");
+
 export const LAYOUT = {
   /** Spec 2.4: max-w-7xl mx-auto px-4 md:px-8 */
   container: "mx-auto w-full max-w-7xl px-4 md:px-8",
