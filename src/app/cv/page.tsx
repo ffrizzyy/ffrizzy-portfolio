@@ -84,8 +84,18 @@ export default function CvPage() {
   // someone drops the file into public/. No dead links until then.
   const missing = findMissingAssets([SITE.cvPath, SITE.cvPathId]);
   const downloads = [
-    { href: SITE.cvPath, ready: !missing.includes(SITE.cvPath), badge: "EN" },
-    { href: SITE.cvPathId, ready: !missing.includes(SITE.cvPathId), badge: "ID" },
+    {
+      href: SITE.cvPath,
+      ready: !missing.includes(SITE.cvPath),
+      badge: "EN",
+      label: "Download CV, English",
+    },
+    {
+      href: SITE.cvPathId,
+      ready: !missing.includes(SITE.cvPathId),
+      badge: "ID",
+      label: "Download CV, Indonesian",
+    },
   ];
 
   const contact = [
@@ -115,9 +125,18 @@ export default function CvPage() {
             <div className="no-print flex flex-wrap items-center gap-3">
               {downloads.map((item) =>
                 item.ready ? (
-                  <ButtonLink key={item.badge} href={item.href} variant="primary" size="md">
+                  <ButtonLink
+                    key={item.badge}
+                    href={item.href}
+                    variant="primary"
+                    size="md"
+                    /* Without this the accessible name runs the parts together as
+                       "Download CVEN", because the language badge is a separate
+                       span and text nodes concatenate with no space. */
+                    aria-label={item.label}
+                  >
                     Download CV
-                    <span className="num text-xs uppercase tracking-[0.12em] opacity-80">
+                    <span aria-hidden className="num text-xs uppercase tracking-[0.12em] opacity-80">
                       {item.badge}
                     </span>
                   </ButtonLink>
