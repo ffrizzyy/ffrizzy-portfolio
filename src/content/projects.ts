@@ -62,7 +62,10 @@ export const projects: Project[] = [
     tags: [],
     links: [
       { label: "GitHub", href: "https://github.com/Gedegok23/portal-publik" },
-      { label: "LinkedIn article", href: "https://www.linkedin.com/" },
+      {
+        label: "LinkedIn article",
+        href: "https://www.linkedin.com/pulse/ai-engineer-muhammad-farrel-al-wafi-frizzy-ixuyf",
+      },
     ],
     cover: "/images/portal-publik.webp",
     sampleData: true,
