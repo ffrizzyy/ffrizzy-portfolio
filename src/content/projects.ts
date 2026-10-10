@@ -12,7 +12,7 @@ export const projects: Project[] = [
     type: "build",
     featured: true,
     role: "Solo build: product, frontend, API, deployment",
-    period: "2025",
+    period: "Sep 2026",
     outcome:
       "A private journal that spots mood patterns every week, with shared streaks. Works with Anthropic, OpenAI, or any compatible model.",
     stack: ["Express", "SQLite", "Vanilla JS", "Multi-provider AI"],
@@ -55,7 +55,7 @@ export const projects: Project[] = [
     type: "build",
     featured: true,
     role: "Public portal. The Telegram bot, AI agent, officer dashboard, and database are team work.",
-    period: "2026",
+    period: "Sep 2026",
     outcome:
       "The public face of KITO: residents see reports on a map, check status by tracking code, and compare how fast each agency responds.",
     stack: ["Next.js", "TypeScript", "Tailwind", "SWR", "Leaflet", "Recharts"],
