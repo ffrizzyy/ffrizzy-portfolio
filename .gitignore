@@ -24,3 +24,7 @@ Thumbs.db
 # Font cache for scripts/make-icons.py. Re-downloaded on demand; the PNGs that
 # script produces are committed.
 scripts/.fonts/
+
+# Python bytecode from the asset scripts.
+__pycache__/
+*.pyc
