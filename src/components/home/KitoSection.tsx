@@ -1,6 +1,7 @@
 import { Icon } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { TagChip } from "@/components/ui/Chip";
+import { projects } from "@/content/projects";
 import { kitoBotStatus, kitoFlow, kitoSafeguards, kitoStack, kitoStats } from "@/content/site";
 import { LAYOUT } from "@/lib/constants";
 import { cn, groupNumber } from "@/lib/utils";
@@ -14,6 +15,12 @@ import { cn, groupNumber } from "@/lib/utils";
  * here; the bot, agent, and dashboard are team work.
  */
 export function KitoSection() {
+  // Read the article link off the project record rather than writing the URL out
+  // a second time, so the case study and this section can never disagree.
+  const article = projects
+    .find((project) => project.slug === "portal-publik")
+    ?.links.find((link) => link.label === "LinkedIn article");
+
   return (
     <section id="kito" className={`${LAYOUT.section} border-t border-line`}>
       <div className={LAYOUT.container}>
@@ -104,13 +111,26 @@ export function KitoSection() {
               <p className="num text-xs text-ink-muted">
                 Telegram bot {kitoBotStatus.handle}: {kitoBotStatus.status}.
               </p>
-              <a
-                href="/work/portal-publik"
-                className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
-              >
-                Read the full case study
-                <Icon name="ArrowUpRight" size={18} className="nudge" />
-              </a>
+              <div className="flex flex-col gap-3">
+                <a
+                  href="/work/portal-publik"
+                  className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                >
+                  Read the full case study
+                  <Icon name="ArrowUpRight" size={18} className="nudge" />
+                </a>
+                {article ? (
+                  <a
+                    href={article.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                  >
+                    Read the article
+                    <Icon name="ArrowUpRight" size={18} className="nudge" />
+                  </a>
+                ) : null}
+              </div>
             </div>
           </Reveal>
         </div>
