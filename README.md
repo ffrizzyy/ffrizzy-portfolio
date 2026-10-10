@@ -184,10 +184,45 @@ with a capture of the app needs no code change. Case study galleries additionall
 look for `<slug>-2.webp` and `<slug>-3.webp`. The spec's section 14.2 lists what
 to capture for each project.
 
-One caveat worth stating plainly: as shipped, **no image on this site is a real
-screenshot**. They are all drawn stand-ins.
+## Where the images came from
 
-Both were then rendered in headless Chrome and inspected as images, which is how
+Seven of the eleven project covers are now real captures or real figures, and the
+scripts that produced the rest are kept as the record:
+
+- **Live captures**, taken in headless Chrome: the Azzifa app, the Tableau
+  dashboard (from its embed URL, so Tableau's own chrome is not in frame), and the
+  SAT SET Figma prototype.
+- **Figures out of the source files**, not off a screen: `mount-figures.py` puts
+  the capstone's training curves, the rice clustering elbow plot, and the TOPSIS
+  and COBIT method diagrams on the design system's paper, inside a rule, with a
+  title and a caption. A bare chart on a white field reads as a screenshot of
+  somebody else's document, which is why they are mounted rather than dropped in.
+- **Drawn**, by `make-artwork.py`: Portal Publik (its dev server was not
+  reachable), the watsonx app (kept drawn at the author's request), the Redesign
+  Challenge and SDC covers, and the four Instagram cards. The last two are drawn
+  because Instagram serves a session wall, and no attempt was made to get past it.
+
+The COBIT paper also contained a group photograph of identifiable students. It was
+not used: publishing photographs of other people needs their consent, and a public
+paper does not supply it.
+
+## Turnstile
+
+The site key is wired and inlined into the client bundle, but **the widget does
+not render on `127.0.0.1`**. Cloudflare answers the challenge platform with HTTP
+400 and no iframe appears, which is the signature of a site key whose allowed
+hostnames do not include the host being served.
+
+Two things are needed before it protects anything:
+
+1. Add the deployment domain to the key's allowed hostnames in the Cloudflare
+   dashboard.
+2. Set `TURNSTILE_SECRET_KEY` in the host environment. Without it
+   `src/app/api/contact/route.ts` skips verification entirely, so the widget is
+   decorative. The site key is not a secret and lives in `.env.local`.
+
+The map and the charts were then rendered in headless Chrome and inspected as
+images, which is how
 two things were caught: the map and charts do draw, and **Recharts ignores
 `prefers-reduced-motion`**, so its marks animated for readers who asked for no
 motion. Both charts now pass `isAnimationActive={!reduceMotion}`.

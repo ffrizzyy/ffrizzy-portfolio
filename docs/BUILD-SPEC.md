@@ -1561,6 +1561,63 @@ One caveat is recorded rather than fixed. Every cover is a drawn stand-in, so th
 site currently shows no real interface anywhere. Section 14.2 lists exactly what
 to capture and where each file goes.
 
+### 13.9 Round 8: real assets
+
+The author supplied a portrait, a Turnstile site key, and sources for the projects.
+Seven covers are now real captures or real figures rather than drawn stand-ins.
+
+| Project | Cover now | Source |
+|---|---|---|
+| Azzifa | Live app screenshot | `azzifa.up.railway.app`, captured at 1600x1000, 305 KB PNG to 35 KB WebP |
+| KITO Portal Publik | drawn | the dev server at `192.168.1.106:3000` was not reachable |
+| Aid Distribution Dashboard | Live Tableau dashboard | the `public.tableau.com` embed form, which hides Tableau's own chrome |
+| watsonx Generative AI App | drawn | kept drawn at the author's request |
+| IMDB Sentiment Capstone | Training curves | extracted from the project notebook |
+| Rice Production Clustering | K-Means elbow plot | extracted from the paper DOCX |
+| TOPSIS vs SMART | Method flowchart | extracted from the paper PDF |
+| COBIT 2019 Hospital Audit | Method flowchart | extracted from the paper PDF |
+| SAT SET | Figma prototype | public proto, cropped to the frame |
+| Redesign Challenge Backend | drawn | the Instagram post needs a session |
+| Sriwijaya Digital Conference | drawn | the Instagram profile needs a session |
+
+Method notes worth keeping:
+
+- **Figures come out of the source files, not off the screen.** A notebook stores
+  its rendered charts as base64 PNG inside its JSON, so they extract at full
+  resolution. A DOCX is a zip and its images sit in `word/media/`. A PDF usually
+  embeds figures as image XObjects, and `DCTDecode` streams are already JPEG. Only
+  2 of 8 image objects in the TOPSIS paper and 5 of 6 in the COBIT paper were large
+  enough to be figures rather than fragments.
+- **A figure from a paper must not be dropped in raw.** It arrives as a bare chart
+  on a white field, which reads as a screenshot of someone else's document.
+  `scripts/mount-figures.py` mounts each one on the design system's paper inside a
+  rule, with its title and a caption, so it speaks the same plate language as the
+  drawn covers.
+- **The COBIT PDF also contained a group photograph of identifiable students in a
+  laboratory.** It was not used and will not be. Publishing photographs of other
+  people needs their consent, and a paper being public does not supply it.
+- **An Instagram post and a profile both present a session wall**, so those two
+  remain drawn. No attempt was made to get past it.
+- **Figma letterboxes the prototype on black and runs a cookie bar across the full
+  bottom edge.** That bar is bright, so detecting the content box reports the full
+  width and the crop then slides sideways, clipping the navigation. The prototype
+  rectangle has to be given explicitly.
+
+**The 88 percent claim was checked and holds.** The site says the capstone
+classifies sentiment with 88 percent accuracy, while the notebook's first epoch
+reads `0.7212`, which looks like a contradiction. It is not one: epoch 1 is not
+the result. The final evaluation reads `accuracy: 0.8800` over 2,491 test reviews,
+and the best validation accuracy reached `0.8778`.
+
+**Turnstile is wired but does not render on 127.0.0.1.** The site key is inlined
+into the client chunk correctly and the Turnstile script loads, but Cloudflare
+answers the challenge platform with HTTP 400 and no iframe is created. That is the
+signature of a site key whose allowed hostnames exclude the host being served, so
+the key is most likely restricted to the deployment domain. Two consequences: the
+deployment domain must be in the key's allowlist, and `TURNSTILE_SECRET_KEY` must
+be set in the host environment, because the contact route skips verification
+entirely without it. As shipped, the widget is in the bundle and enforcing nothing.
+
 ---
 
 ## 14. Asset manifest (new)
