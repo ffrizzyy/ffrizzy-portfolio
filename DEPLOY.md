@@ -27,7 +27,7 @@ gitignored on purpose, so a key committed there would not be deployed anyway.
 | `NEXT_PUBLIC_SITE_URL` | Canonical URLs, `sitemap.xml`, `robots.txt` | **The sitemap advertises `http://localhost:3000`**, which tells search engines the wrong canonical URL. Set this to the real origin, with no trailing slash. |
 | `RESEND_API_KEY` | Sending contact form mail | The contact route returns a labelled development response instead of sending. A visitor's message reaches nobody. |
 | `CONTACT_TO_EMAIL` | Where the form delivers | Falls back to the address in the source. |
-| `CONTACT_FROM_EMAIL` | The verified sender | Resend rejects the send unless the sending domain is verified. |
+| `CONTACT_FROM_EMAIL` | The sender address | The route refuses to send unless this is set, so the form reaches nobody. **You do not need a domain to satisfy this.** See below. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Rendering the Turnstile widget | The widget does not render at all. This value is public by design. |
 | `TURNSTILE_SECRET_KEY` | Enforcing the widget | `src/app/api/contact/route.ts` skips verification entirely, so bot protection does nothing. |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Cookieless analytics | No analytics is loaded. |
@@ -38,6 +38,30 @@ A Turnstile site key only works on the hostnames listed against it in the
 Cloudflare dashboard. Add the deployment domain there, and add `127.0.0.1` too if
 you want the widget to render during local development. Without that, Cloudflare
 answers the challenge platform with HTTP 400 and no widget appears.
+
+### You do not need a domain to make the contact form work
+
+Resend's own domain is restricted: `resend.dev` **can only send to the email
+address on your Resend account**. That sounds like a blocker and is not one,
+because the contact form's whole job is delivering messages to you. Sign up to
+Resend with the same address you want the mail delivered to, then set:
+
+```
+RESEND_API_KEY      = re_...
+CONTACT_FROM_EMAIL  = Farrel Frizzy <onboarding@resend.dev>
+CONTACT_TO_EMAIL    = the address your Resend account uses
+```
+
+The display name is allowed, so the mail arrives from "Farrel Frizzy" even though
+the underlying address belongs to Resend. `src/app/api/contact/route.ts` already
+sets `replyTo` to the visitor's address, so replying from the notification goes
+back to them rather than to `onboarding@resend.dev`.
+
+Two trade-offs come with this. Deliverability is weaker than a verified domain, so
+the first message may land in spam: check, and mark it not spam. And the sending
+address is Resend's rather than yours. Buying a domain and verifying it removes
+both, but nothing is broken until then. Reference:
+https://resend.com/docs/knowledge-base/403-error-resend-dev-domain
 
 ## After the first deploy
 
