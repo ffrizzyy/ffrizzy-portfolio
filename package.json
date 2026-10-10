@@ -2,6 +2,10 @@
   "name": "ffrizzy-portfolio",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "packageManager": "pnpm@11.7.0",
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/check-copy.mjs && next build",
