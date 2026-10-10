@@ -80,9 +80,13 @@ function RoleEntry({ entry }: { entry: TimelineEntry }) {
 }
 
 export default function CvPage() {
-  // The PDF is an optional asset, so the download button appears on its own
-  // once someone drops the file into public/. No dead link until then.
-  const pdfMissing = findMissingAssets([SITE.cvPath]).length > 0;
+  // Both CVs are optional assets, so each download button appears on its own once
+  // someone drops the file into public/. No dead links until then.
+  const missing = findMissingAssets([SITE.cvPath, SITE.cvPathId]);
+  const downloads = [
+    { href: SITE.cvPath, ready: !missing.includes(SITE.cvPath), badge: "EN" },
+    { href: SITE.cvPathId, ready: !missing.includes(SITE.cvPathId), badge: "ID" },
+  ];
 
   const contact = [
     { label: SITE.email, href: `mailto:${SITE.email}`, external: false },
@@ -106,13 +110,19 @@ export default function CvPage() {
             </div>
 
             <div className="no-print flex flex-wrap items-center gap-3">
-              {pdfMissing ? null : (
-                <a
-                  href={SITE.cvPath}
-                  className="inline-flex h-11 items-center rounded-pill border-2 border-ink px-6 text-[0.95rem] font-medium text-ink transition-colors hover:bg-paper-sunken"
-                >
-                  Download PDF
-                </a>
+              {downloads.map((item) =>
+                item.ready ? (
+                  <a
+                    key={item.badge}
+                    href={item.href}
+                    className="inline-flex h-11 items-center gap-2 rounded-pill border-2 border-ink px-6 text-[0.95rem] font-medium text-ink transition-colors hover:bg-paper-sunken"
+                  >
+                    Download PDF
+                    <span className="num text-xs uppercase tracking-[0.12em] text-ink-muted">
+                      {item.badge}
+                    </span>
+                  </a>
+                ) : null,
               )}
               <PrintButton />
             </div>

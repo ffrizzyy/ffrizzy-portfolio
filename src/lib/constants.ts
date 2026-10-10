@@ -86,12 +86,19 @@ export const SITE = {
   shortName: "ffrizzy",
   wordmark: "ffrizzy",
   role: "Information Systems graduate",
-  /** From the CV header. The phone number on that CV is deliberately not here. */
+  /**
+   * From the CV header. The phone number is kept out of the markup on purpose,
+   * but note that publishing the CV PDF below does publish it, because the
+   * document itself carries it in its header.
+   */
   location: "Jakarta, Indonesia",
   email: "m.farrel2222@gmail.com",
   linkedin: "https://www.linkedin.com/in/ffrizzy/",
   github: "https://github.com/ffrizzyy",
+  /** The English CV. Offered first, and the one the hero button leads to. */
   cvPath: "/Farrel-Frizzy-CV.pdf",
+  /** The same CV in Bahasa Indonesia. */
+  cvPathId: "/Farrel-Frizzy-CV-ID.pdf",
   cvRoute: "/cv",
   copyright: "2026 Muhammad Farrel Al-Wafi Frizzy",
 } as const;
