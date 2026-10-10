@@ -1,83 +1,90 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
 
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
-import { Button } from "@/components/ui/Button";
-import { Field, NativeSelect, TextArea, TextInput } from "@/components/ui/Field";
-import { ANALYTICS_EVENTS, track } from "@/lib/analytics";
-import { CONTACT_TOPICS, contactSchema, type ContactInput } from "@/lib/contact-schema";
 import { LAYOUT, SITE } from "@/lib/constants";
 
 /**
- * Spec 4.10 contact. One Zod schema shared with the route handler, inline
- * errors under each field, a hidden honeypot, and Cloudflare Turnstile only
- * when a site key is configured. No toast: spec 2.7 says form states are
- * inline.
+ * Defers the contact form the way ReportMap defers Leaflet and
+ * EvDciPanelDeferred defers Recharts.
  *
- * States: idle, sending (the button label becomes "Sending"), sent, error, and
- * rate-limited.
+ * Why it needs a wrapper at all: `next/dynamic` with `ssr: false` is only
+ * allowed inside a Client Component, and the Home page that renders this is a
+ * Server Component.
+ *
+ * What this buys: the form is the only consumer of react-hook-form,
+ * @hookform/resolvers/zod, zod, and @marsidev/react-turnstile in the whole
+ * project, and it is the last section of the page. Leaving it eager put all
+ * four libraries in the first load of a page whose visitor may never scroll
+ * this far. With the split, the four move to a chunk that is fetched only after
+ * the shell has painted.
+ *
+ * One caution for whoever measures this. In the previous build these four
+ * libraries did not have a chunk of their own: they shared one with the whole
+ * of Motion, because Carousel's drag and WorkList's `layout` use Motion and
+ * both of those are still eager. That mixed chunk was one of the files the Home
+ * route loaded eagerly, so removing the form can only take the form's own share
+ * of it, and the size of that share cannot be read off statically. The split
+ * definitely removes the form's four libraries from the first load; it may not
+ * remove the whole file. Motion is dealt with in the report, not here, because
+ * taking it out means changing how Carousel and WorkList animate.
+ *
+ * The heading, the intro sentence, and the mailto link stay in this shell on
+ * purpose. They are CSS-only, they cost nothing, and keeping them here means
+ * the section still reads correctly and sits in the same place in the document
+ * with JavaScript disabled, which a fully deferred section would not.
+ *
+ * The fallback reserves the widget's footprint with the form's own geometry
+ * rather than a guessed height: the same `flex flex-col gap-5` the real form
+ * uses, four label-plus-control pairs built from the same classes Field.tsx
+ * uses, and the same `h-11` submit button. The control heights are read off
+ * those classes rather than eyeballed: `border-[1.5px] px-3 py-2.5` around one
+ * `text-[0.95rem]` line box at the body's 1.65 line-height is 42px, and
+ * `rows={5}` is 156px. Labels are real `text-sm` text drawn transparent, so
+ * they are 23.1px rather than a guess. Only Turnstile, whose height is not a
+ * function of the form's own classes, is reserved explicitly. The fallback is
+ * `aria-hidden` because it carries no information.
  */
-type Status = "idle" | "sending" | "sent" | "error" | "rate-limited";
+const LABELS = ["Name", "Email", "Topic", "Message"];
+const CONTROL_HEIGHTS = ["h-[42px]", "h-[42px]", "h-[42px]", "h-[156px]"];
 
-const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+function ContactFormFallback() {
+  return (
+    <div aria-hidden className="flex flex-col gap-5">
+      {/* The label is the same `text-sm` at the body's 1.65 line-height as the
+          real one, drawn transparent: 23.1px, not a guessed box. The control is
+          `border-[1.5px] py-2.5` with the same line box, which is 42px for the
+          input and the select, and rows={5} for the textarea. */}
+      {LABELS.map((label, index) => (
+        <div key={label} className="flex flex-col gap-2">
+          <span className="block text-sm font-medium text-transparent">{label}</span>
+          <span
+            className={`block w-full animate-pulse border-[1.5px] border-line bg-paper-sunken ${CONTROL_HEIGHTS[index]}`}
+          />
+        </div>
+      ))}
+
+      {/* The Turnstile widget is the one part whose height is not a function of
+          the form's own classes, so it is reserved explicitly at the widget's
+          interactive height. Without this the container grew by 65px the moment
+          the chunk arrived and pulled the mailto link and the footer up. */}
+      <div className="h-[65px]" />
+
+      <div>
+        <span className="block h-11 w-28 animate-pulse rounded-pill border-2 border-line bg-paper-sunken" />
+      </div>
+    </div>
+  );
+}
+
+const ContactFormInner = dynamic(
+  () => import("./ContactFormInner").then((module) => module.ContactFormInner),
+  { ssr: false, loading: () => <ContactFormFallback /> },
+);
 
 export function ContactForm() {
-  const [status, setStatus] = useState<Status>("idle");
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string | undefined>(undefined);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ContactInput>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: { topic: "Hiring", company: "" },
-  });
-
-  const onSubmit = async (values: ContactInput) => {
-    setStatus("sending");
-    setServerError(null);
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, turnstileToken }),
-      });
-
-      if (response.status === 429) {
-        setStatus("rate-limited");
-        return;
-      }
-
-      const data: { ok?: boolean; error?: string } = await response
-        .json()
-        .catch(() => ({}) as { ok?: boolean; error?: string });
-
-      if (!response.ok || data.ok === false) {
-        setStatus("error");
-        setServerError(data.error ?? "The message could not be sent.");
-        return;
-      }
-
-      track(ANALYTICS_EVENTS.contactSubmit);
-      reset();
-      setStatus("sent");
-    } catch {
-      setStatus("error");
-      setServerError("The network request failed. Email works too.");
-    }
-  };
-
-  const sending = status === "sending";
-
   return (
     <section id="contact" className={`${LAYOUT.section} border-t-2 border-ink`}>
       <div className={LAYOUT.container}>
@@ -89,130 +96,7 @@ export function ContactForm() {
         </Reveal>
 
         <div className="mt-12 max-w-[640px]">
-          {status === "sent" ? (
-            <div
-              role="status"
-              className="reveal-fade flex flex-col gap-3 border-2 border-ink bg-paper-raised p-6"
-            >
-              <p className="font-display text-xl font-extrabold tracking-tight text-ink">
-                Message sent.
-              </p>
-              <p className="text-sm text-ink-muted">
-                Thanks. I read everything and usually reply within a couple of days.
-              </p>
-              <button
-                type="button"
-                onClick={() => setStatus("idle")}
-                className="touch-target w-fit text-sm font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
-              >
-                Send another
-              </button>
-            </div>
-          ) : (
-            <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-              <Field label="Name" error={errors.name?.message}>
-                {({ id, describedBy, invalid }) => (
-                  <TextInput
-                    id={id}
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                    autoComplete="name"
-                    {...register("name")}
-                  />
-                )}
-              </Field>
-
-              <Field label="Email" error={errors.email?.message}>
-                {({ id, describedBy, invalid }) => (
-                  <TextInput
-                    id={id}
-                    type="email"
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                    autoComplete="email"
-                    {...register("email")}
-                  />
-                )}
-              </Field>
-
-              <Field label="Topic" error={errors.topic?.message}>
-                {({ id, describedBy, invalid }) => (
-                  <NativeSelect
-                    id={id}
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                    {...register("topic")}
-                  >
-                    {CONTACT_TOPICS.map((topic) => (
-                      <option key={topic} value={topic}>
-                        {topic}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                )}
-              </Field>
-
-              <Field
-                label="Message"
-                error={errors.message?.message}
-                hint="20 characters minimum."
-              >
-                {({ id, describedBy, invalid }) => (
-                  <TextArea
-                    id={id}
-                    rows={5}
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                    {...register("message")}
-                  />
-                )}
-              </Field>
-
-              {/* Honeypot. Hidden from sight and from assistive tech, but a bot
-                  that reads the DOM will still fill it in. */}
-              <div aria-hidden className="hidden">
-                <label htmlFor="contact-company">Company</label>
-                <input id="contact-company" tabIndex={-1} autoComplete="off" {...register("company")} />
-              </div>
-
-              {turnstileSiteKey ? (
-                <Turnstile
-                  siteKey={turnstileSiteKey}
-                  onSuccess={setTurnstileToken}
-                  options={{ theme: "auto" }}
-                />
-              ) : (
-                <p className="font-mono text-xs text-ink-muted">
-                  Turnstile is not configured. Submissions are accepted in development mode.
-                </p>
-              )}
-
-              {status === "error" || status === "rate-limited" ? (
-                <div
-                  role="alert"
-                  className="reveal-fade border-2 border-danger bg-paper-raised p-4 text-sm"
-                >
-                  <p className="text-danger">
-                    {status === "rate-limited"
-                      ? "Too many messages from this connection. Wait a minute, or email me directly."
-                      : (serverError ?? "The message could not be sent.")}
-                  </p>
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    className="touch-target mt-2 inline-block text-ink underline decoration-signal decoration-2 underline-offset-4"
-                  >
-                    {SITE.email}
-                  </a>
-                </div>
-              ) : null}
-
-              <div>
-                <Button type="submit" variant="primary" size="md" disabled={sending}>
-                  {sending ? "Sending" : "Send"}
-                </Button>
-              </div>
-            </form>
-          )}
+          <ContactFormInner />
 
           {/* LinkedIn, GitHub and the CV all sit in the footer a few lines below,
               so listing them here printed the same three links twice on one
