@@ -70,7 +70,6 @@ export const projects: Project[] = [
       },
     ],
     cover: "/images/portal-publik.webp",
-    sampleData: true,
     caseStudy: {
       interactive: "kito-report-map",
       summary:

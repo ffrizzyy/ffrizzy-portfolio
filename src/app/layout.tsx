@@ -8,7 +8,6 @@ import type { CSSProperties, ReactNode } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Nav } from "@/components/layout/Nav";
-import { FrostIntro } from "@/components/shared/FrostIntro";
 import { IconProvider } from "@/components/shared/Icon";
 import { LAYOUT, SITE } from "@/lib/constants";
 import "@/styles/globals.css";
@@ -158,15 +157,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {/* Spec 2.6: the texture is a fixed, pointer-events-none layer
                 behind everything. It is never applied to a scrolling container. */}
             <div aria-hidden className="texture-layer" />
-
-            {/* The opening freeze: a fixed, pointer-events-none frost layer plus
-                the one attribute write that starts it. It is display:none until
-                that attribute lands, and it is removed from the layout the
-                moment the run is over, so it never sits over a control. It takes
-                no pointer events at any point, and it sits below the fixed bars
-                in the z scale, so neither of them is frozen or tinted. */}
-            <div aria-hidden className="frost-overlay" />
-            <FrostIntro />
 
             <Nav />
 

@@ -255,11 +255,6 @@ const contentRow: WorkRow = {
 
 export const workRows: WorkRow[] = [...projectRows, contentRow];
 
-export function filterWorkRows(filter: WorkFilter): WorkRow[] {
-  if (filter === "all") return workRows;
-  return workRows.filter((row) => row.type === filter);
-}
-
 // Re-exported so server callers keep a single import for this list. Client
 // Components must import it from work-filters instead, which is why that module
 // exists.

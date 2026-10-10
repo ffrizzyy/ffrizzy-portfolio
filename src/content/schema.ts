@@ -48,8 +48,6 @@ export const projectSchema = z.object({
   tags: z.array(z.string()),
   links: z.array(linkSchema),
   cover: z.string().startsWith("/"),
-  /** True when any metric on the page is mock. Spec 7. */
-  sampleData: z.boolean().optional(),
   caseStudy: caseStudySchema.optional(),
 });
 

@@ -247,72 +247,6 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * Opening freeze. One run per page load, CSS only, no assets: the      *
- * texture is an SVG turbulence filter written inline. Nothing here     *
- * gates the content, and nothing is left in the layout afterwards.     *
- * ------------------------------------------------------------------ */
-/* Four stops on a descending curve. The easing overshoots above 1 on purpose
-   (that is what makes the entrance snap), so the middle stops stay level rather
-   than peaking: a mid-value above the first one would read as a bright flash
-   before the thaw instead of a sheet of frost clearing. */
-@keyframes frost-clear {
-  0% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.62;
-  }
-  40% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* The turbulence is what makes the freeze read as frost rather than a plain
-   white sheet. It is a filter, not an image, so there is no asset to download
-   and the grain is generated at whatever size the viewport happens to be.
-   Without JavaScript, or before the first effect runs, the overlay is simply
-   absent: the frost is an enhancement over a page that is already complete. */
-.frost-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  /* Below the nav tier, "40" in Z. The fixed bars are chrome and stay crisp and
-     untinted, which also means the overlay never competes with the nav's own
-     glass backdrop-filter. */
-  z-index: 30;
-  pointer-events: none;
-  background-color: #ffffff;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E");
-  background-size: 240px 240px;
-  /* Only the pale half of the noise survives, so the frost is a crust of small
-     white crystals rather than a grey wash over the whole page. */
-  filter: contrast(2.6) brightness(1.35) saturate(0);
-  /* The sheet has no backdrop-filter of its own. A backdrop blur is charged
-     against whatever is visible behind it and blurs that once; putting it on
-     the overlay as well would make the compositor do the same work twice, and
-     it would also pull the fixed nav into the effect. One blur, on the page
-     content below, is what the reader sees and all the effect needs. */
-}
-
-[data-frost="playing"] .frost-overlay {
-  display: block;
-  animation: frost-clear 1300ms var(--ease-out-zine) both;
-}
-
-/* The one part of the effect that touches the content. The blur runs on #main
-   rather than on the overlay, which keeps the fixed nav and the fixed mobile
-   bar sharp and out of the frozen layer, and it eases back to none so the last
-   frame leaves no filter behind. Small enough that the page is readable through
-   it from the very first frame. */
-[data-frost="playing"] #main {
-  filter: blur(5px);
-  transition: filter 1300ms var(--ease-out-zine);
-}
-
 /* Default reveal: a plain on-load animation. Upgraded to a
    scroll-driven timeline wherever the browser supports it.
 
@@ -508,25 +442,36 @@
   }
 
   /* A text link as authored is one line box tall: 26.4px at the base
-     size, but only 21px at text-sm (16px * 1.65 / 20px * 1.05). Padding
-     the element would re-flow the line it sits in, so the hit area is
-     extended with an empty pseudo-element instead. The layout box, the
-     baseline, and the underline all stay exactly where they were, which
-     keeps the desktop render (and the mobile render around it)
-     untouched, and getBoundingClientRect() on the link still reports the
-     visual box rather than the enlarged one.
+     size, but only 21px at text-sm (16px * 1.65 / 20px * 1.05), which is
+     under the 24x24 SC 2.5.8 asks for. An absolutely positioned
+     pseudo-element does not reliably extend the hit area of an inline
+     box: it works on a button, but on a plain <a> the enlarged box is
+     not the one the browser hit-tests. So the box itself is grown.
 
-     The inset takes the smallest of those line boxes to 34.4px, over
-     the minimum whether the label wraps onto two lines or not. The
-     pseudo-element paints nothing, `isolate` gives the link its own
-     stacking context so a z-index below the label cannot escape behind
-     an ancestor surface, and it clears the label's own text box, so it
-     never covers a neighbouring link. */
+     On an inline box, vertical padding extends the painted and
+     hit-tested area without moving the line box, so the baseline and the
+     underline stay exactly where they were. On a block or inline-block
+     box the padding would add 8px of height, and the negative margin
+     cancels exactly that, so the surrounding layout does not reflow
+     either. Nothing is visible: the padding paints nothing on these
+     links, and the whole block is below md, so the desktop render is
+     untouched. 0.25rem each way takes the smallest of those line boxes
+     from 21px to 29px, over the minimum whether the label wraps onto
+     two lines or not. */
   .touch-target {
     position: relative;
     isolation: isolate;
+    padding-block: 0.25rem;
+    margin-block: -0.25rem;
   }
 
+  /* Kept for the pill variant only. A progress dot is a button with a
+     fixed 6px height and border-box sizing, so padding cannot grow it;
+     this pseudo-element is what widens that one, and it works there
+     because the element is a button rather than an inline <a>. It paints
+     nothing, and `isolate` on the base rule gives the element its own
+     stacking context so a z-index below the label cannot escape behind
+     an ancestor surface. */
   .touch-target::after {
     content: "";
     position: absolute;
@@ -622,19 +567,6 @@
     transform: none !important;
     scale: 1 !important;
   }
-
-  /* The opening freeze is skipped, not shortened. The overlay is taken out of
-     the layout and the page is left unblurred, so reduced motion sees the
-     resting page on the first frame whatever the data attribute says. */
-  .frost-overlay {
-    display: none !important;
-    opacity: 0 !important;
-  }
-
-  [data-frost="playing"] #main {
-    filter: none !important;
-    transition: none !important;
-  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -645,7 +577,6 @@
   header,
   footer,
   .texture-layer,
-  .frost-overlay,
   .no-print {
     display: none !important;
   }

@@ -57,8 +57,6 @@ export const contactRequestSchema = contactSchema
   })
   .strict();
 
-export type ContactRequest = z.infer<typeof contactRequestSchema>;
-
 /**
  * Collapses a value to a single safe line before it can reach an email header.
  *
