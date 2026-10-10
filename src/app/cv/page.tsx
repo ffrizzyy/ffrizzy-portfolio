@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { Icon } from "@/components/shared/Icon";
-import { PrintButton } from "@/components/shared/PrintButton";
 import { TrackedLink } from "@/components/shared/TrackedLink";
+import { ButtonLink } from "@/components/ui/Button";
 import { TagChip } from "@/components/ui/Chip";
 import type { TimelineEntry } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
@@ -109,22 +109,20 @@ export default function CvPage() {
               <p className="num mt-1 text-sm text-ink-muted">{SITE.location}</p>
             </div>
 
+            {/* The downloads now carry the primary treatment the print button
+                used to own. With real English and Indonesian documents there is
+                nothing left for a browser-generated PDF to add. */}
             <div className="no-print flex flex-wrap items-center gap-3">
               {downloads.map((item) =>
                 item.ready ? (
-                  <a
-                    key={item.badge}
-                    href={item.href}
-                    className="inline-flex h-11 items-center gap-2 rounded-pill border-2 border-ink px-6 text-[0.95rem] font-medium text-ink transition-colors hover:bg-paper-sunken"
-                  >
-                    Download PDF
-                    <span className="num text-xs uppercase tracking-[0.12em] text-ink-muted">
+                  <ButtonLink key={item.badge} href={item.href} variant="primary" size="md">
+                    Download CV
+                    <span className="num text-xs uppercase tracking-[0.12em] opacity-80">
                       {item.badge}
                     </span>
-                  </a>
+                  </ButtonLink>
                 ) : null,
               )}
-              <PrintButton />
             </div>
           </div>
 

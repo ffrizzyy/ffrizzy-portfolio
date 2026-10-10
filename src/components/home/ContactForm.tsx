@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
-import { CvLink, TrackedLink } from "@/components/shared/TrackedLink";
 import { Button } from "@/components/ui/Button";
 import { Field, NativeSelect, TextArea, TextInput } from "@/components/ui/Field";
 import { ANALYTICS_EVENTS, track } from "@/lib/analytics";
@@ -215,6 +214,10 @@ export function ContactForm() {
             </form>
           )}
 
+          {/* LinkedIn, GitHub and the CV all sit in the footer a few lines below,
+              so listing them here printed the same three links twice on one
+              screen. The address stays: it is the one contact route the footer
+              does not carry, and it is what this section is for. */}
           <ul className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
             <li>
               <a
@@ -223,33 +226,6 @@ export function ContactForm() {
               >
                 {SITE.email}
               </a>
-            </li>
-            <li>
-              <TrackedLink
-                href={SITE.linkedin}
-                event={ANALYTICS_EVENTS.projectOutbound}
-                eventProps={{ target: "linkedin" }}
-                external
-                className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
-              >
-                LinkedIn
-              </TrackedLink>
-            </li>
-            <li>
-              <TrackedLink
-                href={SITE.github}
-                event={ANALYTICS_EVENTS.projectOutbound}
-                eventProps={{ target: "github" }}
-                external
-                className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
-              >
-                GitHub
-              </TrackedLink>
-            </li>
-            <li>
-              <CvLink className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4">
-                Download CV
-              </CvLink>
             </li>
           </ul>
         </div>
