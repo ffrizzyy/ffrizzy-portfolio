@@ -30,7 +30,7 @@ export function SkillsMap() {
             <li key={`${entry.skill.id}-${usage.label}`}>
               <a
                 href={usage.href}
-                className="text-sm text-ink underline decoration-line decoration-2 underline-offset-4 transition-colors hover:decoration-signal"
+                className="touch-target text-sm text-ink underline decoration-line decoration-2 underline-offset-4 transition-colors hover:decoration-signal"
               >
                 {usage.label}
               </a>
