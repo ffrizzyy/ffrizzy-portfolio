@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
+
 import { Icon } from "@/components/shared/Icon";
 import { CoverImage } from "@/components/shared/CoverImage";
 import { PendingImage } from "@/components/shared/PendingImage";
@@ -9,6 +12,17 @@ import { TagChip } from "@/components/ui/Chip";
 import type { Project } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { LAYOUT } from "@/lib/constants";
+
+/**
+ * Whether an extra gallery shot is actually on disk.
+ *
+ * The route is dynamic, so reading the filesystem here is safe, and it is what
+ * lets the gallery show a real screenshot when one exists without inventing a
+ * filename that would 404.
+ */
+function galleryAssetExists(src: string): boolean {
+  return existsSync(path.join(process.cwd(), "public", src));
+}
 
 /**
  * Spec 5.1 case study template. Every section is optional in the data, so a
@@ -118,9 +132,7 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
         <Reveal className="mt-16">
           <h2 className="text-xl md:text-2xl">Gallery</h2>
           <div className="mt-5 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
-            {/* The cover is real artwork now. The two slots after it stay honest
-                pending frames, because a gallery needs more than one image and
-                inventing filenames that do not exist would 404. */}
+            {/* The cover always leads the row. */}
             <div className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line">
               <CoverImage
                 src={project.cover}
@@ -128,16 +140,34 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
                 sizes="520px"
               />
             </div>
-            {[2, 3].map((slot) => (
-              <PendingImage
-                key={slot}
-                src={project.cover.replace(".webp", `-${slot}.webp`)}
-                width={1600}
-                height={1000}
-                label={`${project.title} additional screenshot ${slot}`}
-                className="w-[min(85vw,520px)] shrink-0 snap-start"
-              />
-            ))}
+            {/* Extra shots are read from disk rather than assumed. A slot shows a
+                real image the moment one is dropped at <slug>-2.webp or
+                <slug>-3.webp, and stays an honest pending frame until then,
+                instead of 404ing or being hardcoded as empty. */}
+            {[2, 3].map((slot) => {
+              const src = project.cover.replace(".webp", `-${slot}.webp`);
+              return galleryAssetExists(src) ? (
+                <div
+                  key={slot}
+                  className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line"
+                >
+                  <CoverImage
+                    src={src}
+                    alt={`${project.title} screenshot ${slot}`}
+                    sizes="520px"
+                  />
+                </div>
+              ) : (
+                <PendingImage
+                  key={slot}
+                  src={src}
+                  width={1600}
+                  height={1000}
+                  label={`${project.title} additional screenshot ${slot}`}
+                  className="w-[min(85vw,520px)] shrink-0 snap-start"
+                />
+              );
+            })}
           </div>
         </Reveal>
 
