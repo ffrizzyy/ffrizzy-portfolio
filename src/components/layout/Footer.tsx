@@ -20,7 +20,7 @@ export function Footer() {
               event={ANALYTICS_EVENTS.projectOutbound}
               eventProps={{ target: "linkedin" }}
               external
-              className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+              className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
             >
               LinkedIn
             </TrackedLink>
@@ -31,13 +31,13 @@ export function Footer() {
               event={ANALYTICS_EVENTS.projectOutbound}
               eventProps={{ target: "github" }}
               external
-              className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+              className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
             >
               GitHub
             </TrackedLink>
           </li>
           <li>
-            <CvLink className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4">
+            <CvLink className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4">
               Download CV
             </CvLink>
           </li>

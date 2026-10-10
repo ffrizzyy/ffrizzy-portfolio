@@ -11,8 +11,10 @@ import { cn } from "@/lib/utils";
  * Spec 2.7 carousel: one slide at a time inside a hairline-bordered
  * --paper-raised box at radius 0. A mono counter, wrapping 44px square
  * prev/next buttons, and progress dots where the active one stretches to 56px
- * in signal. Arrow keys switch slides while a dot or an arrow has focus. No
- * autoplay, which is also a spec 2.8 ban.
+ * in signal. The dots keep their 6px height but carry a pseudo-element that
+ * widens the hit area to 24px on mobile, so the control passes WCAG 2.2
+ * SC 2.5.8 without changing what is drawn. Arrow keys switch slides while a
+ * dot or an arrow has focus. No autoplay, which is also a spec 2.8 ban.
  *
  * Spec 4.5 adds touch swipe, which is the one thing here CSS cannot do, so it
  * is the only reason Motion is imported. It is switched off entirely under
@@ -98,7 +100,10 @@ export function Carousel({
                 aria-current={dotIndex === index}
                 onClick={() => setIndex(dotIndex)}
                 className={cn(
-                  "h-1.5 rounded-pill transition-[width,background-color] duration-200 ease-zine",
+                  // touch-target-pill widens the hit area to 24px tall without
+                  // touching the 6px dot itself. The dots were the other half of
+                  // the SC 2.5.8 finding: the arrows are 44px, the dots were 6px.
+                  "touch-target touch-target-pill h-1.5 rounded-pill transition-[width,background-color] duration-200 ease-zine",
                   dotIndex === index ? "w-14 bg-signal" : "w-9 bg-line hover:bg-ink-muted",
                 )}
               />

@@ -8,11 +8,18 @@ import * as Popover from "@radix-ui/react-popover";
  *
  * A small client leaf so the rest of the stat grid stays a Server Component,
  * which is the pattern spec 1.3 asks for.
+ *
+ * Considered and deliberately NOT deferred, unlike the case study's Recharts
+ * panel. The stat grid is the second section of the Home page, so these
+ * triggers are in the first viewport: `next/dynamic` would preload the chunk on
+ * hydration anyway, and pushing the trigger behind `ssr: false` would take an
+ * interactive control out of the server-rendered HTML. The 32 KB it costs is
+ * accepted rather than moved around.
  */
 export function CountedPopover({ method, asOf }: { method: string; asOf: string }) {
   return (
     <Popover.Root>
-      <Popover.Trigger className="w-fit text-sm text-ink-muted underline decoration-line decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-signal">
+      <Popover.Trigger className="touch-target w-fit text-sm text-ink-muted underline decoration-line decoration-1 underline-offset-4 transition-colors hover:text-ink hover:decoration-signal">
         How is this counted?
       </Popover.Trigger>
       <Popover.Portal>

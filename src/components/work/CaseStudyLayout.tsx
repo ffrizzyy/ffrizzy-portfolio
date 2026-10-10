@@ -6,7 +6,7 @@ import { CoverImage } from "@/components/shared/CoverImage";
 import { PendingImage } from "@/components/shared/PendingImage";
 import { Reveal } from "@/components/shared/Reveal";
 import { TrackedLink } from "@/components/shared/TrackedLink";
-import { EvDciPanel } from "@/components/work/EvDciPanel";
+import { EvDciPanelDeferred } from "@/components/work/EvDciPanelDeferred";
 import { ReportMap } from "@/components/work/ReportMap";
 import { TagChip } from "@/components/ui/Chip";
 import type { Project } from "@/content/schema";
@@ -74,7 +74,7 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
                     event={ANALYTICS_EVENTS.projectOutbound}
                     eventProps={{ project: project.slug, label: link.label }}
                     external={link.href.startsWith("http")}
-                    className="inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
                     {link.label}
                     {link.href.startsWith("http") ? <Icon name="ArrowUpRight" size={18} /> : null}
@@ -112,7 +112,11 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
 
           {/* Interactive pieces are declared by name in the content module and
               resolved here, so the content stays data and the heavy libraries
-              load only on the case study that asks for them. */}
+              load only on the case study that asks for them.
+              Both are wrapped: ReportMap for Leaflet and EvDciPanelDeferred for
+              Recharts, because a Server Component cannot call next/dynamic with
+              ssr: false itself. Rendering them directly would put the library in
+              every work route's first load, which is what EvDciPanel used to do. */}
           {detail?.interactive === "kito-report-map" ? (
             <Reveal>
               <h2 className="text-xl md:text-2xl">The map, on sample data</h2>
@@ -123,7 +127,7 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
           {detail?.interactive === "sdc-ev-dci" ? (
             <Reveal>
               <h2 className="text-xl md:text-2xl">The data behind the concept</h2>
-              <EvDciPanel />
+              <EvDciPanelDeferred />
             </Reveal>
           ) : null}
         </div>

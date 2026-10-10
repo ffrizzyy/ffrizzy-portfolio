@@ -103,7 +103,7 @@ export function ContactForm() {
               <button
                 type="button"
                 onClick={() => setStatus("idle")}
-                className="w-fit text-sm font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                className="touch-target w-fit text-sm font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
               >
                 Send another
               </button>
@@ -199,7 +199,7 @@ export function ContactForm() {
                   </p>
                   <a
                     href={`mailto:${SITE.email}`}
-                    className="mt-2 inline-block text-ink underline decoration-signal decoration-2 underline-offset-4"
+                    className="touch-target mt-2 inline-block text-ink underline decoration-signal decoration-2 underline-offset-4"
                   >
                     {SITE.email}
                   </a>
@@ -222,7 +222,7 @@ export function ContactForm() {
             <li>
               <a
                 href={`mailto:${SITE.email}`}
-                className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
               >
                 {SITE.email}
               </a>

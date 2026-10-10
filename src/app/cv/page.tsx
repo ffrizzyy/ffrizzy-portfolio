@@ -154,14 +154,14 @@ export default function CvPage() {
                     event={ANALYTICS_EVENTS.projectOutbound}
                     eventProps={{ target: "cv-contact" }}
                     external
-                    className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
                     {item.label}
                   </TrackedLink>
                 ) : (
                   <a
                     href={item.href}
-                    className="text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
                     {item.label}
                   </a>
@@ -226,7 +226,7 @@ export default function CvPage() {
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <a
                     href={`/work/${project.slug}`}
-                    className="text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-signal"
+                    className="touch-target text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-signal"
                   >
                     {project.title}
                   </a>
@@ -314,7 +314,7 @@ export default function CvPage() {
         <div className="no-print mt-12 flex flex-wrap items-center gap-6 border-t border-line pt-6">
           <a
             href="/"
-            className="group inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+            className="touch-target group inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
           >
             <Icon name="ArrowUpRight" size={18} className="nudge" />
             Back to the portfolio

@@ -45,6 +45,12 @@ export const LAYOUT = {
   navOffset: 20,
   /** Total vertical space the fixed nav claims, used to pad page content. */
   navTotal: 76,
+  /**
+   * The mobile section bar: a fixed bar pinned to the bottom edge below md.
+   * Only the bar itself. The iPhone home-indicator inset is added on top of
+   * this at the point of use, because env() is a CSS value.
+   */
+  mobileNavHeight: 64,
   anchorOffset: 104,
   /** Spec 2.3: 65ch measure for body copy. */
   measure: "max-w-[65ch]",

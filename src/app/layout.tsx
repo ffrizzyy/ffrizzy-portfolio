@@ -3,9 +3,10 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { ThemeProvider } from "next-themes";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { Footer } from "@/components/layout/Footer";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { Nav } from "@/components/layout/Nav";
 import { IconProvider } from "@/components/shared/Icon";
 import { LAYOUT, SITE } from "@/lib/constants";
@@ -160,12 +161,28 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <Nav />
 
             {/* The nav floats over the page, so content starts below it. The
-                offset comes from the same constant the nav itself uses. */}
-            <main id="main" style={{ paddingTop: LAYOUT.navTotal }}>
+                offset comes from the same constant the nav itself uses.
+
+                --mobile-nav-h is read by the mobile block in globals.css, which
+                pads this element's bottom by the bar height plus the safe-area
+                inset. The constant lives here, the media query lives in the
+                stylesheet, and neither has to restate the other's numbers. */}
+            <main
+              id="main"
+              style={{ paddingTop: LAYOUT.navTotal, "--mobile-nav-h": `${LAYOUT.mobileNavHeight}px` } as CSSProperties}
+            >
               {children}
             </main>
 
             <Footer />
+
+            {/* The mobile section bar is fixed to the bottom edge, so below md
+                the page has to reserve its height or the last line of the footer
+                sits underneath it. The padding that does it is keyed off the
+                custom property set on <main> above; from md up the bar is hidden
+                and that padding does not apply, which is what keeps the desktop
+                render exactly what it was. */}
+            <MobileNav />
           </IconProvider>
         </ThemeProvider>
       </body>

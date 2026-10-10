@@ -418,6 +418,58 @@
   animation: marker-sweep 700ms var(--ease-out-zine) 350ms both;
 }
 
+/* ------------------------------------------------------------------ *
+ * Mobile only: the fixed section bar's page padding, and the tap      *
+ * targets WCAG 2.2 SC 2.5.8 asks for at 24x24 CSS pixels.             *
+ * 767.98px is the breakpoint Tailwind's md: prefix compiles to.       *
+ * ------------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+  /* The mobile section bar is fixed to the bottom edge, so the page reserves
+     its height here. --mobile-nav-h is set on <main> from
+     LAYOUT.mobileNavHeight, and the safe-area inset matches the one the bar
+     itself carries, so the reserved space and the bar cannot drift apart.
+     Above md nothing is fixed to the bottom, so no padding is applied. */
+  #main {
+    padding-bottom: calc(var(--mobile-nav-h, 64px) + env(safe-area-inset-bottom));
+  }
+
+  /* A text link as authored is one line box tall: 26.4px at the base
+     size, but only 21px at text-sm (16px * 1.65 / 20px * 1.05). Padding
+     the element would re-flow the line it sits in, so the hit area is
+     extended with an empty pseudo-element instead. The layout box, the
+     baseline, and the underline all stay exactly where they were, which
+     keeps the desktop render (and the mobile render around it)
+     untouched, and getBoundingClientRect() on the link still reports the
+     visual box rather than the enlarged one.
+
+     The inset takes the smallest of those line boxes to 34.4px, over
+     the minimum whether the label wraps onto two lines or not. The
+     pseudo-element paints nothing, `isolate` gives the link its own
+     stacking context so a z-index below the label cannot escape behind
+     an ancestor surface, and it clears the label's own text box, so it
+     never covers a neighbouring link. */
+  .touch-target {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .touch-target::after {
+    content: "";
+    position: absolute;
+    inset: -0.25rem 0;
+    z-index: -1;
+  }
+
+  /* The carousel progress dots are 6px tall by design, so a vertical inset
+     alone cannot reach 24px. They already sit 8px apart, which is why the
+     enlargement is allowed to overlap into the gutter between two dots: a
+     tap that lands there belongs to one of the two, never to the slide
+     underneath. The visible dot is unchanged. */
+  .touch-target-pill::after {
+    inset: -0.5625rem 0;
+  }
+}
+
 /* Micro-interaction: an arrow that steps forward when its row is hovered. */
 .nudge {
   transition: transform 220ms var(--ease-out-zine);

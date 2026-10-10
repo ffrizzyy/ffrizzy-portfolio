@@ -80,7 +80,7 @@ export function StatGrid() {
 
                   <a
                     href={stat.href}
-                    className="w-fit text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 transition-[text-decoration-color,text-decoration-thickness] hover:decoration-signal group-hover:decoration-4 group-hover:decoration-signal"
+                    className="touch-target w-fit text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 transition-[text-decoration-color,text-decoration-thickness] hover:decoration-signal group-hover:decoration-4 group-hover:decoration-signal"
                   >
                     {stat.label}
                   </a>

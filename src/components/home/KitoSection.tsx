@@ -114,7 +114,7 @@ export function KitoSection() {
               <div className="flex flex-col gap-3">
                 <a
                   href="/work/portal-publik"
-                  className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                  className="touch-target group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                 >
                   Read the full case study
                   <Icon name="ArrowUpRight" size={18} className="nudge" />
@@ -124,7 +124,7 @@ export function KitoSection() {
                     href={article.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target group inline-flex w-fit items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
                     Read the article
                     <Icon name="ArrowUpRight" size={18} className="nudge" />
