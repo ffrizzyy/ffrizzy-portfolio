@@ -9,6 +9,7 @@ import { Chip } from "@/components/ui/Chip";
 import type { WorkRow } from "@/lib/content";
 import type { ProjectType } from "@/content/schema";
 import { LAYOUT } from "@/lib/constants";
+import { hiddenUntilExpanded, moreLabel } from "@/lib/mobile-collapse";
 import { FILTER_LABELS, isWorkFilter, WORK_FILTERS, type WorkFilter } from "@/lib/work-filters";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,14 @@ import { cn } from "@/lib/utils";
  * Filter state lives in the URL as ?type=research so a view is shareable. It is
  * written with history.replaceState rather than the Next router, which keeps this
  * component out of a useSearchParams Suspense boundary.
+ *
+ * Mobile: twelve rows are the tallest thing on the page at 390px, so below md
+ * the list shows VISIBLE_ROWS of them and a control reveals the rest. A hidden
+ * row is never unmounted, only `display: none`, so the index stays in the
+ * document for a crawler, and from md up every row renders exactly as before.
+ * Changing the filter resets the reveal, and a filtered list is short enough
+ * that it is never shortened at all: a reader who asks for one type sees every
+ * row of it.
  */
 const TYPE_ICON: Record<ProjectType, IconName> = {
   build: "Code",
@@ -42,9 +51,46 @@ const TYPE_ICON: Record<ProjectType, IconName> = {
   content: "PencilSimpleLine",
 };
 
+/**
+ * Rows the index shows before the reader opens it, below md only. A row is
+ * roughly 120px at 390px, so the other nine are about 1080px, which is more
+ * than a screen of scroll on their own.
+ */
+const VISIBLE_ROWS = 3;
+
+/** The list the reveal control points at. One section, so one fixed id. */
+const LIST_ID = "all-list";
+
+/** Binds the collapsed state to the shared responsive hiding rule. */
+const disclosureRange = (collapsed: boolean) => ({ visible: VISIBLE_ROWS, collapsed });
+
+/**
+ * The responsive flag CSS cannot supply to JavaScript.
+ *
+ * Hiding is decided entirely in CSS, so this is used for one thing only: whether
+ * Motion may animate row layout. It starts false so the server HTML and the
+ * hydrated HTML agree, and it uses the same 767.98px boundary the md: prefix
+ * compiles to.
+ */
+function useIsCollapsedBreakpoint() {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767.98px)");
+    const sync = () => setMatches(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  return matches;
+}
+
 export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
   const [filter, setFilter] = useState<WorkFilter>("all");
+  const [expanded, setExpanded] = useState(false);
   const reduceMotion = useReducedMotion();
+  const isCollapsedBreakpoint = useIsCollapsedBreakpoint();
 
   // Read the deep link on mount so /?type=research works on first load.
   useEffect(() => {
@@ -65,6 +111,9 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
 
   const select = (next: WorkFilter) => {
     setFilter(next);
+    // A different filter is a different list, so it opens at the compact
+    // length rather than staying open from the previous one.
+    setExpanded(false);
 
     const url = new URL(window.location.href);
     if (next === "all") url.searchParams.delete("type");
@@ -76,6 +125,14 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
     () => (filter === "all" ? allRows : allRows.filter((row) => row.type === filter)),
     [allRows, filter],
   );
+
+  // The reveal is only offered when it would actually reveal something. It is
+  // also why a filtered list is never shortened: every filtered view here is
+  // short enough to fit, and hiding part of a subset the reader just asked for
+  // would be the confusing case.
+  const canReveal = rows.length > VISIBLE_ROWS;
+  const collapsed = canReveal && !expanded;
+  const hiddenCount = Math.max(rows.length - VISIBLE_ROWS, 0);
 
   return (
     <section id="all" className={`${LAYOUT.section} border-t border-line`}>
@@ -137,17 +194,24 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
           </div>
         ) : null}
 
-        <ul className="mt-12 border-t border-line">
+        <ul id={LIST_ID} className="mt-12 border-t border-line">
           <AnimatePresence initial={false}>
             {rows.map((row, index) => (
               <motion.li
                 key={row.id}
-                layout={!reduceMotion}
+                /* Projection is off where a row can be display:none: a hidden
+                   row measures as nothing, so animating its neighbours would
+                   animate from a wrong reading, and there is nothing to slide
+                   anyway because every row on this breakpoint is one height. */
+                layout={!reduceMotion && !isCollapsedBreakpoint}
                 initial={reduceMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={reduceMotion ? undefined : { opacity: 0 }}
                 transition={reduceMotion ? { duration: 0 } : { duration: 0.25 }}
-                className="border-b border-line"
+                className={cn(
+                  "border-b border-line",
+                  hiddenUntilExpanded(index, disclosureRange(collapsed)),
+                )}
               >
                 <a
                   href={row.href}
@@ -193,6 +257,42 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
             ))}
           </AnimatePresence>
         </ul>
+
+        {/* Mobile only: above md this wrapper is display:none, and every row it
+            would reveal is visible already, so the desktop render is the same
+            twelve rows it has always been. The control is a pill, which is the
+            one shape the system rounds, drawn as a paper tab: ink border, hard
+            offset shadow, mono label. The 4rem above it is deliberate, so the
+            control reads as a standfirst for the rows it opens rather than as
+            the thirteenth row of the list. */}
+        {canReveal ? (
+          <div className="hidden md:flex">
+            <button
+              type="button"
+              aria-expanded={expanded}
+              aria-controls={LIST_ID}
+              onClick={() => setExpanded((value) => !value)}
+              className={cn(
+                "group mt-16 inline-flex min-h-11 items-center gap-3 rounded-pill border-2 border-ink bg-paper px-5 py-2.5",
+                "num text-xs uppercase tracking-[0.16em] text-ink shadow-hard",
+                "transition-[background-color,transform,box-shadow] duration-200 ease-zine",
+                "hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-paper-raised hover:shadow-[8px_8px_0_0_var(--shadow-color)]",
+                "active:translate-x-0 active:translate-y-0 active:shadow-none",
+              )}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "grid size-5 shrink-0 place-items-center transition-transform duration-300 ease-zine",
+                  expanded && "rotate-45",
+                )}
+              >
+                <Icon name="Plus" size={16} />
+              </span>
+              {expanded ? "Show fewer" : moreLabel(hiddenCount, "project")}
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );

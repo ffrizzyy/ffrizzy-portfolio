@@ -2,6 +2,7 @@ import { Accordion } from "@/components/shared/Accordion";
 import { Icon, type IconName } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { SectionHeading } from "@/components/shared/decor";
+import { ExperienceTimeline } from "@/components/home/ExperienceTimeline";
 import { aboutTimeline, awardList, certList, languages } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
 
@@ -12,12 +13,21 @@ import { LAYOUT } from "@/lib/constants";
  *
  * Deliberately absent here: a portrait, a separate education block, and a CV
  * button, all of which spec 4.9 excludes.
+ *
+ * Mobile: the rail is the second tallest thing on the page at 390px, so below
+ * md it shows ENTRIES_BEFORE_REVEAL entries and hands the reader a control for
+ * the rest. Only the rail is a client leaf; this section stays a Server
+ * Component, so the timeline data does not enter the client bundle. The entries
+ * are rendered here and passed down, which is the same split WorkList uses.
  */
 const KIND_ICON: Record<string, IconName> = {
   work: "Briefcase",
   leadership: "UsersThree",
   award: "Trophy",
 };
+
+/** Entries the rail shows before the reader opens it, below md only. */
+const ENTRIES_BEFORE_REVEAL = 3;
 
 export function AboutSection() {
   const certItems = certList.map((group) => ({
@@ -34,6 +44,25 @@ export function AboutSection() {
       </ul>
     ),
   }));
+
+  // Rendered here and handed down, so the revealed entries are the same
+  // markup they always were and the client leaf carries no content data.
+  const timelineEntries = aboutTimeline.map((entry) => (
+    <li key={entry.id} className="flex flex-col gap-1.5">
+      <span className="flex items-center gap-2">
+        <Icon name={KIND_ICON[entry.kind] ?? "Briefcase"} size={18} />
+        <span className="text-base font-medium text-ink">{entry.title}</span>
+      </span>
+      <span className="text-sm text-ink-muted">
+        {entry.org}
+        {entry.location ? `, ${entry.location}` : ""}
+      </span>
+      <span className="num text-xs text-ink-muted">{entry.display}</span>
+      {entry.bullets[0] ? (
+        <span className="mt-1 text-sm text-ink-muted">{entry.bullets[0]}</span>
+      ) : null}
+    </li>
+  ));
 
   return (
     <section id="about" className={`${LAYOUT.section} border-t border-line`}>
@@ -89,30 +118,10 @@ export function AboutSection() {
                 Experience
               </h3>
 
-              <ol className="relative flex flex-col gap-8 border-l-2 border-line pl-6">
-                {/* The signal line fills as the reader scrolls. */}
-                <span
-                  aria-hidden
-                  className="rail-progress absolute -left-0.5 top-0 h-full w-0.5 bg-signal"
-                />
-
-                {aboutTimeline.map((entry) => (
-                  <li key={entry.id} className="flex flex-col gap-1.5">
-                    <span className="flex items-center gap-2">
-                      <Icon name={KIND_ICON[entry.kind] ?? "Briefcase"} size={18} />
-                      <span className="text-base font-medium text-ink">{entry.title}</span>
-                    </span>
-                    <span className="text-sm text-ink-muted">
-                      {entry.org}
-                      {entry.location ? `, ${entry.location}` : ""}
-                    </span>
-                    <span className="num text-xs text-ink-muted">{entry.display}</span>
-                    {entry.bullets[0] ? (
-                      <span className="mt-1 text-sm text-ink-muted">{entry.bullets[0]}</span>
-                    ) : null}
-                  </li>
-                ))}
-              </ol>
+              <ExperienceTimeline
+                entries={timelineEntries}
+                visibleCount={ENTRIES_BEFORE_REVEAL}
+              />
             </div>
 
             <div className="flex flex-col gap-4">
