@@ -244,7 +244,7 @@ const projectRows: WorkRow[] = WORK_ROW_ORDER.map((slug) => {
   };
 });
 
-/** The eleventh row: content work, which has no case study route. */
+/** The twelfth row: content work, which has no case study route. */
 const contentRow: WorkRow = {
   id: "audience-growth-stories",
   title: "Audience growth stories",

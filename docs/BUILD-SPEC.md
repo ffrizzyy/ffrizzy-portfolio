@@ -1758,3 +1758,24 @@ Only these stay static, because they contain no script tag: `icon.png`,
 `public/.well-known/security.txt` follows RFC 9116 with a contact and an expiry.
 `Canonical` and `Policy` are deliberately omitted until the production domain is
 fixed, because both require an absolute URL and a wrong one is worse than none.
+
+---
+
+## 16. The JavaScript budget, revised against measurement
+
+Section 1.6 set the home page first-load JavaScript budget at 170 KB gzipped. Measured against the deployed site with a cold cache, that figure is not reachable, and no application-level work makes it reachable.
+
+| Page | Measured | Before the deferrals |
+|---|---|---|
+| `/` | 302 KB | 299 KB |
+| `/cv` | 186 KB | 185 KB |
+| `/work/portal-publik` | 241 KB | 348 KB |
+| `/work/azzifa` | 194 KB | 301 KB |
+
+The case study routes fell by roughly 100 KB once the chart and map panels moved behind dynamic imports. That is the change that worked. The home page did not move, and the reason is structural: the form libraries and Motion share one eager chunk, and Motion is still required on first load by the work list and the carousel. Deferring the contact form removes only its share of a chunk that has to load anyway.
+
+Beneath the route code is a floor the application does not control. The framework shell plus polyfills measured 172,449 B gzip, of which 39,520 B is a core-js polyfill set shipped to every route. Adding a modern `browserslist` target to package.json, the documented lever for dropping it, did **not** measurably reduce the result: the polyfill chunk still appears on every route at about 45 KB.
+
+**The 170 KB budget is therefore withdrawn and replaced by a regression guard.** A budget exists to catch growth. A number already exceeded by the framework, before any application code loads, cannot do that. Set the replacement from measurement rather than aspiration, using the table above as the baseline.
+
+The only remaining lever of real size is Motion. Its projection system is reached from the work list's `layout` prop and the carousel's `drag`. Replacing those with CSS visibility plus a transform transition, and pointer events instead of drag, would take Motion out of the first load entirely. Both are genuine changes to animation behaviour and neither has been attempted.
