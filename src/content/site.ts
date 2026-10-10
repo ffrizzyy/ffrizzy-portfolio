@@ -521,6 +521,17 @@ export const growthSlides: z.infer<typeof growthSlideSchema>[] = [
  * Writing. Spec 4.8 and 5.4.                                          *
  * ------------------------------------------------------------------ */
 
+/**
+ * The LinkedIn article describing KITO, published 30 Sep 2026.
+ *
+ * Defined once, here, because it is referenced from two places: this writing
+ * entry and the portal-publik project's link list. It was written out twice
+ * before, one copy was corrected and the other was not, which left a link to the
+ * LinkedIn homepage sitting in the writing section.
+ */
+export const kitoArticleUrl =
+  "https://www.linkedin.com/pulse/ai-engineer-muhammad-farrel-al-wafi-frizzy-ixuyf";
+
 export const writing: WritingItem[] = [
   {
     id: "kito-article",
@@ -528,7 +539,7 @@ export const writing: WritingItem[] = [
     title: "KITO: Kanal Informasi, Transparansi & Observasi",
     description:
       "How a Telegram bot, an AI agent, and a public portal give Palembang residents one simple place to report problems and track what happens next.",
-    url: "https://www.linkedin.com/",
+    url: kitoArticleUrl,
     date: "30 Sep 2026",
     cover: "/images/portal-publik.webp",
     language: "id",

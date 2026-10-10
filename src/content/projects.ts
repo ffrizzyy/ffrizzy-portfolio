@@ -1,4 +1,5 @@
 import type { Project } from "./schema";
+import { kitoArticleUrl } from "./site";
 
 /**
  * The ten project records. Spec 7 inventory, with the outcome lines from
@@ -64,7 +65,8 @@ export const projects: Project[] = [
       { label: "GitHub", href: "https://github.com/Gedegok23/portal-publik" },
       {
         label: "LinkedIn article",
-        href: "https://www.linkedin.com/pulse/ai-engineer-muhammad-farrel-al-wafi-frizzy-ixuyf",
+        // Shared with the writing section so the two cannot drift apart again.
+        href: kitoArticleUrl,
       },
     ],
     cover: "/images/portal-publik.webp",
