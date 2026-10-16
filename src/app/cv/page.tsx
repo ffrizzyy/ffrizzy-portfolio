@@ -256,7 +256,20 @@ export default function CvPage() {
                       key={item.id}
                       className="flex flex-wrap items-baseline justify-between gap-x-4"
                     >
-                      <span className="text-sm text-ink-muted">{item.name}</span>
+                      {/* A certificate with a public verification page links to
+                          it, so the claim can be checked rather than trusted. */}
+                      {item.credentialUrl ? (
+                        <a
+                          href={item.credentialUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="touch-target text-sm text-ink-muted underline decoration-signal decoration-2 underline-offset-4 hover:text-ink hover:decoration-4"
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <span className="text-sm text-ink-muted">{item.name}</span>
+                      )}
                       <span className="num text-xs text-ink-muted">{item.date ?? item.year}</span>
                     </li>
                   ))}

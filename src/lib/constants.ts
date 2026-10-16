@@ -52,11 +52,18 @@ export const LAYOUT = {
  * Spec 3: one line of anchors, then the theme switch. It grew from five to six
  * when the Open source section was added: the same list feeds the desktop bar
  * and the mobile section bar, so a section that gets an anchor gets it on both.
+ *
+ * The order is the order the sections appear down the page, so the active mark
+ * travels left to right as a reader scrolls rather than jumping back. That is
+ * why Content leads: the content carousel sits above the #all index on the page
+ * even though Work reads first everywhere else. The Work link still points at
+ * #all, the filterable list, which is the deliberate asymmetry spec 3 records;
+ * only its position in the bar is set by the page, not by the label's rank.
  */
 export const NAV_LINKS = [
+  { label: "Content", href: "#content" },
   { label: "Work", href: "#all" },
   { label: "Repos", href: "#repos" },
-  { label: "Content", href: "#content" },
   { label: "Writing", href: "#writing" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },

@@ -351,14 +351,43 @@ export const education = [
 export const awards: Award[] = [
   { id: "best-core-team", title: "The Best Core Team", org: "GDSC", year: 2024 },
   { id: "redesign-2nd", title: "2nd Winner, Redesign Challenge", org: "GDSC", year: 2024 },
+  /**
+   * Topindoku win, from the signed certificate: 162/B/S.Ket/Pan-ITFAIRXIII/
+   * HIMATIF/II/2024, awarded to team DEUX TEAM as Juara 1 in the UI/UX design
+   * competition at IT Fair XIII, UIN Sunan Gunung Djati Bandung.
+   */
+  { id: "topindoku-uiux-1st", title: "1st Winner, UI/UX Design Competition", org: "Topindoku, IT Fair XIII", year: 2024 },
   { id: "uiux-1st", title: "1st Winner, UI/UX Competition", org: "Technology Euphoria", year: 2023 },
 ];
 
 /* ------------------------------------------------------------------ *
- * Certifications. All seven are transcribed from the CV.               *
+ * Certifications. The Coursera, Hacktiv8, IBM and Dicoding entries    *
+ * are transcribed from the CV; the Claude Academy badges were earned   *
+ * since and are reported here as well.                                *
  * ------------------------------------------------------------------ */
 
 export const certifications: CertIssuer[] = [
+  {
+    issuer: "Claude Academy",
+    items: [
+      {
+        id: "claude-code-101",
+        name: "Claude Code 101",
+        year: 2026,
+        date: "Oct 2026",
+        // Each badge has a public verification page, so the credential itself
+        // can be checked rather than taken on trust.
+        credentialUrl: "https://academy.claude.com/verify/0d998f2cb6f5e6e1544649275aaf2645",
+      },
+      {
+        id: "claude-code-in-action",
+        name: "Claude Code in action",
+        year: 2026,
+        date: "Oct 2026",
+        credentialUrl: "https://academy.claude.com/verify/9d2b7dc3986fe851f19d16431e78dc03",
+      },
+    ],
+  },
   {
     issuer: "Coursera",
     items: [

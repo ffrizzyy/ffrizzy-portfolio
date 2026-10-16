@@ -17,8 +17,10 @@ import { LAYOUT, NAV_LINKS } from "@/lib/constants";
  * Two details are deliberate:
  *
  * - The first entry is #work rather than the desktop nav's #all. The bar carries
- *   the five section anchors, and on a phone the "selected work" bento is the
+ *   the six section anchors, and on a phone the "selected work" bento is the
  *   section a visitor is looking for; see the note on MOBILE_ENTRIES below.
+ *   (MOBILE_ENTRIES is NAV_LINKS verbatim, so the bar reads in the same order as
+ *   the desktop nav and highlights in the same left-to-right sequence.)
  * - It reads no scroll position. The active entry comes from an
  *   IntersectionObserver over the same section ids the desktop nav watches, so
  *   nothing runs per frame and spec 2.8's ban on scroll listeners still holds.

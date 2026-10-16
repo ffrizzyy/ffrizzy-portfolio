@@ -37,7 +37,18 @@ export function AboutSection() {
       <ul className="flex flex-col gap-2">
         {group.items.map((item) => (
           <li key={item.id} className="flex items-baseline justify-between gap-4">
-            <span className="text-sm text-ink">{item.name}</span>
+            {item.credentialUrl ? (
+              <a
+                href={item.credentialUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="touch-target text-sm text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+              >
+                {item.name}
+              </a>
+            ) : (
+              <span className="text-sm text-ink">{item.name}</span>
+            )}
             <span className="num text-xs text-ink-muted">{item.date ?? item.year}</span>
           </li>
         ))}
