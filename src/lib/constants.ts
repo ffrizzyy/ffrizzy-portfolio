@@ -49,18 +49,21 @@ export const LAYOUT = {
 } as const;
 
 /**
- * Spec 3: one line of anchors, then the theme switch. It grew from five to six
- * when the Open source section was added: the same list feeds the desktop bar
- * and the mobile section bar, so a section that gets an anchor gets it on both.
+ * Spec 3: one line of anchors, then the theme switch. It grew from five to
+ * seven as the Open source and Skills sections were added: the same list feeds
+ * the desktop bar, the mobile section bar, and the phone menu sheet, so a
+ * section that gets an anchor gets it everywhere.
  *
  * The order is the order the sections appear down the page, so the active mark
  * travels left to right as a reader scrolls rather than jumping back. That is
- * why Content leads: the content carousel sits above the #all index on the page
- * even though Work reads first everywhere else. The Work link still points at
- * #all, the filterable list, which is the deliberate asymmetry spec 3 records;
- * only its position in the bar is set by the page, not by the label's rank.
+ * why Skills and Content lead, and Work sits third: the skills map and the
+ * content carousel both sit above the #all index on the page even though Work
+ * reads first everywhere else. The Work link still points at #all, the
+ * filterable list, which is the deliberate asymmetry spec 3 records; only its
+ * position in the bar is set by the page, not by the label's rank.
  */
 export const NAV_LINKS = [
+  { label: "Skills", href: "#skills" },
   { label: "Content", href: "#content" },
   { label: "Work", href: "#all" },
   { label: "Repos", href: "#repos" },

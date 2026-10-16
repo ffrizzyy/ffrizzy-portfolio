@@ -122,7 +122,7 @@ export function Nav() {
                       href={hrefFor(link.href)}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative block rounded-pill px-3 py-1.5 text-sm font-medium transition-colors duration-200 ease-zine",
+                        "relative block rounded-pill px-2 py-1.5 text-sm font-medium transition-colors duration-200 ease-zine lg:px-3",
                         isActive ? "text-ink" : "text-ink-muted hover:text-ink",
                       )}
                     >

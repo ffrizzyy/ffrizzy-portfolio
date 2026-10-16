@@ -16,11 +16,11 @@ import { LAYOUT, NAV_LINKS } from "@/lib/constants";
  *
  * Two details are deliberate:
  *
- * - The first entry is #work rather than the desktop nav's #all. The bar carries
- *   the six section anchors, and on a phone the "selected work" bento is the
- *   section a visitor is looking for; see the note on MOBILE_ENTRIES below.
- *   (MOBILE_ENTRIES is NAV_LINKS verbatim, so the bar reads in the same order as
- *   the desktop nav and highlights in the same left-to-right sequence.)
+ * - It carries NAV_LINKS verbatim, so the entries read in the same order as the
+ *   desktop bar and the menu sheet; see the note on MOBILE_ENTRIES below for why
+ *   no entry is retargeted here. Seven single-word labels is the most the bar
+ *   holds on a 360px phone, which is why the label size and tracking are a notch
+ *   smaller than they were at six.
  * - It reads no scroll position. The active entry comes from an
  *   IntersectionObserver over the same section ids the desktop nav watches, so
  *   nothing runs per frame and spec 2.8's ban on scroll listeners still holds.
@@ -36,7 +36,7 @@ import { LAYOUT, NAV_LINKS } from "@/lib/constants";
 type MobileEntry = { label: string; id: string };
 
 /**
- * The five main sections, taken straight from NAV_LINKS.
+ * The seven section anchors, taken straight from NAV_LINKS.
  *
  * It was briefly retargeted so that "Work" opened #work, the bento, on the
  * grounds that NAV_LINKS points the same label at #all. That was reverted: a
@@ -128,8 +128,8 @@ export function MobileNav() {
                 href={onHome ? `#${entry.id}` : `/#${entry.id}`}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "relative flex min-h-[3.875rem] items-center justify-center px-1 text-center",
-                  "font-mono text-[0.7rem] uppercase tracking-[0.12em] transition-colors duration-200 ease-zine",
+                  "relative flex min-h-[3.875rem] items-center justify-center px-0.5 text-center",
+                  "whitespace-nowrap font-mono text-[0.62rem] uppercase tracking-[0.06em] transition-colors duration-200 ease-zine",
                   isActive ? "text-ink" : "text-ink-muted hover:text-ink",
                 )}
               >
