@@ -2,9 +2,13 @@ import type { Project } from "./schema";
 import { kitoArticleUrl } from "./site";
 
 /**
- * The ten project records. Spec 7 inventory, with the outcome lines from
+ * The fourteen project records. Spec 7 inventory, with the outcome lines from
  * spec 10.2. `tags` values must match a skill name in site.ts, and the build
  * fails if a skill resolves to no project (spec 7.1 invariant 1).
+ *
+ * The last three come from the public repositories that previously appeared only
+ * in the Open source section, so their case studies now exist and the repository
+ * cards link across to them.
  */
 export const projects: Project[] = [
   {
@@ -335,6 +339,126 @@ export const projects: Project[] = [
         {
           label: "Who it was for",
           text: "Minimum age 17, across the general public, school students, university students, employees, professionals, and communities.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "frizzy-store-system",
+    title: "Frizzy Store System",
+    type: "build",
+    featured: false,
+    role: "Solo build: data model, point of sale, cash engine, and interface",
+    period: "Oct 2026",
+    outcome:
+      "A phone shop's sales, stock, and cash in one place, plus a Cash Recovery Engine that computes runway, flags leaks, and sets open-to-buy.",
+    stack: ["Next.js", "TypeScript", "Tailwind", "Zustand", "Recharts"],
+    tags: [],
+    links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/frizzy-store-system" }],
+    cover: "/images/frizzy-store-system.webp",
+    caseStudy: {
+      summary:
+        "A store system for a phone counter: sales, stock and cash in one place. On top of the usual point of sale sits a Cash Recovery Engine, which reads the same numbers and answers the question the owner actually has, which is how long the cash lasts and what to spend it on. The sales are real, taken from an export of the counter's WhatsApp sales chat.",
+      problem:
+        "A phone counter runs on cash and stock that turn over quickly, and a cashier app answers the wrong question. It reports today's takings but not how fast the cash is burning, where it is leaking, or how much stock it is safe to buy next week. Those answers are already in the data, but not in a form anyone reads.",
+      approach:
+        "Sales come from the real records, extracted row by row from the shop's WhatsApp sales group. Stock is an append-only ledger, so a sale never overwrites a stock figure, it writes a new line. Money is always integer rupiah, never a float. The Cash Recovery Engine is built on top: True Burn, runway, a Leak Detector, reorder suggestions, open-to-buy, a What-If slider and a playbook. Two roles differ in what they can see, so as staff the cost prices and the profit disappear and a sensitive action asks for the owner's PIN.",
+      outcome:
+        "Nineteen pages, a point of sale with IMEI selection, a margin guard, layered discounts and mixed payments, a catalogue of 24 reports with CSV export, shift and cash reconciliation, and an AI analyst that computes its answers with tools instead of letting the model guess.",
+      limitations:
+        "The supporting records the chat export does not contain, such as stock, cash, overheads and shifts, are generated deterministically so every feature can be exercised. The app is not deployed, so the repository is the whole of it, and a real deployment would replace the generated data with the counter's own.",
+      bullets: [
+        {
+          label: "The cash engine",
+          text: "True Burn and runway estimate how long the cash lasts, the Leak Detector points at where it goes, and open-to-buy sets a safe purchasing ceiling. A What-If slider re-runs the forecast against a change before it is made.",
+        },
+        {
+          label: "Tested in a real browser",
+          text: "An end-to-end script drives the running app through the DevTools protocol: it adds a product, completes a payment, rejects a wrong PIN, approves with the owner's PIN, moves the What-If slider, switches theme and opens every page. The last run passed 34 checks with none failing.",
+        },
+        {
+          label: "Why a ledger",
+          text: "Stock as an append-only ledger means a correction is another entry, so the history of a number is never lost. Every stock change also writes an audit line.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "she-aint-allat",
+    title: "she aint allat",
+    type: "build",
+    featured: false,
+    role: "Solo build: matcher, interruption levels, and interface",
+    period: "Oct 2026",
+    outcome:
+      "A browser extension that intervenes when your own browsing touches an ex, covering the page with something you chose in advance. Local first, no account.",
+    stack: ["JavaScript", "Manifest V3", "WebExtensions API"],
+    tags: [],
+    links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/she-aint-allat" }],
+    cover: "/images/she-aint-allat.webp",
+    caseStudy: {
+      summary:
+        "A browser extension that interrupts the urge to look someone up. You keep a list of your own triggers, a name, a handle, a place or a link pattern, and allow the sites you want watched. When one fires, the page is covered by something you chose in advance: a picture that makes you laugh, a line that calms you, or a reminder of why it ended.",
+      problem:
+        "Looking up an ex is a one second impulse, and by the time a decision arrives the page is already open. Willpower loses that race because it is asked to act at the exact moment it is weakest. The fix is to decide in advance, while calm, what should happen instead.",
+      approach:
+        "Everything runs and stays on the device. Matching happens in memory against the page address, its title, search boxes, visible text, image descriptions and links, and nothing about the page is stored. Three levels escalate: a nudge that closes itself, a blur with a card, and a full pause with a timer. The same trigger firing three times in half an hour steps up one level, never past the highest. App lock, night mode, snooze and a pool of pop-up items keep the tool usable without making it weaker.",
+      outcome:
+        "Three interruption levels with automatic escalation, a 24 hour delay before a trigger can be removed, insights that read detours by hour and by site, unsent letters that lock for a chosen number of days, an optional reality check list of reasons it ended, and a support page with crisis lines for four countries. No account, no server, no analytics.",
+      limitations:
+        "Chrome, Edge and Brave are the tested target. The Firefox build is new and checked by tests rather than by hand, and there is no Safari build. Only the top frame of each page is watched, there is no text recognition inside images or video, and there is no sync between devices. The app lock is a gate, not encryption, and a hostile page can detect the overlay.",
+      bullets: [
+        {
+          label: "The commitment device",
+          text: "Removing a trigger takes 24 hours and asks for confirmation a second time, so a decision made at one in the morning cannot undo a list written when things were clear. A trigger added by mistake can still be removed at once within fifteen minutes.",
+        },
+        {
+          label: "Local first",
+          text: "No network requests, no analytics and no remote configuration. The toolbar icon and badge are always visible so the extension cannot hide on someone's computer, and the settings page can export or delete everything.",
+        },
+        {
+          label: "A tool, not treatment",
+          text: "The extension says plainly that it is self-help and not therapy or medical care, and points to local helplines.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "loopnote",
+    title: "Loopnote",
+    type: "build",
+    featured: false,
+    role: "Solo build: API, client, and study scheduling",
+    period: "Sep 2026",
+    outcome:
+      "Photograph a whiteboard or a page of notes and get a summary plus flashcards on an SM-2 schedule. Expo app, Express API, mocked model calls.",
+    stack: ["TypeScript", "Expo", "Express", "SQLite", "SM-2"],
+    tags: [],
+    links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/loopnote" }],
+    cover: "/images/loopnote.webp",
+    caseStudy: {
+      summary:
+        "Loopnote turns photos of notes, whiteboards and journal pages into searchable summaries and flashcards. A photo is imported from a phone, the server runs it through a pipeline, and the result is organised into topics with spaced repetition scheduling on top.",
+      problem:
+        "Notes photographed on a phone are easy to capture and almost impossible to use again. They sit in the camera roll in the order they were taken, unsearchable, and turning them into something studyable is the step that never happens.",
+      approach:
+        "A monorepo with an Expo client and an Express API. An upload runs through a pipeline of resize, detect and a summarisation gate, then lands as topics, notes and flashcards. Scheduling is a pure SM-2 implementation and grouping across notes is a tag-similarity match, both written as plain functions with their own tests, so the study logic does not depend on the framework. Invites, a waitlist and feedback collection are part of the same build.",
+      outcome:
+        "An in-app import flow with a queue, visible upload progress and retry, automatic categorisation across notes, SM-2 scheduling with a due queue, a review step to keep, merge or discard what came in, a beta invite flow, and a framework-free review interface.",
+      limitations:
+        "Both model calls are still mocked, so summaries and flashcards come from a stub rather than a real model. The native share sheet, the share to Loopnote action inside the photo library, is stubbed and needs a real Xcode or Android Studio project. Nothing is deployed, so the repository is the whole of it.",
+      bullets: [
+        {
+          label: "Study logic as plain functions",
+          text: "The SM-2 scheduler and the topic matcher take plain inputs and return plain outputs, with no framework in the way, so both are tested on their own rather than through the app.",
+        },
+        {
+          label: "The upload path",
+          text: "A picker with multi-select feeds a queue that uploads with visible progress and retries failures, and the queue reducer is framework-agnostic and tested.",
+        },
+        {
+          label: "Where it stops",
+          text: "Phase 0 is complete and three Phase 1 issues are done. The model calls and the native share sheet are the known gaps, both recorded in the repository.",
         },
       ],
     },

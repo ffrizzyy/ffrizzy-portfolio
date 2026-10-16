@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
  * Redesigned from a plain three-column list into an index: each row now carries
  * its position, a type icon, the outcome, and the type and period together, with
  * a hover state that lifts the row, fills the icon tile with signal, and slides
- * an arrow in. The point is that twelve rows of text gave a reader nothing to
+ * an arrow in. The point is that fifteen rows of text gave a reader nothing to
  * scan; the icons and the counts give the eye something to travel along.
  *
  * The icon set is the one spec 2.13 already assigns to work types, so this uses
@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
  *
  * Rows arrive as a prop from the Server Component rather than being imported.
  * Importing them from the content layer dragged every project and its case study
- * prose into the client bundle, so each visitor downloaded all eleven write-ups
+ * prose into the client bundle, so each visitor downloaded all fourteen write-ups
  * to render a list of titles. Only the filter vocabulary and the WorkRow type are
  * imported, and the type is erased at build time.
  *
@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
  * written with history.replaceState rather than the Next router, which keeps this
  * component out of a useSearchParams Suspense boundary.
  *
- * Mobile: twelve rows are the tallest thing on the page at 390px, so below md
+ * Mobile: fifteen rows are the tallest thing on the page at 390px, so below md
  * the list shows VISIBLE_ROWS of them and a control reveals the rest. A hidden
  * row is never unmounted, only `display: none`, so the index stays in the
  * document for a crawler, and from md up every row renders exactly as before.
@@ -53,7 +53,7 @@ const TYPE_ICON: Record<ProjectType, IconName> = {
 
 /**
  * Rows the index shows before the reader opens it, below md only. A row is
- * roughly 120px at 390px, so the other nine are about 1080px, which is more
+ * roughly 120px at 390px, so the other twelve are about 1440px, which is more
  * than a screen of scroll on their own.
  */
 const VISIBLE_ROWS = 3;
@@ -260,11 +260,11 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
 
         {/* Mobile only: below md this wrapper is display:flex, and from md up it
             is display:none because every row it would reveal is already visible,
-            so the desktop render is the same twelve rows it has always been. The
+            so the desktop render is the same fifteen rows it has always been. The
             control is a pill, which is the one shape the system rounds, drawn as
             a paper tab: ink border, hard offset shadow, mono label. The 4rem
             above it is deliberate, so the control reads as a standfirst for the
-            rows it opens rather than as the thirteenth row of the list. */}
+            rows it opens rather than as the sixteenth row of the list. */}
         {canReveal ? (
           <div className="flex md:hidden">
             <button

@@ -222,7 +222,9 @@ if (orphanSkills.length > 0) {
 }
 
 /* ------------------------------------------------------------------ *
- * The #all list. Spec 4.7: 11 rows, but only 10 are project files.    *
+ * The #all list. Spec 4.7 called for 11 rows. It is now the 14 project *
+ * files plus the content row, since every public repository gained a   *
+ * case study.                                                          *
  * ------------------------------------------------------------------ */
 
 export type WorkRow = {
@@ -242,6 +244,9 @@ const WORK_ROW_ORDER = [
   "portal-publik",
   "watsonx-genai-app",
   "redesign-challenge",
+  "frizzy-store-system",
+  "she-aint-allat",
+  "loopnote",
   "aid-dashboard",
   "imdb-sentiment-bilstm",
   "rice-clustering",
@@ -264,7 +269,7 @@ const projectRows: WorkRow[] = WORK_ROW_ORDER.map((slug) => {
   };
 });
 
-/** The twelfth row: content work, which has no case study route. */
+/** The last row: content work, which has no case study route. */
 const contentRow: WorkRow = {
   id: "audience-growth-stories",
   title: "Audience growth stories",

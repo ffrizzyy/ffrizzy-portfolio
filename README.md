@@ -82,7 +82,7 @@ empty box.
 
 | File | Holds |
 |---|---|
-| `src/content/projects.ts` | The ten projects, their outcome lines, and the case study bodies |
+| `src/content/projects.ts` | The fourteen projects, their outcome lines, and the case study bodies |
 | `src/content/repos.ts` | Every public GitHub repository, with the matching case study slug where one exists |
 | `src/content/site.ts` | Stats, timeline, events, awards, certifications, growth slides, writing, skills, tools, KITO copy |
 | `src/content/schema.ts` | The Zod schemas and inferred types |
@@ -146,6 +146,7 @@ spec document tracks the same list.
 | Brand logos in native colour | Ink at rest, signal on hover | Spec 2.2 exempts logos, but spec 4.4 specifically asks the strip to turn signal on hover. The more specific rule wins |
 | CSS `@property` count-up | `IntersectionObserver` plus `requestAnimationFrame` | The CSS counter can only paint through `content`, so the real number would never be in the DOM. This keeps the final value as real text at all times |
 | `content/projects/*.ts` | One `content/projects.ts` registry | With MDX gone, a single registry is the natural equivalent and avoids ten near-identical files |
+| Spec 4.7: 11 rows in `#all` | 15 rows: the 14 project files plus the content row | Every public repository now has a case study, so the three that previously lived only in Open source joined the index. The stat, the "N projects / N types" line and the stacked bar are all computed from the same list, so they move with it |
 | Analytics through a script tag | Conditionally loaded Plausible plus the `track()` wrapper | The script loads only when `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set, so a clone with no secrets makes no third-party request at all |
 | Spec 2.7 nav: 64px, not sticky | Fixed, rounded, translucent glass bar that compacts on scroll and marks the current section | Requested directly, and spec 5.3 had already listed a sticky header as a later addition. Both the compact state and the active section come from IntersectionObserver, so spec 2.8's ban on scroll listeners still holds and nothing runs per frame |
 | Spec 2.5: no blur | `backdrop-filter` on the floating nav and the mobile sheet only | The glass request. Blur is confined to those two surfaces and is never used as the blur glow that 2.5 bans |
@@ -189,7 +190,7 @@ to capture for each project.
 
 ## Where the images came from
 
-Seven of the eleven project covers are now real captures or real figures, and the
+Seven of the fourteen project covers are now real captures or real figures, and the
 scripts that produced the rest are kept as the record:
 
 - **Live captures**, taken in headless Chrome: the Azzifa app, the Tableau
@@ -202,7 +203,8 @@ scripts that produced the rest are kept as the record:
   somebody else's document, which is why they are mounted rather than dropped in.
 - **Drawn**, by `make-artwork.py`: Portal Publik (its dev server was not
   reachable), the watsonx app (kept drawn at the author's request), the Redesign
-  Challenge and SDC covers, and the four Instagram cards. The last two are drawn
+  Challenge and SDC covers, the Frizzy Store System, she aint allat and Loopnote
+  covers, and the four Instagram cards. The last two are drawn
   because Instagram serves a session wall, and no attempt was made to get past it.
 
 The COBIT paper also contained a group photograph of identifiable students. It was

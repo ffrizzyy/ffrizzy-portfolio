@@ -18,6 +18,7 @@ export const repos: Repo[] = [
       "Stock, sales, and cash system for a phone counter, with a cash recovery engine covering true burn, runway, and open-to-buy",
     url: "https://github.com/ffrizzyy/frizzy-store-system",
     language: "TypeScript",
+    projectSlug: "frizzy-store-system",
   },
   {
     name: "she-aint-allat",
@@ -25,6 +26,7 @@ export const repos: Repo[] = [
       "Browser extension that interrupts the urge to look someone up, with pop-ups you choose in advance. Local first, no account, no tracking",
     url: "https://github.com/ffrizzyy/she-aint-allat",
     language: "JavaScript",
+    projectSlug: "she-aint-allat",
   },
   {
     name: "loopnote",
@@ -32,6 +34,7 @@ export const repos: Repo[] = [
       "Photograph a whiteboard and get a summary plus flashcards scheduled with SM-2, as an Expo app on an Express API",
     url: "https://github.com/ffrizzyy/loopnote",
     language: "TypeScript",
+    projectSlug: "loopnote",
   },
   {
     name: "azzifa",
