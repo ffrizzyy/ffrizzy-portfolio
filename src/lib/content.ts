@@ -7,6 +7,7 @@ import {
   eventSchema,
   growthSlideSchema,
   projectSchema,
+  repoSchema,
   skillCategorySchema,
   skillSchema,
   statSchema,
@@ -19,6 +20,7 @@ import {
   type PortfolioEvent,
   type Project,
   type ProjectType,
+  type Repo,
   type Skill,
   type SkillCategory,
   type Stat,
@@ -27,6 +29,7 @@ import {
   type WritingItem,
 } from "@/content/schema";
 import { FEATURED_ORDER, projects } from "@/content/projects";
+import { repos as rawRepos } from "@/content/repos";
 import { isWorkFilter, WORK_FILTERS, type WorkFilter } from "@/lib/work-filters";
 import {
   awards as rawAwards,
@@ -68,12 +71,29 @@ export const growthList = z.array(growthSlideSchema).parse(rawGrowth);
 export const writingList: WritingItem[] = z.array(writingItemSchema).parse(rawWriting);
 export const skillList: Skill[] = z.array(skillSchema).parse(rawSkills);
 export const toolList: Tool[] = z.array(toolSchema).parse(rawTools);
+export const repoList: Repo[] = z.array(repoSchema).parse(rawRepos);
 
 /** Slug uniqueness, so two records cannot quietly shadow each other. */
 const slugs = projectList.map((p) => p.slug);
 const duplicateSlugs = slugs.filter((slug, index) => slugs.indexOf(slug) !== index);
 if (duplicateSlugs.length > 0) {
   throw new Error(`Duplicate project slugs: ${[...new Set(duplicateSlugs)].join(", ")}`);
+}
+
+/**
+ * A repository card that names a case study must name one that exists, so a
+ * rename in projects.ts cannot leave a dead "Case study" link behind.
+ */
+const missingRepoCaseStudies = repoList
+  .map((repo) => repo.projectSlug)
+  .filter((slug): slug is string => Boolean(slug))
+  .filter((slug) => !projectList.some((project) => project.slug === slug));
+if (missingRepoCaseStudies.length > 0) {
+  throw new Error(
+    `Repository cards reference missing case studies: ${[
+      ...new Set(missingRepoCaseStudies),
+    ].join(", ")}. Fix the projectSlug in content/repos.ts.`,
+  );
 }
 
 /**

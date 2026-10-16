@@ -106,7 +106,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
       className={`${bricolage.variable} ${geist.variable} ${geistMono.variable}`}
     >
-      <body>
+      {/* --mobile-nav-h is published on <body>, not on <main>, because the
+          reserved space belongs to the footer: the mobile section bar is fixed
+          to the bottom edge and the footer is the last element on the page, so
+          the padding that keeps it clear of the bar has to be reachable from
+          the footer. The stylesheet applies it in the mobile block. */}
+      <body style={{ "--mobile-nav-h": `${LAYOUT.mobileNavHeight}px` } as CSSProperties}>
         <script
           type="application/ld+json"
           nonce={nonce}
@@ -161,27 +166,20 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <Nav />
 
             {/* The nav floats over the page, so content starts below it. The
-                offset comes from the same constant the nav itself uses.
-
-                --mobile-nav-h is read by the mobile block in globals.css, which
-                pads this element's bottom by the bar height plus the safe-area
-                inset. The constant lives here, the media query lives in the
-                stylesheet, and neither has to restate the other's numbers. */}
-            <main
-              id="main"
-              style={{ paddingTop: LAYOUT.navTotal, "--mobile-nav-h": `${LAYOUT.mobileNavHeight}px` } as CSSProperties}
-            >
+                offset comes from the same constant the nav itself uses. */}
+            <main id="main" style={{ paddingTop: LAYOUT.navTotal }}>
               {children}
             </main>
 
             <Footer />
 
             {/* The mobile section bar is fixed to the bottom edge, so below md
-                the page has to reserve its height or the last line of the footer
-                sits underneath it. The padding that does it is keyed off the
-                custom property set on <main> above; from md up the bar is hidden
-                and that padding does not apply, which is what keeps the desktop
-                render exactly what it was. */}
+                the footer has to reserve its height or its last line sits
+                underneath the bar. The padding that does it lives in the mobile
+                block of globals.css and keys off the custom property set on
+                <body> above; from md up the bar is hidden and that padding does
+                not apply, which is what keeps the desktop render exactly what it
+                was. */}
             <MobileNav />
           </IconProvider>
         </ThemeProvider>

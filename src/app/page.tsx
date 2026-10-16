@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/home/ContactForm";
 import { ContentGrowth } from "@/components/home/ContentGrowth";
 import { Hero } from "@/components/home/Hero";
 import { KitoSection } from "@/components/home/KitoSection";
+import { ReposSection } from "@/components/home/ReposSection";
 import { SkillsMap } from "@/components/home/SkillsMap";
 import { StatGrid } from "@/components/home/StatGrid";
 import { WorkBento } from "@/components/home/WorkBento";
@@ -41,6 +42,7 @@ export default function Home() {
       <KitoSection />
       {/* Rows are handed down so the client bundle never imports the catalogue. */}
       <WorkList rows={workRows} />
+      <ReposSection />
       <WritingSection />
       <AboutSection />
       <ContactForm />

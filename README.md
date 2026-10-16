@@ -1,7 +1,7 @@
 # ffrizzy-portfolio
 
 The portfolio site described by `docs/BUILD-SPEC.md` (version 2). One long
-Home page with ten sections, plus a case study route, system pages, and a
+Home page with eleven sections, plus a case study route, system pages, and a
 contact form.
 
 ## Requirements
@@ -83,6 +83,7 @@ empty box.
 | File | Holds |
 |---|---|
 | `src/content/projects.ts` | The ten projects, their outcome lines, and the case study bodies |
+| `src/content/repos.ts` | Every public GitHub repository, with the matching case study slug where one exists |
 | `src/content/site.ts` | Stats, timeline, events, awards, certifications, growth slides, writing, skills, tools, KITO copy |
 | `src/content/schema.ts` | The Zod schemas and inferred types |
 | `src/lib/content.ts` | Validation, computed stats, the derived skills map, and the `#all` row list |
@@ -139,7 +140,8 @@ spec document tracks the same list.
 | MDX case studies | Typed Zod-validated content modules | Turbopack and Next 16 MDX wiring is a build-level risk, and the stat grid needs to compute over the content set |
 | `--shadow-hard` | `--hard-shadow` raw token, `shadow-hard` utility | The original name collides with Tailwind's `--shadow-*` theme namespace |
 | Four hero stickers | Three (Python, Go, Figma) | Tableau has no entry in simple-icons 16; spec 1.1 says to drop a missing brand rather than hand-draw it |
-| Ten tools in the strip | Seven | Excel, Tableau, and Canva have no simple-icons entry. Excel is still covered in the Deep skills accordion |
+| Ten tools in the strip | Every mark that resolves | Four brands the owner asked for have no entry in the installed simple-icons set (Excel, Photoshop, VS Code, ChatGPT). Spec 1.1 bans drawing a missing brand; it does not ban sourcing one, so those marks are copied from other public icon sets by `scripts/gen-brand-icons.mjs` into `src/lib/brand-icons.ts`, committed, and reduced to one colour |
+| Spec 3: five nav anchors | Six, with `Repos` for the Open source section | Requested. `NAV_LINKS` feeds both the desktop bar and the mobile section bar, so a new anchor appears on both at once |
 | Brand logos in native colour | Ink at rest, signal on hover | Spec 2.2 exempts logos, but spec 4.4 specifically asks the strip to turn signal on hover. The more specific rule wins |
 | CSS `@property` count-up | `IntersectionObserver` plus `requestAnimationFrame` | The CSS counter can only paint through `content`, so the real number would never be in the DOM. This keeps the final value as real text at all times |
 | `content/projects/*.ts` | One `content/projects.ts` registry | With MDX gone, a single registry is the natural equivalent and avoids ten near-identical files |

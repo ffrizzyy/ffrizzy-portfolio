@@ -2,10 +2,11 @@ import { siFigma, siGo, siPython } from "simple-icons";
 
 import { Sticker, TapedPhoto } from "@/components/shared/decor";
 import { CoverImage } from "@/components/shared/CoverImage";
+import { Icon } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { CvLink } from "@/components/shared/TrackedLink";
-import { LAYOUT } from "@/lib/constants";
+import { LAYOUT, SITE } from "@/lib/constants";
 import { MarkerHighlight } from "@/components/shared/decor";
 
 /**
@@ -55,8 +56,21 @@ export function Hero() {
             <ButtonLink href="#work" variant="primary" size="md">
               View work
             </ButtonLink>
-            <CvLink className="inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-6 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]">
-              Download CV
+            {/* The CV control leads with the name rather than the action. The
+                aria-label keeps "Download CV" as the accessible name, and the
+                mono CV badge is what tells a reader the pill opens the CV. */}
+            <CvLink
+              ariaLabel={`Download CV, ${SITE.name}`}
+              className="inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-5 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]"
+            >
+              <Icon name="DownloadSimple" size={18} />
+              <span>{SITE.name}</span>
+              <span
+                aria-hidden
+                className="num rounded-pill bg-paper-sunken px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em] text-ink-muted"
+              >
+                CV
+              </span>
             </CvLink>
           </Reveal>
         </div>

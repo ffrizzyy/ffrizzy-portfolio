@@ -87,12 +87,12 @@ export function ExperienceTimeline({
         ) : null}
       </div>
 
-      {/* Mobile only. Above md this wrapper is display:none, and every entry it
-          would reveal is already in the rail above. The control is a pill, the
-          one rounded shape in the system, drawn as a paper tab: ink border,
-          hard offset shadow, mono label. */}
+      {/* Mobile only. Below md this wrapper is display:flex; from md up it is
+          display:none, and every entry it would reveal is already in the rail
+          above. The control is a pill, the one rounded shape in the system,
+          drawn as a paper tab: ink border, hard offset shadow, mono label. */}
       {canReveal ? (
-        <div className="mt-4 hidden md:flex">
+        <div className="mt-4 flex md:hidden">
           <button
             type="button"
             aria-expanded={expanded}

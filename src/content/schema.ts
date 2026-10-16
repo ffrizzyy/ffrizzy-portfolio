@@ -173,6 +173,27 @@ export const writingItemSchema = z.object({
   featured: z.boolean().optional(),
 });
 
+/**
+ * A public GitHub repository. Spec 5.5 pattern: the strip of repositories is a
+ * typed content module rather than a runtime fetch, so the section renders with
+ * no network request and its copy is reviewable in a diff. GitHub metadata
+ * fetching stays optional and unwired, as the README records.
+ */
+export const repoSchema = z.object({
+  /** Repository name, as GitHub spells it. */
+  name: z.string().min(1),
+  /** One sentence, no trailing period. */
+  description: z.string().min(1),
+  /** The repository URL. */
+  url: z.string().url(),
+  /** Primary language GitHub reports, shown as a mono label. */
+  language: z.string().optional(),
+  /** A separate live deployment, when there is one. */
+  homepage: z.string().url().optional(),
+  /** Slug of a matching case study on this site, when one exists. */
+  projectSlug: z.string().optional(),
+});
+
 export const skillSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -191,6 +212,7 @@ export type Award = z.infer<typeof awardSchema>;
 export type Education = z.infer<typeof educationSchema>;
 export type CertIssuer = z.infer<typeof certIssuerSchema>;
 export type CertItem = z.infer<typeof certIssuerSchema>["items"][number];
+export type Repo = z.infer<typeof repoSchema>;
 export type Skill = z.infer<typeof skillSchema>;
 export type SkillCategory = z.infer<typeof skillCategorySchema>;
 export type Tool = z.infer<typeof toolSchema>;

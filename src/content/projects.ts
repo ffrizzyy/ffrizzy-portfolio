@@ -17,7 +17,7 @@ export const projects: Project[] = [
     outcome:
       "A private journal that spots mood patterns every week, with shared streaks. Works with Anthropic, OpenAI, or any compatible model.",
     stack: ["Express", "SQLite", "Vanilla JS", "Multi-provider AI"],
-    tags: [],
+    tags: ["SQL"],
     links: [
       { label: "Live app", href: "https://azzifa.up.railway.app" },
       { label: "GitHub", href: "https://github.com/ffrizzyy/azzifa" },

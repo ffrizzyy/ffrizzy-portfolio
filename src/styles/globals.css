@@ -435,12 +435,14 @@
  * 767.98px is the breakpoint Tailwind's md: prefix compiles to.       *
  * ------------------------------------------------------------------ */
 @media (max-width: 767.98px) {
-  /* The mobile section bar is fixed to the bottom edge, so the page reserves
-     its height here. --mobile-nav-h is set on <main> from
-     LAYOUT.mobileNavHeight, and the safe-area inset matches the one the bar
-     itself carries, so the reserved space and the bar cannot drift apart.
-     Above md nothing is fixed to the bottom, so no padding is applied. */
-  #main {
+  /* The mobile section bar is fixed to the bottom edge, so the footer reserves
+     its height here. It is the last element on the page, which is what the bar
+     actually overlaps: padding <main> instead left the footer underneath the
+     bar. --mobile-nav-h is set on <body> from LAYOUT.mobileNavHeight, and the
+     safe-area inset matches the one the bar itself carries, so the reserved
+     space and the bar cannot drift apart. Above md nothing is fixed to the
+     bottom, so no padding is applied. */
+  footer {
     padding-bottom: calc(var(--mobile-nav-h, 64px) + env(safe-area-inset-bottom));
   }
 

@@ -48,9 +48,14 @@ export const LAYOUT = {
   measure: "max-w-[65ch]",
 } as const;
 
-/** Spec 3: nav is one line with five anchors, then the theme switch. */
+/**
+ * Spec 3: one line of anchors, then the theme switch. It grew from five to six
+ * when the Open source section was added: the same list feeds the desktop bar
+ * and the mobile section bar, so a section that gets an anchor gets it on both.
+ */
 export const NAV_LINKS = [
   { label: "Work", href: "#all" },
+  { label: "Repos", href: "#repos" },
   { label: "Content", href: "#content" },
   { label: "Writing", href: "#writing" },
   { label: "About", href: "#about" },

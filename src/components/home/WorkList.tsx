@@ -258,15 +258,15 @@ export function WorkList({ rows: allRows }: { rows: WorkRow[] }) {
           </AnimatePresence>
         </ul>
 
-        {/* Mobile only: above md this wrapper is display:none, and every row it
-            would reveal is visible already, so the desktop render is the same
-            twelve rows it has always been. The control is a pill, which is the
-            one shape the system rounds, drawn as a paper tab: ink border, hard
-            offset shadow, mono label. The 4rem above it is deliberate, so the
-            control reads as a standfirst for the rows it opens rather than as
-            the thirteenth row of the list. */}
+        {/* Mobile only: below md this wrapper is display:flex, and from md up it
+            is display:none because every row it would reveal is already visible,
+            so the desktop render is the same twelve rows it has always been. The
+            control is a pill, which is the one shape the system rounds, drawn as
+            a paper tab: ink border, hard offset shadow, mono label. The 4rem
+            above it is deliberate, so the control reads as a standfirst for the
+            rows it opens rather than as the thirteenth row of the list. */}
         {canReveal ? (
-          <div className="hidden md:flex">
+          <div className="flex md:hidden">
             <button
               type="button"
               aria-expanded={expanded}

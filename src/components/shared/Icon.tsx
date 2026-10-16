@@ -13,6 +13,7 @@ import {
   Eye,
   Flask,
   GithubLogo,
+  Globe,
   GraduationCap,
   IconContext,
   LinkedinLogo,
@@ -67,6 +68,7 @@ const icons = {
   EnvelopeSimple,
   LinkedinLogo,
   GithubLogo,
+  Globe,
   List,
   X,
 } as const;

@@ -5,9 +5,9 @@
  * The whole feature is mobile only, and both rules below are plain Tailwind
  * utilities rather than a new class in globals.css:
  *
- * - The control lives in a `hidden md:flex` wrapper, so from md up nothing is
- *   drawn and no state is reachable, which is what keeps the desktop render
- *   byte for byte what it was.
+ * - The control lives in a `flex md:hidden` wrapper, so it is drawn only below
+ *   md and from md up nothing is drawn and no state is reachable, which is what
+ *   keeps the desktop render byte for byte what it was.
  * - A row past the visible count renders `max-md:hidden`, so below md it is
  *   hidden by CSS and from md up it is an ordinary list row. Nothing is
  *   unmounted: the rows stay in the DOM, keep their place in the document, and

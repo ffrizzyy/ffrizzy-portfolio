@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
-import { LAYOUT, SITE } from "@/lib/constants";
+import { LAYOUT } from "@/lib/constants";
 
 /**
  * Defers the contact form the way ReportMap defers Leaflet and
@@ -91,27 +91,17 @@ export function ContactForm() {
         <Reveal>
           <SectionHeading className="max-w-[16ch]">Have a project or a role in mind?</SectionHeading>
           <p className="mt-4 max-w-[65ch] text-base text-ink-muted">
-            Send a short note about what you need. Email, LinkedIn, or the form all work.
+            Send a short note about what you need. The form works, and the footer carries the
+            email and the social links.
           </p>
         </Reveal>
 
         <div className="mt-12 max-w-[640px]">
+          {/* LinkedIn, GitHub, the email address, and the CV all sit in the
+              footer a few lines below, so listing them here printed the same
+              links twice on one screen. The section is the form now, and the
+              footer is the directory. */}
           <ContactFormInner />
-
-          {/* LinkedIn, GitHub and the CV all sit in the footer a few lines below,
-              so listing them here printed the same three links twice on one
-              screen. The address stays: it is the one contact route the footer
-              does not carry, and it is what this section is for. */}
-          <ul className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-            <li>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
-              >
-                {SITE.email}
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </section>

@@ -1,13 +1,34 @@
 import {
+  siClaude,
+  siDeepseek,
+  siDocker,
   siFigma,
+  siGit,
+  siGithub,
+  siGithubcopilot,
   siGo,
   siGoogle,
+  siGooglegemini,
+  siGooglesheets,
+  siJira,
+  siJavascript,
   siMeta,
+  siMysql,
+  siNextdotjs,
+  siNodedotjs,
+  siNotion,
+  siPostgresql,
   siPython,
+  siReact,
+  siSqlite,
   siStreamlit,
+  siTailwindcss,
   siTrello,
+  siTypescript,
+  siVercel,
 } from "simple-icons";
 
+import { EXTRA_BRAND_ICONS } from "@/lib/brand-icons";
 import { toolList } from "@/lib/content";
 
 /**
@@ -15,24 +36,61 @@ import { toolList } from "@/lib/content";
  * 30s linear loop that pauses on hover and on focus. This is the only infinite
  * loop on the site.
  *
- * Spec 1.1 says to drop any brand missing from simple-icons rather than
- * hand-draw it. As of simple-icons 16, Microsoft Excel, Tableau, Canva, and
- * RapidMiner have no entry at all, so they are dropped from the strip. Those
- * capabilities are still listed on the page as stack chips and in the Deep
- * skills accordion, so nothing is lost but the logo.
+ * Most marks come straight from simple-icons. A few brands the strip now
+ * carries are not in that set (Microsoft Excel, Adobe Photoshop, Visual Studio
+ * Code, OpenAI/ChatGPT); those live in lib/brand-icons.ts, copied from other
+ * public icon sets rather than hand-drawn, so spec 1.1's rule about not drawing
+ * a missing brand is kept. A slug missing from both maps is still dropped
+ * silently, which is what lets the tools list carry a name before its mark
+ * exists.
  *
  * Colour note: spec 2.2 exempts third-party logos from the single-accent rule,
  * but spec 4.4 specifically asks the strip to turn signal on hover. The more
- * specific rule wins, so marks render in ink at rest and signal on hover.
+ * specific rule wins, so marks render in ink at rest and signal on hover, and
+ * every mark, including the sourced ones, is reduced to a single colour so the
+ * row reads as one family.
  */
-const BRAND_ICONS: Record<string, { title: string; path: string }> = {
+type BrandMark = { title: string; viewBox: string; path: string };
+
+const SIMPLE_ICON_MARKS: Record<string, { title: string; path: string }> = {
   python: siPython,
   go: siGo,
+  typescript: siTypescript,
+  javascript: siJavascript,
+  react: siReact,
+  nextdotjs: siNextdotjs,
+  nodedotjs: siNodedotjs,
+  tailwindcss: siTailwindcss,
+  docker: siDocker,
+  git: siGit,
+  github: siGithub,
+  vercel: siVercel,
+  notion: siNotion,
+  googlesheets: siGooglesheets,
+  jira: siJira,
+  mysql: siMysql,
+  postgresql: siPostgresql,
+  sqlite: siSqlite,
+  streamlit: siStreamlit,
   trello: siTrello,
   meta: siMeta,
-  streamlit: siStreamlit,
   google: siGoogle,
   figma: siFigma,
+  claude: siClaude,
+  deepseek: siDeepseek,
+  googlegemini: siGooglegemini,
+  githubcopilot: siGithubcopilot,
+};
+
+/** simple-icons marks are all on the 24x24 grid. */
+const BRAND_ICONS: Record<string, BrandMark> = {
+  ...Object.fromEntries(
+    Object.entries(SIMPLE_ICON_MARKS).map(([slug, mark]) => [
+      slug,
+      { ...mark, viewBox: "0 0 24 24" },
+    ]),
+  ),
+  ...EXTRA_BRAND_ICONS,
 };
 
 /**
@@ -43,7 +101,8 @@ const BRAND_ICONS: Record<string, { title: string; path: string }> = {
  * roughly 1230px against a container of about 1216px, so half of it was barely
  * one viewport wide: as the animation ran, the track ran out and left a few
  * hundred pixels of empty space at the trailing edge. Six copies put half the
- * track at about 1850px, which clears the widest the container can get.
+ * track well past the widest the container can get, with room for the marks
+ * added since.
  */
 const COPIES = 6;
 
@@ -70,7 +129,7 @@ export function ToolStrip() {
                 return (
                   <li key={tool.slug} className="text-ink transition-colors hover:text-signal">
                     <svg
-                      viewBox="0 0 24 24"
+                      viewBox={brand.viewBox}
                       role={copy === 0 ? "img" : undefined}
                       aria-label={copy === 0 ? tool.name : undefined}
                       aria-hidden={copy > 0 ? true : undefined}
