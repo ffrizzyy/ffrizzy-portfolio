@@ -89,13 +89,15 @@ empty box.
 | `src/lib/content.ts` | Validation, computed stats, the derived skills map, and the `#all` row list |
 
 Experience, education, certifications, the professional summary, and the CV
-page's skill categories are transcribed from the owner's CV document. The Home
-About rail is a curated subset of seven; the CV page carries the full list of
-eleven roles in the CV's own two sections.
+page's skill categories are transcribed from the owner's CV document (two
+education entries, including high school). The Home About rail is a curated
+subset of eight; the CV page carries the full list of thirteen roles in the CV's
+own two sections.
 
 **The phone number in the CV header is deliberately not published.** Spec 9.1
 says so and this repository is public, so it appears in no content module, no
-page, and no metadata. Email and LinkedIn are the contact routes.
+page, and no metadata. Email, LinkedIn, GitHub, and the deployed site are the
+contact routes.
 
 Derived rather than typed, so they cannot drift:
 
@@ -150,7 +152,7 @@ spec document tracks the same list.
 | Analytics through a script tag | Conditionally loaded Plausible plus the `track()` wrapper | The script loads only when `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set, so a clone with no secrets makes no third-party request at all |
 | Spec 2.7 nav: 64px, not sticky | Fixed, rounded, translucent glass bar that compacts on scroll and marks the current section | Requested directly, and spec 5.3 had already listed a sticky header as a later addition. Both the compact state and the active section come from IntersectionObserver, so spec 2.8's ban on scroll listeners still holds and nothing runs per frame |
 | Spec 2.5: no blur | `backdrop-filter` on the floating nav and the mobile sheet only | The glass request. Blur is confined to those two surfaces and is never used as the blur glow that 2.5 bans |
-| Spec 3: `/cv` redirects to the PDF | `/cv` is a real page | There is no PDF yet, HTML is searchable and linkable where a PDF is not, and one source of truth cannot drift the way a second document does. The page exports itself through the browser print pipeline and links a hosted PDF automatically once one exists |
+| Spec 3: `/cv` redirects to the PDF | `/cv` is a real page, with the PDF as a download | HTML is searchable and linkable where a PDF is not, and one source of truth cannot drift the way a second document does. The page exports itself through the browser print pipeline, and the English and Indonesian PDFs are linked as buttons when those files are present in `public/` |
 | Spec 2.10: numbered eyebrows banned | Kept the ban; no section indices added | Techy styling was done with mono micro-labels, the scroll rule, and the glass bar instead, so the eyebrow budget stays unspent |
 | Spec 4.4 broad-skill chips | Static spans, not buttons | They are labels, not controls. The first version was a button with `pointer-events-none`, which silently disabled the hover state it declared |
 

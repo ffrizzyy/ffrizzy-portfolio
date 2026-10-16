@@ -129,7 +129,7 @@ export const eventTotals = {
  * ------------------------------------------------------------------ */
 
 export const summary =
-  "Information Systems graduate with three years of experience across content, communications, data, and organizational leadership, gained through internships, part-time work, and several student organizations. Comfortable with both the creative side, like writing and planning content, and the analytical side, like tracking performance or thinking through a problem with data. Has led teams as large as nine people, run long-running responsibilities with minimal supervision, and kept picking up new skills through self-driven certifications.";
+  "Information Systems graduate working across technology, content, and operations. Experience spans web and data tools, content and social media, and leading teams and events. Learns new tools quickly, mostly through self-directed courses in machine learning, SEO, and business process management.";
 
 /* ------------------------------------------------------------------ *
  * Professional experience. Transcribed from the CV.                   *
@@ -146,7 +146,7 @@ export const experience: TimelineEntry[] = [
     end: "2024-08",
     display: "Jul to Aug 2024",
     bullets: [
-      "Planned and ran the Instagram and TikTok content calendar, using performance data to lift engagement 20%, grow followers 15%, and push interaction rates up 25%.",
+      "Planned and ran the Instagram and TikTok content calendar, using performance data to raise engagement 20%, grow followers 15%, and lift the interaction rate 25%.",
     ],
   },
   {
@@ -159,7 +159,7 @@ export const experience: TimelineEntry[] = [
     end: "2024-03",
     display: "Feb to Mar 2024",
     bullets: [
-      "Ran a digital marketing campaign start to finish across a remote team: set the goals, built the timeline, and evaluated performance data at the end.",
+      "Ran a Ramadan digital marketing campaign about doing good deeds with a remote team, from setting the goals and building the timeline to reviewing performance data at the end.",
     ],
   },
   {
@@ -172,8 +172,8 @@ export const experience: TimelineEntry[] = [
     end: "2024-01",
     display: "Dec 2023 to Jan 2024",
     bullets: [
-      "Conducted business process analysis within the Operations and Maintenance division, examining existing workflows to identify problem areas and inefficiencies.",
-      "Applied several analytical approaches grounded in an Information Systems perspective to diagnose issues from different angles and support recommendations for process improvement.",
+      "Analyzed business processes in the Operations and Maintenance (OP-HAR) division to find workflow problems and inefficiencies.",
+      "Used questionnaires, interviews, and observations to study the workflows, and applied use cases, user stories, UML diagrams, flowcharts, gap analysis, and prototyping to support recommendations for improvement.",
     ],
   },
   {
@@ -185,9 +185,7 @@ export const experience: TimelineEntry[] = [
     start: "2023-08",
     end: "2023-09",
     display: "Aug to Sep 2023",
-    bullets: [
-      "Audited webpages for on-page and off-page SEO, building a grounding in technical SEO analysis and organic growth.",
-    ],
+    bullets: ["Audited webpages for on-page and off-page SEO."],
   },
 ];
 
@@ -248,7 +246,7 @@ export const leadership: TimelineEntry[] = [
     end: "2024-01",
     display: "Aug 2023 to Jan 2024",
     bullets: [
-      "Coordinated event content across platforms, growing engagement 30% for an audience of over 1,000 attendees.",
+      "Coordinated event content across platforms; engagement grew 30% for an audience of 2,000+ attendees.",
     ],
   },
   {
@@ -261,7 +259,7 @@ export const leadership: TimelineEntry[] = [
     end: "2023-10",
     display: "May to Oct 2023",
     bullets: [
-      "Led the publication team behind event content across Instagram, TikTok, and Twitter, growing engagement 80% for an event with over 1,000 attendees.",
+      "Led the publication team behind event content across Instagram, TikTok, and Twitter; engagement grew 80% for an event with 2,000+ attendees.",
     ],
   },
   {
@@ -329,11 +327,21 @@ export const education = [
     institution: "Universitas Sriwijaya",
     degree: "Bachelor of Information Systems",
     detail: "GPA 3.97 / 4.00",
-    display: "Apr 2025",
+    display: "Aug 2021 to Apr 2025",
     location: "Palembang, Indonesia",
     bullets: [
       "Built web applications and automated data-processing tools through coursework and extracurricular projects.",
       "Coursework covered system design, digital forensics, machine learning, and data analytics.",
+    ],
+  },
+  {
+    id: "sman1-sungai-penuh",
+    institution: "SMAN 1 Sungai Penuh",
+    degree: "Senior High School, Mathematics and Natural Sciences (MIPA)",
+    display: "Aug 2018 to Aug 2021",
+    location: "Sungai Penuh, Indonesia",
+    bullets: [
+      "Selected in Grade 11 as one of three school representatives for the city-level KSN (National Science Competition) mathematics olympiad.",
     ],
   },
 ];
@@ -473,11 +481,16 @@ export const skillCategories: SkillCategory[] = [
     label: "Data and Technical",
     items: [
       "Python",
+      "Go",
+      "JavaScript",
+      "TypeScript",
+      "Next.js",
+      "SQL",
+      "Tableau",
+      "Microsoft Excel",
       "Machine Learning",
       "Data Analysis",
       "Data Visualization",
-      "Microsoft Excel",
-      "SQL",
       "SEO Analysis",
       "AI Prompting",
       "watsonx.ai",

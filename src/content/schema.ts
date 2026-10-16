@@ -117,7 +117,8 @@ export const educationSchema = z.object({
   id: z.string(),
   institution: z.string(),
   degree: z.string(),
-  detail: z.string(),
+  /** A one-line qualifier, such as the GPA. Optional: not every school states one. */
+  detail: z.string().optional(),
   display: z.string(),
   location: z.string().optional(),
   bullets: z.array(z.string()).default([]),

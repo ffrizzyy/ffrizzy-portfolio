@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { Icon } from "@/components/shared/Icon";
+import { Icon, type IconName } from "@/components/shared/Icon";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
 import { TagChip } from "@/components/ui/Chip";
@@ -35,19 +35,30 @@ export const metadata: Metadata = {
  *
  * All of this content is transcribed from the CV. The one deliberate omission
  * is the phone number in the CV header: the spec (section 9.1) says it is not
- * published, and this repository is public, so email and LinkedIn are the
- * contact routes.
+ * published, and this repository is public, so email, LinkedIn, GitHub, and the
+ * deployed site are the contact routes.
  *
- * Spec 3 originally made /cv a redirect to a PDF. It is a page instead: there is
- * no PDF yet, HTML is searchable and linkable where a PDF is not, and one source
- * of truth cannot drift the way a second document does. The browser's print
- * pipeline is the exporter, and a hosted PDF is linked automatically once one
- * exists.
+ * Spec 3 originally made /cv a redirect to a PDF. It is a page instead: HTML is
+ * searchable and linkable where a PDF is not, and one source of truth cannot
+ * drift the way a second document does. The English and Indonesian PDFs sit in
+ * public/ and are offered as downloads above; the page also exports itself
+ * through the browser print pipeline.
  */
-function CvSection({ title, children }: { title: string; children: ReactNode }) {
+function CvSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: IconName;
+  children: ReactNode;
+}) {
   return (
     <section className="mt-10 border-t-2 border-ink pt-5">
-      <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">{title}</h2>
+      <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">
+        <Icon name={icon} size={16} className="shrink-0" />
+        {title}
+      </h2>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -98,10 +109,17 @@ export default function CvPage() {
     },
   ];
 
-  const contact = [
-    { label: SITE.email, href: `mailto:${SITE.email}`, external: false },
-    { label: "LinkedIn", href: SITE.linkedin, external: true },
-    { label: "GitHub", href: SITE.github, external: true },
+  const contact: { label: string; href: string; external: boolean; icon: IconName }[] = [
+    { label: SITE.email, href: `mailto:${SITE.email}`, external: false, icon: "EnvelopeSimple" },
+    { label: "LinkedIn", href: SITE.linkedin, external: true, icon: "LinkedinLogo" },
+    { label: "GitHub", href: SITE.github, external: true, icon: "GithubLogo" },
+    {
+      // The CV header carries the deployed site, shown here as a bare domain.
+      label: SITE.website.replace(/^https?:\/\//, ""),
+      href: SITE.website,
+      external: true,
+      icon: "Globe",
+    },
   ];
 
   return (
@@ -135,6 +153,7 @@ export default function CvPage() {
                        span and text nodes concatenate with no space. */
                     aria-label={item.label}
                   >
+                    <Icon name="DownloadSimple" size={18} className="shrink-0" />
                     Download CV
                     <span aria-hidden className="num text-xs uppercase tracking-[0.12em] opacity-80">
                       {item.badge}
@@ -154,15 +173,17 @@ export default function CvPage() {
                     event={ANALYTICS_EVENTS.projectOutbound}
                     eventProps={{ target: "cv-contact" }}
                     external
-                    className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target inline-flex items-center gap-1.5 text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
+                    <Icon name={item.icon} size={16} className="shrink-0" />
                     {item.label}
                   </TrackedLink>
                 ) : (
                   <a
                     href={item.href}
-                    className="touch-target text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    className="touch-target inline-flex items-center gap-1.5 text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
                   >
+                    <Icon name={item.icon} size={16} className="shrink-0" />
                     {item.label}
                   </a>
                 )}
@@ -171,11 +192,11 @@ export default function CvPage() {
           </ul>
         </header>
 
-        <CvSection title="Professional summary">
+        <CvSection title="Professional summary" icon="PenNib">
           <p className="max-w-[68ch] text-base text-ink-muted">{summary}</p>
         </CvSection>
 
-        <CvSection title="Professional experience">
+        <CvSection title="Professional experience" icon="Briefcase">
           <ol className="flex flex-col gap-6">
             {experienceList.map((entry) => (
               <RoleEntry key={entry.id} entry={entry} />
@@ -183,7 +204,7 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Leadership and organizational experience">
+        <CvSection title="Leadership and organizational experience" icon="UsersThree">
           <ol className="flex flex-col gap-6">
             {leadershipList.map((entry) => (
               <RoleEntry key={entry.id} entry={entry} />
@@ -191,7 +212,7 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Education">
+        <CvSection title="Education" icon="GraduationCap">
           <ol className="flex flex-col gap-6">
             {educationList.map((entry) => (
               <li key={entry.id} className="flex flex-col gap-1.5">
@@ -203,7 +224,9 @@ export default function CvPage() {
                   {entry.degree}
                   {entry.location ? `, ${entry.location}` : ""}
                 </span>
-                <span className="num text-sm text-ink-muted">{entry.detail}</span>
+                {entry.detail ? (
+                  <span className="num text-sm text-ink-muted">{entry.detail}</span>
+                ) : null}
                 {entry.bullets.length > 0 ? (
                   <ul className="mt-1 flex flex-col gap-1">
                     {entry.bullets.map((bullet) => (
@@ -219,16 +242,17 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Selected projects">
+        <CvSection title="Selected projects" icon="Code">
           <ol className="flex flex-col gap-5">
             {featuredProjects.map((project) => (
               <li key={project.slug} className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <a
                     href={`/work/${project.slug}`}
-                    className="touch-target text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-signal"
+                    className="touch-target group inline-flex items-center gap-1 text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-signal"
                   >
                     {project.title}
+                    <Icon name="ArrowUpRight" size={14} className="nudge shrink-0" />
                   </a>
                   <span className="num text-xs text-ink-muted">{project.period}</span>
                 </div>
@@ -245,7 +269,7 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Certifications">
+        <CvSection title="Certifications" icon="Certificate">
           <div className="flex flex-col gap-4">
             {certList.map((group) => (
               <div key={group.issuer} className="flex flex-col gap-1.5">
@@ -263,9 +287,10 @@ export default function CvPage() {
                           href={item.credentialUrl}
                           target="_blank"
                           rel="noreferrer noopener"
-                          className="touch-target text-sm text-ink-muted underline decoration-signal decoration-2 underline-offset-4 hover:text-ink hover:decoration-4"
+                          className="touch-target group inline-flex items-center gap-1 text-sm text-ink-muted underline decoration-signal decoration-2 underline-offset-4 hover:text-ink hover:decoration-4"
                         >
                           {item.name}
+                          <Icon name="ArrowUpRight" size={12} className="nudge shrink-0" />
                         </a>
                       ) : (
                         <span className="text-sm text-ink-muted">{item.name}</span>
@@ -279,7 +304,7 @@ export default function CvPage() {
           </div>
         </CvSection>
 
-        <CvSection title="Skills">
+        <CvSection title="Skills" icon="Wrench">
           <div className="flex flex-col gap-5">
             {skillCategoryList.map((category) => (
               <div key={category.id} className="flex flex-col gap-2">
@@ -298,7 +323,7 @@ export default function CvPage() {
           </div>
         </CvSection>
 
-        <CvSection title="Awards">
+        <CvSection title="Awards" icon="Trophy">
           <ol className="flex flex-col">
             {awardList.map((award) => (
               <li
@@ -314,7 +339,7 @@ export default function CvPage() {
           </ol>
         </CvSection>
 
-        <CvSection title="Languages">
+        <CvSection title="Languages" icon="Globe">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-muted">
             {languages.map((language) => (
               <li key={language.name}>

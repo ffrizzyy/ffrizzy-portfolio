@@ -86,6 +86,8 @@ export const SITE = {
   email: "m.farrel2222@gmail.com",
   linkedin: "https://www.linkedin.com/in/ffrizzy/",
   github: "https://github.com/ffrizzyy",
+  /** The deployed site, as the CV header lists it. */
+  website: "https://ffrizzy.vercel.app",
   /** The English CV. Offered first, and the one the hero button leads to. */
   cvPath: "/Farrel-Frizzy-CV.pdf",
   /** The same CV in Bahasa Indonesia. */

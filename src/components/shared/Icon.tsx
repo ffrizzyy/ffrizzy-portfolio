@@ -6,6 +6,7 @@ import {
   CalendarCheck,
   CaretLeft,
   CaretRight,
+  Certificate,
   ChartBar,
   Code,
   DownloadSimple,
@@ -28,6 +29,7 @@ import {
   Trophy,
   UserPlus,
   UsersThree,
+  Wrench,
   X,
 } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
@@ -61,6 +63,7 @@ const icons = {
   DownloadSimple,
   CaretLeft,
   CaretRight,
+  Certificate,
   Plus,
   Monitor,
   Sun,
@@ -70,6 +73,7 @@ const icons = {
   GithubLogo,
   Globe,
   List,
+  Wrench,
   X,
 } as const;
 
