@@ -114,43 +114,9 @@ if (eventList.length > eventsValue) {
 }
 
 /**
- * The Home timeline is a curated subset of the CV.
+ * Computed stats. Spec 4.2: the events and projects numbers are
+ * computed, never typed.
  */
-
-const endKey = (entry: TimelineEntry) => (entry.end === "present" ? "9999-99" : entry.end);
-
-/**
- * Fourteen entries is the whole CV, and putting all of them on the Home rail
- * pushes everything below it out of reach. Home shows the professional roles,
- * the longest-running organizational ones, and the conference concept work,
- * newest first; the CV page carries the complete list in the CV's own two
- * sections.
- */
-const ABOUT_TIMELINE_IDS = [
-  "palembang-digital",
-  "media-si",
-  "sdc-concept",
-  "rhetoric-academy",
-  "gdsc-core",
-  "mvSlim",
-  "pln-op-har",
-  "niagahoster",
-];
-
-export const aboutTimeline: TimelineEntry[] = [...experienceList, ...leadershipList]
-  .filter((entry) => ABOUT_TIMELINE_IDS.includes(entry.id))
-  .sort((a, b) => endKey(b).localeCompare(endKey(a)));
-
-if (aboutTimeline.length !== ABOUT_TIMELINE_IDS.length) {
-  throw new Error(
-    `aboutTimeline is missing entries. Expected ${ABOUT_TIMELINE_IDS.length}, got ${aboutTimeline.length}.`,
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * Computed stats. Spec 4.2: the events and projects numbers are       *
- * computed, never typed.                                              *
- * ------------------------------------------------------------------ */
 
 export const statsResolved: Stat[] = z.array(statSchema).parse(
   rawStats.map((stat) => {

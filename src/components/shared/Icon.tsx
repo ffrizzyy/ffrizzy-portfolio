@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
   Briefcase,
   CalendarCheck,
@@ -59,6 +61,8 @@ const icons = {
   Briefcase,
   UsersThree,
   Trophy,
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
   DownloadSimple,
   CaretLeft,

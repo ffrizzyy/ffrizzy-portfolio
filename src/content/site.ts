@@ -35,7 +35,7 @@ export const stats: Stat[] = [
     asOf: "2025",
     icon: "GraduationCap",
     viz: "ring",
-    href: "#about",
+    href: "/cv",
   },
   {
     id: "events",

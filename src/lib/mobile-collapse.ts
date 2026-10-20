@@ -1,6 +1,6 @@
 /**
- * The mobile progressive disclosure shared by the two long Home sections, the
- * #all index and the #about timeline.
+ * The mobile progressive disclosure shared by the sections that hold a long
+ * list, the #all index among them.
  *
  * The whole feature is mobile only, and both rules below are plain Tailwind
  * utilities rather than a new class in globals.css:

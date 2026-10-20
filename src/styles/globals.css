@@ -93,8 +93,12 @@
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.65;
-    /* Spec 2.8: the one theme transition, in one place. */
-    transition: background-color 300ms, color 300ms;
+    /* Spec 2.8: the one theme transition, in one place. The per-element fade
+       is switched on for the duration of a theme change by `.theme-switching`
+       below, so surfaces that are not the body change at the same pace. */
+    transition:
+      background-color 500ms var(--ease-out-zine),
+      color 500ms var(--ease-out-zine);
   }
 
   h1,
@@ -127,6 +131,36 @@
   ::selection {
     background-color: var(--signal);
     color: var(--on-signal);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Theme switch.                                                       *
+ *                                                                     *
+ * The whole-page fade is opt-in for the length of the change: the     *
+ * switch adds `theme-switching` to <html> before next-themes writes   *
+ * the attribute and removes it once the fade ends. A permanent        *
+ * transition on every element would also slow every hover, which is   *
+ * why this is a temporary class and not a base rule.                  *
+ *                                                                     *
+ * Everything that reads a token has to be in the list: surfaces, ink, *
+ * borders, icon fills, the hard shadow, and the texture layer's       *
+ * filter and opacity. `!important` is deliberate: a Tailwind          *
+ * `transition-[transform,box-shadow]` utility would otherwise narrow  *
+ * the property list and let background colours snap while the shadow  *
+ * eased. It only wins for the 520ms the class is present.             *
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-switching,
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition-property:
+      background-color, border-color, color, fill, stroke, opacity, box-shadow, filter,
+      outline-color, text-decoration-color !important;
+    transition-duration: 500ms !important;
+    transition-timing-function: var(--ease-out-zine) !important;
+    transition-delay: 0s !important;
   }
 }
 
@@ -198,6 +232,19 @@
   100% {
     opacity: 1;
     transform: scale(1) rotate(var(--spin, 0deg));
+  }
+}
+
+/* The idle half of the sticker animation. It moves `translate`, not
+   `transform`, so it can run alongside the pop-in (which owns the rotation and
+   scale) without the two overwriting each other. */
+@keyframes sticker-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
   }
 }
 
@@ -309,7 +356,9 @@
 }
 
 .sticker-pop {
-  animation: pop-in 600ms var(--ease-out-zine) both;
+  animation:
+    pop-in 600ms var(--ease-out-zine) both,
+    sticker-float 6s ease-in-out infinite;
 }
 
 /* Stat illustrations. Spec 4.2: the ring arc draws, ticks grow up from the
@@ -375,6 +424,38 @@
 
 .nav-drop {
   animation: nav-drop 600ms var(--ease-out-zine) both;
+}
+
+/* The phone menu sheet. Radix sets data-state on the overlay and content, so the
+   entrance can hang off that without any extra state in the component. The
+   close animation is intentionally omitted: the dialog unmounts immediately,
+   and an exit that never draws is worse than a clean cut. */
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dialog-overlay[data-state="open"] {
+  animation: overlay-in 220ms var(--ease-out-zine) both;
+}
+
+.dialog-content[data-state="open"] {
+  animation: sheet-rise 360ms var(--ease-out-zine) both;
 }
 
 /* Glass surface. color-mix is what lets a single declaration serve both
@@ -504,6 +585,23 @@
   transform: translate3d(3px, -3px, 0);
 }
 
+/* Horizontal variants. The hero's CV pill and the CV page's back control use
+   these: the arrow leans in the direction the link travels. */
+.nudge-right,
+.nudge-left {
+  transition: transform 220ms var(--ease-out-zine);
+}
+
+.group:hover .nudge-right,
+.group:focus-visible .nudge-right {
+  transform: translate3d(4px, 0, 0);
+}
+
+.group:hover .nudge-left,
+.group:focus-visible .nudge-left {
+  transform: translate3d(-4px, 0, 0);
+}
+
 /* Page transitions between routes. Spec 2.8: CSS only, progressive
    enhancement, so a browser without support just navigates normally. */
 @view-transition {
@@ -579,8 +677,12 @@
  * so the chrome, the texture, and anything interactive come out.       *
  * ------------------------------------------------------------------ */
 @media print {
-  header,
+  /* Only the site chrome. The CV's own <header> carries the name and contact
+     details and has to stay on the printed page, which is why this targets the
+     fixed nav bar rather than every header on the document. */
+  header.fixed,
   footer,
+  nav.fixed,
   .texture-layer,
   .no-print {
     display: none !important;
@@ -594,6 +696,16 @@
 
   main {
     padding-top: 0 !important;
+  }
+
+  /* Scroll-driven reveals must not print as blank space. A section the reader
+     never scrolled to can still be at opacity 0 when the print pipeline lays the
+     page out, and the CV is the one page that is routinely printed to PDF. */
+  .reveal,
+  .reveal-fade {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   a {

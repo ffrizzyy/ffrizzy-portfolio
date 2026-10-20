@@ -50,9 +50,10 @@ export const LAYOUT = {
 
 /**
  * Spec 3: one line of anchors, then the theme switch. It grew from five to
- * seven as the Open source and Skills sections were added: the same list feeds
- * the desktop bar, the mobile section bar, and the phone menu sheet, so a
- * section that gets an anchor gets it everywhere.
+ * seven as the Open source and Skills sections were added, and the About
+ * section has since come off Home: the same list feeds the desktop bar, the
+ * mobile section bar, and the phone menu sheet, so an entry that moves moves
+ * everywhere.
  *
  * The order is the order the sections appear down the page, so the active mark
  * travels left to right as a reader scrolls rather than jumping back. That is
@@ -61,6 +62,14 @@ export const LAYOUT = {
  * reads first everywhere else. The Work link still points at #all, the
  * filterable list, which is the deliberate asymmetry spec 3 records; only its
  * position in the bar is set by the page, not by the label's rank.
+ *
+ * About is the one entry that is a route rather than an anchor: the About
+ * section was removed from Home, so the label now opens /cv, which carries the
+ * experience, education, skills, awards, and languages that section used to
+ * show. It sits last, and last is where it belongs: it points away from the
+ * page the other entries scroll within, so it reads as a destination rather
+ * than as another stop on the scroll. A route href is the leading `/`; the
+ * bars branch on `isRouteHref` rather than guessing.
  */
 export const NAV_LINKS = [
   { label: "Skills", href: "#skills" },
@@ -68,9 +77,14 @@ export const NAV_LINKS = [
   { label: "Work", href: "#all" },
   { label: "Repos", href: "#repos" },
   { label: "Writing", href: "#writing" },
-  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
+  { label: "About", href: "/cv" },
 ] as const;
+
+/** True when a nav entry points at a route rather than a `#section` anchor. */
+export function isRouteHref(href: string): boolean {
+  return href.startsWith("/");
+}
 
 export const SITE = {
   name: "Muhammad Farrel Al-Wafi Frizzy",

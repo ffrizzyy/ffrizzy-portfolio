@@ -1,4 +1,3 @@
-import { AboutSection } from "@/components/home/AboutSection";
 import { ContactForm } from "@/components/home/ContactForm";
 import { ContentGrowth } from "@/components/home/ContentGrowth";
 import { Hero } from "@/components/home/Hero";
@@ -13,9 +12,14 @@ import { reportMissingAssets } from "@/lib/assets.server";
 import { projectList, workRows, writingList } from "@/lib/content";
 
 /**
- * Spec 3 and 4: one long page with the ten sections in a fixed order.
+ * Spec 3 and 4: one long page with the sections in a fixed order.
  * Neighbouring sections never share a layout family, and the carousel is the
  * one pattern reused (sections 5 and 8) with other sections between them.
+ *
+ * The About section that used to close this page is gone. Its subsections
+ * (experience, education, skills, awards, languages) all live on /cv, which the
+ * About nav entry opens, so there is one copy of that content rather than two
+ * that can drift apart.
  */
 export default function Home() {
   if (process.env.NODE_ENV !== "production") {
@@ -44,7 +48,6 @@ export default function Home() {
       <WorkList rows={workRows} />
       <ReposSection />
       <WritingSection />
-      <AboutSection />
       <ContactForm />
     </>
   );

@@ -75,7 +75,16 @@ export const statSchema = z.object({
   asOf: z.string(),
   icon: z.enum(["GraduationCap", "CalendarCheck", "Stack", "UserPlus", "Eye"]),
   viz: z.enum(["ring", "ticks", "stack", "platforms", "phone"]),
-  href: z.string().startsWith("#"),
+  /**
+   * A `#section` anchor on Home, or an absolute route when the detail lives on
+   * another page. GPA now points at /cv, which carries the academic record that
+   * used to sit in the removed About section.
+   */
+  href: z
+    .string()
+    .refine((value) => value.startsWith("#") || value.startsWith("/"), {
+      message: 'a stat href must be a "#section" anchor or a route starting with "/"',
+    }),
 });
 
 export type Stat = z.infer<typeof statSchema>;

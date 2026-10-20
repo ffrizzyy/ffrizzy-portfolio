@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { ANALYTICS_EVENTS, track, type AnalyticsEvent } from "@/lib/analytics";
@@ -9,6 +10,11 @@ import { cn } from "@/lib/utils";
  * Links that fire one of the four stable analytics events from spec 6 before
  * navigating. Kept as a client leaf so the surrounding layout stays a Server
  * Component.
+ *
+ * External destinations stay plain anchors, with the target and rel they need.
+ * Internal ones go through next/link instead: the CV button in the hero and the
+ * footer's CV link are both this component, and a full page load there threw
+ * away the client router for no reason.
  */
 export function TrackedLink({
   href,
@@ -27,16 +33,30 @@ export function TrackedLink({
   external?: boolean;
   ariaLabel?: string;
 }) {
+  if (external) {
+    return (
+      <a
+        href={href}
+        aria-label={ariaLabel}
+        className={cn(className)}
+        onClick={() => track(event, eventProps)}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <a
+    <Link
       href={href}
       aria-label={ariaLabel}
       className={cn(className)}
       onClick={() => track(event, eventProps)}
-      {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 

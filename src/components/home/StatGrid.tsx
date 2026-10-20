@@ -1,7 +1,10 @@
+import Link from "next/link";
+
 import { CountedPopover } from "@/components/shared/CountedPopover";
 import { CountUp } from "@/components/shared/CountUp";
 import { IconTile } from "@/components/shared/decor";
 import { Icon } from "@/components/shared/Icon";
+import { Reveal } from "@/components/shared/Reveal";
 import { StatViz } from "@/components/shared/StatViz";
 import { statsResolved } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
@@ -35,8 +38,10 @@ export function StatGrid() {
             const animates = ANIMATED.has(stat.id);
 
             return (
-              <article
+              <Reveal
+                as="article"
                 key={stat.id}
+                delay={index * 0.06}
                 className={cn(
                   "group flex flex-col justify-between gap-6 border-t border-line py-8 pr-6",
                   isWide ? "sm:col-span-2 md:col-span-3" : "md:col-span-2",
@@ -78,12 +83,24 @@ export function StatGrid() {
                     ) : null}
                   </p>
 
-                  <a
-                    href={stat.href}
-                    className="touch-target w-fit text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 transition-[text-decoration-color,text-decoration-thickness] hover:decoration-signal group-hover:decoration-4 group-hover:decoration-signal"
-                  >
-                    {stat.label}
-                  </a>
+                  {/* The label is a link to the section or route that carries
+                      the detail. GPA points at /cv now, so it renders as a
+                      router link rather than a full page load. */}
+                  {stat.href.startsWith("/") ? (
+                    <Link
+                      href={stat.href}
+                      className="touch-target w-fit text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 transition-[text-decoration-color,text-decoration-thickness] hover:decoration-signal group-hover:decoration-4 group-hover:decoration-signal"
+                    >
+                      {stat.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={stat.href}
+                      className="touch-target w-fit text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 transition-[text-decoration-color,text-decoration-thickness] hover:decoration-signal group-hover:decoration-4 group-hover:decoration-signal"
+                    >
+                      {stat.label}
+                    </a>
+                  )}
 
                   <p className="text-sm text-ink-muted">{stat.detail}</p>
 
@@ -91,7 +108,7 @@ export function StatGrid() {
                     <CountedPopover method={stat.method} asOf={stat.asOf} />
                   </div>
                 </div>
-              </article>
+              </Reveal>
             );
           })}
         </div>

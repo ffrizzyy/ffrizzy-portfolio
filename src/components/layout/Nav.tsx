@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 import { Icon } from "@/components/shared/Icon";
 import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
-import { LAYOUT, NAV_LINKS, SITE } from "@/lib/constants";
+import { isRouteHref, LAYOUT, NAV_LINKS, SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /**
@@ -50,15 +50,17 @@ export function Nav() {
   // Which nav target is in the reading band. The negative root margin shrinks
   // the viewport to a strip around the middle, so a section becomes current
   // when it reaches the centre of the screen rather than the moment it appears.
+  // Route entries (About) are not anchors on this page, so they are filtered
+  // out here: their active state comes from the pathname instead.
   useEffect(() => {
     if (pathname !== "/") {
       setActive(null);
       return;
     }
 
-    const targets = NAV_LINKS.map((link) => document.getElementById(link.href.slice(1))).filter(
-      (element): element is HTMLElement => element !== null,
-    );
+    const targets = NAV_LINKS.filter((link) => !isRouteHref(link.href))
+      .map((link) => document.getElementById(link.href.slice(1)))
+      .filter((element): element is HTMLElement => element !== null);
     if (targets.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -83,12 +85,18 @@ export function Nav() {
    * `#all` fragments, the browser could not scroll to an id that does not exist
    * on that document, and nothing happened at all. The reader was stranded on
    * the page they were already on.
+   *
+   * About is the one entry that is a route rather than an anchor, so it is
+   * handed back untouched and rendered as a Next Link: it never becomes a
+   * `/#about` style fragment, because there is no such section any more.
    */
   const onHome = pathname === "/";
-  const hrefFor = (anchor: string) => (onHome ? anchor : `/${anchor}`);
+  const hrefFor = (anchor: string) =>
+    isRouteHref(anchor) ? anchor : onHome ? anchor : `/${anchor}`;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40">      <div className={cn(LAYOUT.container, "nav-drop")}>
+    <header className="fixed inset-x-0 top-0 z-40">
+      <div className={cn(LAYOUT.container, "nav-drop")}>
         <div
           className={cn(
             // mt-5 is LAYOUT.navOffset (20px) spelled out. A Tailwind class has
@@ -115,26 +123,51 @@ export function Nav() {
           <nav aria-label="Sections" className="hidden md:block">
             <ul className="flex items-center gap-1">
               {NAV_LINKS.map((link) => {
-                const isActive = active === link.href.slice(1);
+                const route = isRouteHref(link.href);
+                const isActive = route ? pathname === link.href : active === link.href.slice(1);
+
+                const className = cn(
+                  "group relative block rounded-pill px-2 py-1.5 text-sm font-medium transition-colors duration-200 ease-zine lg:px-3",
+                  isActive ? "text-ink" : "text-ink-muted hover:text-ink",
+                );
+
+                const underline = (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "absolute inset-x-3 bottom-0.5 h-0.5 origin-left rounded-pill bg-signal transition-transform duration-300 ease-zine",
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                    )}
+                  />
+                );
+
                 return (
-                  <li key={link.href}>
-                    <a
-                      href={hrefFor(link.href)}
-                      aria-current={isActive ? "true" : undefined}
-                      className={cn(
-                        "relative block rounded-pill px-2 py-1.5 text-sm font-medium transition-colors duration-200 ease-zine lg:px-3",
-                        isActive ? "text-ink" : "text-ink-muted hover:text-ink",
-                      )}
-                    >
-                      {link.label}
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "absolute inset-x-3 bottom-0.5 h-0.5 origin-left rounded-pill bg-signal transition-transform duration-300 ease-zine",
-                          isActive ? "scale-x-100" : "scale-x-0",
-                        )}
-                      />
-                    </a>
+                  <li
+                    key={link.href}
+                    // The route entry sits last and is set off by a hairline, so
+                    // it reads as a destination rather than as one more stop on
+                    // the scroll the other entries share.
+                    className={cn(route && "ml-1 border-l border-line pl-2")}
+                  >
+                    {route ? (
+                      <Link
+                        href={link.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={className}
+                      >
+                        {link.label}
+                        {underline}
+                      </Link>
+                    ) : (
+                      <a
+                        href={hrefFor(link.href)}
+                        aria-current={isActive ? "true" : undefined}
+                        className={className}
+                      >
+                        {link.label}
+                        {underline}
+                      </a>
+                    )}
                   </li>
                 );
               })}
@@ -158,8 +191,8 @@ export function Nav() {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/45 backdrop-blur-sm" />
-                <Dialog.Content className="glass fixed inset-3 z-50 flex flex-col rounded-[24px] p-6">
+                <Dialog.Overlay className="dialog-overlay fixed inset-0 z-50 bg-ink/45 backdrop-blur-sm" />
+                <Dialog.Content className="dialog-content glass fixed inset-3 z-50 flex flex-col rounded-[24px] p-6">
                   <div className="flex items-center justify-between">
                     <Dialog.Title className="font-display text-lg font-extrabold">
                       {SITE.wordmark}
@@ -181,22 +214,45 @@ export function Nav() {
 
                   <nav aria-label="Sections" className="mt-10 flex-1">
                     <ul className="flex flex-col gap-1">
-                      {NAV_LINKS.map((link, index) => (
-                        <li key={link.href}>
-                          <a
-                            href={hrefFor(link.href)}
-                            onClick={() => setOpen(false)}
-                            className="flex items-baseline gap-3 rounded-[14px] px-3 py-2.5 transition-colors hover:bg-paper-sunken"
-                          >
+                      {NAV_LINKS.map((link, index) => {
+                        const route = isRouteHref(link.href);
+                        const className =
+                          "flex items-baseline gap-3 rounded-[14px] px-3 py-2.5 transition-colors hover:bg-paper-sunken";
+
+                        const content = (
+                          <>
                             <span className="num text-xs text-ink-muted">
                               {String(index + 1).padStart(2, "0")}
                             </span>
                             <span className="font-display text-3xl font-extrabold tracking-tight text-ink">
                               {link.label}
                             </span>
-                          </a>
-                        </li>
-                      ))}
+                          </>
+                        );
+
+                        return (
+                          <li key={link.href}>
+                            {route ? (
+                              <Link
+                                href={link.href}
+                                onClick={() => setOpen(false)}
+                                aria-current={pathname === link.href ? "page" : undefined}
+                                className={className}
+                              >
+                                {content}
+                              </Link>
+                            ) : (
+                              <a
+                                href={hrefFor(link.href)}
+                                onClick={() => setOpen(false)}
+                                className={className}
+                              >
+                                {content}
+                              </a>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </nav>
 

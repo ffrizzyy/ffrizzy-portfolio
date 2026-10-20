@@ -57,13 +57,15 @@ export function Hero() {
               View work
             </ButtonLink>
             {/* The CV control leads with the name rather than the action. The
-                aria-label keeps "Download CV" as the accessible name, and the
-                mono CV badge is what tells a reader the pill opens the CV. */}
+                aria-label keeps the CV as the accessible name, and the mono CV
+                badge is what tells a reader the pill opens the CV. The icon is
+                an arrow, not a download: the pill opens the /cv page, and the
+                PDF downloads live on that page. */}
             <CvLink
-              ariaLabel={`Download CV, ${SITE.name}`}
-              className="inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-5 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]"
+              ariaLabel={`Open the CV page, ${SITE.name}`}
+              className="group inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-5 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]"
             >
-              <Icon name="DownloadSimple" size={18} />
+              <Icon name="ArrowRight" size={18} className="nudge-right" />
               <span>{SITE.name}</span>
               <span
                 aria-hidden

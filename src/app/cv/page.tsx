@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Icon, type IconName } from "@/components/shared/Icon";
@@ -54,7 +55,7 @@ function CvSection({
   children: ReactNode;
 }) {
   return (
-    <section className="mt-10 border-t-2 border-ink pt-5">
+    <section className="reveal mt-10 border-t-2 border-ink pt-5">
       <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">
         <Icon name={icon} size={16} className="shrink-0" />
         {title}
@@ -125,9 +126,23 @@ export default function CvPage() {
   return (
     <div className={`${LAYOUT.section} pb-24`}>
       <div className={`${LAYOUT.container} print-cv max-w-4xl`}>
+        {/* Back control. The nav's About entry lands here from Home, so there
+            has to be a way back that does not depend on the browser's back
+            button, which is not there at all when this page was opened in a new
+            tab or reached from a search result. Hidden in print. */}
+        <div className="no-print mb-8">
+          <Link
+            href="/"
+            className="group inline-flex min-h-11 items-center gap-2 rounded-pill border-2 border-ink bg-paper px-4 py-2 text-sm font-medium text-ink transition-[background-color,transform,box-shadow] duration-200 ease-zine hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-paper-raised hover:shadow-hard active:translate-x-0 active:translate-y-0 active:shadow-none"
+          >
+            <Icon name="ArrowLeft" size={18} className="nudge-left" />
+            Back to home
+          </Link>
+        </div>
+
         {/* Header. Chrome is hidden in print, so the contact details have to be
             part of the document itself. */}
-        <header className="flex flex-col gap-4 border-b-2 border-ink pb-8">
+        <header className="reveal flex flex-col gap-4 border-b-2 border-ink pb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-4xl md:text-5xl">{SITE.name}</h1>
@@ -354,7 +369,7 @@ export default function CvPage() {
             href="/"
             className="touch-target group inline-flex items-center gap-1.5 text-base font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
           >
-            <Icon name="ArrowUpRight" size={18} className="nudge" />
+            <Icon name="ArrowLeft" size={18} className="nudge-left" />
             Back to the portfolio
           </a>
         </div>

@@ -47,11 +47,12 @@ export function WorkBento() {
                   {/* The cover artwork now exists, so the cell shows an image
                       rather than an empty placeholder frame. A real screenshot
                       dropped over the same path replaces it with no code change. */}
-                  <div className="relative aspect-[16/10] border-b-2 border-ink">
+                  <div className="relative aspect-[16/10] overflow-hidden border-b-2 border-ink">
                     <CoverImage
                       src={project.cover}
                       alt={`${project.title} cover`}
                       sizes="(min-width: 768px) 45vw, 100vw"
+                      className="transition-transform duration-700 ease-zine group-hover:scale-[1.04]"
                     />
                   </div>
 

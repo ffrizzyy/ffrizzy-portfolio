@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { LAYOUT, NAV_LINKS } from "@/lib/constants";
+import { isRouteHref, LAYOUT, NAV_LINKS } from "@/lib/constants";
 
 /**
  * The mobile section bar.
@@ -20,7 +21,9 @@ import { LAYOUT, NAV_LINKS } from "@/lib/constants";
  *   desktop bar and the menu sheet; see the note on MOBILE_ENTRIES below for why
  *   no entry is retargeted here. Seven single-word labels is the most the bar
  *   holds on a 360px phone, which is why the label size and tracking are a notch
- *   smaller than they were at six.
+ *   smaller than they were at six. The About entry is a route rather than an
+ *   anchor, so below md it opens /cv rather than scrolling, and it carries no
+ *   IntersectionObserver target.
  * - It reads no scroll position. The active entry comes from an
  *   IntersectionObserver over the same section ids the desktop nav watches, so
  *   nothing runs per frame and spec 2.8's ban on scroll listeners still holds.
@@ -33,10 +36,10 @@ import { LAYOUT, NAV_LINKS } from "@/lib/constants";
  * because a stylesheet cannot read a TypeScript constant, so this is the one
  * place the two are tied together.
  */
-type MobileEntry = { label: string; id: string };
+type MobileEntry = { label: string; href: string; route: boolean };
 
 /**
- * The seven section anchors, taken straight from NAV_LINKS.
+ * The section anchors, taken straight from NAV_LINKS, plus the one route entry.
  *
  * It was briefly retargeted so that "Work" opened #work, the bento, on the
  * grounds that NAV_LINKS points the same label at #all. That was reverted: a
@@ -44,10 +47,14 @@ type MobileEntry = { label: string; id: string };
  * on the width of the window is a trap, particularly for someone who rotates a
  * phone or sends a link. If the bento deserves its own entry it should get one in
  * NAV_LINKS, so both bars change together.
+ *
+ * About is the exception that proves the rule: it is a route entry, so it opens
+ * /cv on every breakpoint and is not an observer target here.
  */
 const MOBILE_ENTRIES: MobileEntry[] = NAV_LINKS.map((link) => ({
   label: link.label,
-  id: link.href.slice(1),
+  href: link.href,
+  route: isRouteHref(link.href),
 }));
 
 export function MobileNav() {
@@ -61,9 +68,9 @@ export function MobileNav() {
       return;
     }
 
-    const targets = MOBILE_ENTRIES.map((entry) => document.getElementById(entry.id)).filter(
-      (element): element is HTMLElement => element !== null,
-    );
+    const targets = MOBILE_ENTRIES.filter((entry) => !entry.route)
+      .map((entry) => document.getElementById(entry.href.slice(1)))
+      .filter((element): element is HTMLElement => element !== null);
     if (targets.length === 0) return;
 
     // Ids currently inside the reading band. Keeping the set, rather than just
@@ -121,30 +128,46 @@ export function MobileNav() {
     >
       <ul className="mx-auto flex w-full max-w-7xl items-stretch">
         {MOBILE_ENTRIES.map((entry) => {
-          const isActive = active === entry.id;
+          const isActive = entry.route ? pathname === entry.href : active === entry.href.slice(1);
+          const href = entry.route || onHome ? entry.href : `/${entry.href}`;
+
+          const className = cn(
+            "group relative flex min-h-[3.875rem] items-center justify-center px-0.5 text-center",
+            "whitespace-nowrap font-mono text-[0.62rem] uppercase tracking-[0.06em] transition-colors duration-200 ease-zine",
+            isActive ? "text-ink" : "text-ink-muted hover:text-ink",
+          );
+
+          const underline = (
+            <span
+              aria-hidden
+              className={cn(
+                "absolute inset-x-3 top-0 h-0.5 origin-left rounded-pill bg-signal transition-transform duration-300 ease-zine",
+                isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+              )}
+            />
+          );
+
           return (
-            <li key={entry.id} className="flex-1">
-              <a
-                href={onHome ? `#${entry.id}` : `/#${entry.id}`}
-                aria-current={isActive ? "true" : undefined}
-                className={cn(
-                  "relative flex min-h-[3.875rem] items-center justify-center px-0.5 text-center",
-                  "whitespace-nowrap font-mono text-[0.62rem] uppercase tracking-[0.06em] transition-colors duration-200 ease-zine",
-                  isActive ? "text-ink" : "text-ink-muted hover:text-ink",
-                )}
-              >
-                {entry.label}
-                {/* The same signal rule the desktop bar marks its active entry
-                    with, mirrored to the top edge because the active weight
-                    belongs against the page above the bar. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute inset-x-3 top-0 h-0.5 origin-left rounded-pill bg-signal transition-transform duration-300 ease-zine",
-                    isActive ? "scale-x-100" : "scale-x-0",
-                  )}
-                />
-              </a>
+            <li key={entry.href} className="flex-1">
+              {entry.route ? (
+                <Link
+                  href={href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={className}
+                >
+                  {entry.label}
+                  {underline}
+                </Link>
+              ) : (
+                <a
+                  href={href}
+                  aria-current={isActive ? "true" : undefined}
+                  className={className}
+                >
+                  {entry.label}
+                  {underline}
+                </a>
+              )}
             </li>
           );
         })}
