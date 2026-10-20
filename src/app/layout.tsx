@@ -92,6 +92,38 @@ function safeJsonLd(data: unknown): string {
     .replace(/\u2029/g, "\\u2029");
 }
 
+/**
+ * Pre-paint theme resolution.
+ *
+ * next-themes writes the same attribute, but its script lands at the top of
+ * <body>: the browser has already parsed the stylesheet and can paint the
+ * light canvas before that script runs, which is the light flash a dark-theme
+ * visitor sees on reload. This copy runs from <head>, before the body exists,
+ * and mirrors the provider's storage key and values (storageKey "theme",
+ * defaultTheme "system"). It is deliberately tiny and try/catch wrapped: if
+ * storage is blocked, system preference still wins and the document is never
+ * left without a theme.
+ */
+const themeInitScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var choice =
+      stored === "light" || stored === "dark" || stored === "system"
+        ? stored
+        : "system";
+    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var theme = choice === "system" ? (prefersDark ? "dark" : "light") : choice;
+    var root = document.documentElement;
+    root.setAttribute("data-theme", theme);
+    // The switch paints its selected segment from this, so the control does not
+    // render with nothing selected for the hydration frame.
+    root.setAttribute("data-theme-choice", choice);
+    root.style.colorScheme = theme;
+  } catch (error) {}
+})();
+`;
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // The nonce issued by src/middleware.ts. Next stamps its own script tags from
   // the request's CSP header, but a raw <script> written here has to be handed
@@ -106,6 +138,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
       className={`${bricolage.variable} ${geist.variable} ${geistMono.variable}`}
     >
+      {/* Runs before the first paint. See the note on themeInitScript. */}
+      <head>
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       {/* --mobile-nav-h is published on <body>, not on <main>, because the
           reserved space belongs to the footer: the mobile section bar is fixed
           to the bottom edge and the footer is the last element on the page, so

@@ -85,6 +85,10 @@
     scroll-padding-top: 104px;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* The canvas behind <body>. Without this the browser's white canvas can be
+       painted for a frame before the body's background resolves, which reads as
+       a white flash on load even when the theme attribute is already correct. */
+    background-color: var(--paper);
   }
 
   body {
@@ -97,8 +101,8 @@
        is switched on for the duration of a theme change by `.theme-switching`
        below, so surfaces that are not the body change at the same pace. */
     transition:
-      background-color 500ms var(--ease-out-zine),
-      color 500ms var(--ease-out-zine);
+      background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   h1,
@@ -143,12 +147,18 @@
  * transition on every element would also slow every hover, which is   *
  * why this is a temporary class and not a base rule.                  *
  *                                                                     *
+ * The fade is 200ms. It was 500ms, which read as a slow wash rather   *
+ * than a switch: the eye has already read the new surface before the  *
+ * colour arrives. The easing is the standard material curve, so the   *
+ * change starts promptly and settles without the long tail that an    *
+ * aggressive ease-out leaves behind.                                  *
+ *                                                                     *
  * Everything that reads a token has to be in the list: surfaces, ink, *
- * borders, icon fills, the hard shadow, and the texture layer's       *
- * filter and opacity. `!important` is deliberate: a Tailwind          *
- * `transition-[transform,box-shadow]` utility would otherwise narrow  *
- * the property list and let background colours snap while the shadow  *
- * eased. It only wins for the 520ms the class is present.             *
+ * borders, icon fills, the hard shadow, and underlines. `!important`  *
+ * is deliberate: a Tailwind `transition-[transform,box-shadow]`      *
+ * utility would otherwise narrow the property list and let background *
+ * colours snap while the shadow eased. It only wins for the 300ms the *
+ * class is present.                                                   *
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
   html.theme-switching,
@@ -156,12 +166,30 @@
   html.theme-switching *::before,
   html.theme-switching *::after {
     transition-property:
-      background-color, border-color, color, fill, stroke, opacity, box-shadow, filter,
-      outline-color, text-decoration-color !important;
-    transition-duration: 500ms !important;
-    transition-timing-function: var(--ease-out-zine) !important;
+      background-color, border-color, color, fill, stroke, box-shadow, outline-color,
+      text-decoration-color !important;
+    transition-duration: 200ms !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
     transition-delay: 0s !important;
   }
+}
+
+/* The theme switch's selected segment. It is driven by the data-theme-choice
+   attribute the pre-paint script writes, not by React state, so the control
+   arrives with the right option already filled instead of painting every
+   option unselected until hydration. changeTheme rewrites the attribute on
+   every click, so the two cannot drift. */
+html[data-theme-choice="system"] .theme-option-system,
+html[data-theme-choice="light"] .theme-option-light,
+html[data-theme-choice="dark"] .theme-option-dark {
+  background-color: var(--ink);
+  color: var(--paper);
+}
+
+html[data-theme-choice="system"] .theme-option-system svg,
+html[data-theme-choice="light"] .theme-option-light svg,
+html[data-theme-choice="dark"] .theme-option-dark svg {
+  transform: scale(1.1);
 }
 
 /* ------------------------------------------------------------------ *
@@ -177,6 +205,12 @@
   background-position: center;
   opacity: var(--texture-opacity);
   filter: var(--texture-filter);
+  /* The only element whose opacity and filter follow the theme. Kept off the
+     global `.theme-switching` list so the browser does not try to fade every
+     node's opacity, which is both wasteful and a stacking-context trap. */
+  transition:
+    opacity 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .marker {

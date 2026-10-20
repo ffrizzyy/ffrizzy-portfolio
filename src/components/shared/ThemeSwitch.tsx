@@ -21,10 +21,11 @@ const OPTIONS: { value: "system" | "light" | "dark"; label: string; icon: IconNa
 ];
 
 /**
- * How long the cross-fade is allowed to run. It matches the 500ms duration in
- * the `.theme-switching` rule in globals.css; keep the two in step.
+ * How long the `theme-switching` class stays on <html>. The fade itself is
+ * 200ms in globals.css; the extra 100ms is slack for next-themes to apply the
+ * attribute in its effect, so the class is never removed mid-transition.
  */
-const THEME_TRANSITION_MS = 520;
+const THEME_TRANSITION_MS = 300;
 
 export function ThemeSwitch() {
   const { theme, setTheme } = useTheme();
@@ -34,6 +35,16 @@ export function ThemeSwitch() {
   // The server cannot know the visitor's stored theme, so the first paint
   // renders every option unselected. Without this the markup would not match.
   useEffect(() => setMounted(true), []);
+
+  // The selected segment is painted from `data-theme-choice` (see
+  // globals.css), which the pre-paint script writes. This keeps that attribute
+  // in step when next-themes changes the theme from somewhere else, such as a
+  // storage event in another tab.
+  useEffect(() => {
+    if (mounted && theme) {
+      document.documentElement.setAttribute("data-theme-choice", theme);
+    }
+  }, [mounted, theme]);
 
   // The whole-page fade is opted into for the duration of the change rather
   // than left on permanently: a permanent `transition` on every element makes
@@ -50,6 +61,10 @@ export function ThemeSwitch() {
 
   const changeTheme = useCallback(
     (value: string) => {
+      // Written first so the selected segment is already correct when the
+      // attribute change repaints, whether or not the CSS fade is available.
+      document.documentElement.setAttribute("data-theme-choice", value);
+
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         setTheme(value);
         return;
@@ -81,10 +96,11 @@ export function ThemeSwitch() {
           <label
             key={option.value}
             className={cn(
-              "grid size-[34px] cursor-pointer place-items-center rounded-pill transition-[background-color,color,transform] duration-200 ease-zine",
+              "theme-option grid size-[34px] cursor-pointer place-items-center rounded-pill",
+              `theme-option-${option.value}`,
+              "text-ink-muted transition-[background-color,color,transform] duration-200 ease-zine",
               "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink",
-              "active:scale-90",
-              selected ? "bg-ink text-paper" : "text-ink-muted hover:text-ink",
+              "hover:text-ink active:scale-90",
             )}
           >
             <input
@@ -99,10 +115,7 @@ export function ThemeSwitch() {
             <Icon
               name={option.icon}
               size={18}
-              className={cn(
-                "transition-transform duration-300 ease-zine",
-                selected ? "scale-110" : "scale-100",
-              )}
+              className="transition-transform duration-300 ease-zine"
             />
           </label>
         );
