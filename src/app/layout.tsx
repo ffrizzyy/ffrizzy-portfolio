@@ -177,9 +177,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           // prevent. Verified: the served HTML has 20 of 20 script tags
           // carrying the nonce only when this prop is present.
           nonce={nonce}
-          // Spec 2.8 asks for a 300ms theme transition, so next-themes must not
-          // suppress it. The provider's pre-paint script means it never fires on
-          // load, so there is still no flash.
+          // The fade is handled by ThemeSwitch with a view transition, so the
+          // provider should not inject its own transition-suppression style.
+          // The pre-paint script means the change never fires on load anyway.
           disableTransitionOnChange={false}
         >
           <IconProvider>

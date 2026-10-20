@@ -97,12 +97,6 @@
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.65;
-    /* Spec 2.8: the one theme transition, in one place. The per-element fade
-       is switched on for the duration of a theme change by `.theme-switching`
-       below, so surfaces that are not the body change at the same pace. */
-    transition:
-      background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
-      color 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   h1,
@@ -141,37 +135,40 @@
 /* ------------------------------------------------------------------ *
  * Theme switch.                                                       *
  *                                                                     *
- * The whole-page fade is opt-in for the length of the change: the     *
- * switch adds `theme-switching` to <html> before next-themes writes   *
- * the attribute and removes it once the fade ends. A permanent        *
- * transition on every element would also slow every hover, which is   *
- * why this is a temporary class and not a base rule.                  *
+ * The cross-fade is a same-document view transition, not a transition *
+ * on every element. The old version put `transition` on `html *`,     *
+ * which created roughly 1,800 CSS transitions on this page: the main  *
+ * thread stalled, the switch repainted at once, and the rest of the  *
+ * page arrived late. A view transition holds the old frame in a       *
+ * snapshot, paints the new theme underneath it, and fades the new     *
+ * snapshot in as one compositor layer, so every piece of content      *
+ * moves at exactly the same speed as the switch.                      *
  *                                                                     *
- * The fade is 200ms. It was 500ms, which read as a slow wash rather   *
- * than a switch: the eye has already read the new surface before the  *
- * colour arrives. The easing is the standard material curve, so the   *
- * change starts promptly and settles without the long tail that an    *
- * aggressive ease-out leaves behind.                                  *
+ * While the snapshot is being taken, `.theme-vt` turns off the many   *
+ * `transition-colors` utilities. Otherwise around 380 elements would  *
+ * start their own 150ms colour fades underneath the 200ms cross-fade, *
+ * which is invisible at best and janky at worst. The class lives only *
+ * for the duration of the view transition.                            *
  *                                                                     *
- * Everything that reads a token has to be in the list: surfaces, ink, *
- * borders, icon fills, the hard shadow, and underlines. `!important`  *
- * is deliberate: a Tailwind `transition-[transform,box-shadow]`      *
- * utility would otherwise narrow the property list and let background *
- * colours snap while the shadow eased. It only wins for the 300ms the *
- * class is present.                                                   *
+ * ThemeSwitch skips the transition under reduced motion, and the      *
+ * reduced-motion block below also disables these animations.          *
  * ------------------------------------------------------------------ */
-@media (prefers-reduced-motion: no-preference) {
-  html.theme-switching,
-  html.theme-switching *,
-  html.theme-switching *::before,
-  html.theme-switching *::after {
-    transition-property:
-      background-color, border-color, color, fill, stroke, box-shadow, outline-color,
-      text-decoration-color !important;
-    transition-duration: 200ms !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-    transition-delay: 0s !important;
-  }
+html.theme-vt,
+html.theme-vt *,
+html.theme-vt *::before,
+html.theme-vt *::after {
+  transition: none !important;
+}
+
+::view-transition-group(root) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* The theme switch's selected segment. It is driven by the data-theme-choice
@@ -205,12 +202,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   background-position: center;
   opacity: var(--texture-opacity);
   filter: var(--texture-filter);
-  /* The only element whose opacity and filter follow the theme. Kept off the
-     global `.theme-switching` list so the browser does not try to fade every
-     node's opacity, which is both wasteful and a stacking-context trap. */
-  transition:
-    opacity 200ms cubic-bezier(0.4, 0, 0.2, 1),
-    filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .marker {
