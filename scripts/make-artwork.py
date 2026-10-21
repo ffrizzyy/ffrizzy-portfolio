@@ -9,6 +9,7 @@ They exist so no slot in the interface is an empty grey box. A real screenshot
 dropped over any of these paths simply replaces it.
 
 Run: python scripts/make-artwork.py
+     python scripts/make-artwork.py prepo joevix   # only these covers
 """
 
 from __future__ import annotations
@@ -338,12 +339,23 @@ def read_projects() -> list[dict[str, str]]:
 
 
 def main() -> int:
-    print("paper texture:")
-    make_paper()
+    # A list of slugs regenerates only those covers. Without it the script
+    # rebuilds every drawn asset, which would overwrite a real photo or capture
+    # that had been dropped over the placeholder.
+    only = set(sys.argv[1:])
+
+    if not only:
+        print("paper texture:")
+        make_paper()
 
     print("project covers:")
     for index, project in enumerate(read_projects(), start=1):
+        if only and project["slug"] not in only:
+            continue
         make_cover(project["slug"], project["title"], project["type"], index)
+
+    if only:
+        return 0
 
     print("portrait card:")
     make_portrait()

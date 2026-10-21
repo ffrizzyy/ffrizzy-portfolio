@@ -29,7 +29,7 @@ import {
   type WritingItem,
 } from "@/content/schema";
 import { FEATURED_ORDER, projects } from "@/content/projects";
-import { repos as rawRepos } from "@/content/repos";
+import { repoFallback } from "@/content/repos";
 import { isWorkFilter, WORK_FILTERS, type WorkFilter } from "@/lib/work-filters";
 import {
   awards as rawAwards,
@@ -71,7 +71,7 @@ export const growthList = z.array(growthSlideSchema).parse(rawGrowth);
 export const writingList: WritingItem[] = z.array(writingItemSchema).parse(rawWriting);
 export const skillList: Skill[] = z.array(skillSchema).parse(rawSkills);
 export const toolList: Tool[] = z.array(toolSchema).parse(rawTools);
-export const repoList: Repo[] = z.array(repoSchema).parse(rawRepos);
+export const repoList: Repo[] = z.array(repoSchema).parse(repoFallback);
 
 /** Slug uniqueness, so two records cannot quietly shadow each other. */
 const slugs = projectList.map((p) => p.slug);
@@ -115,16 +115,23 @@ if (eventList.length > eventsValue) {
 
 /**
  * Computed stats. Spec 4.2: the events and projects numbers are
- * computed, never typed.
+ * computed, never typed. The repository count joins them because the Open
+ * source section reads the same GitHub list.
+ *
+ * This takes the live count as an argument rather than reading a module-level
+ * constant, so a failed fetch cannot leave a stale number in the grid.
  */
 
-export const statsResolved: Stat[] = z.array(statSchema).parse(
-  rawStats.map((stat) => {
-    if (stat.computedFrom === "events") return { ...stat, value: eventsValue };
-    if (stat.computedFrom === "projects") return { ...stat, value: projectList.length };
-    return stat;
-  }),
-);
+export function resolveStats(repoCount: number): Stat[] {
+  return z.array(statSchema).parse(
+    rawStats.map((stat) => {
+      if (stat.computedFrom === "events") return { ...stat, value: eventsValue };
+      if (stat.computedFrom === "projects") return { ...stat, value: projectList.length };
+      if (stat.computedFrom === "repos") return { ...stat, value: repoCount };
+      return stat;
+    }),
+  );
+}
 
 /** Drives the stacked-bar illustration and the "Build 4" style labels. */
 export const projectTypeBreakdown: Record<ProjectType, number> = projectList.reduce(
@@ -188,7 +195,7 @@ if (orphanSkills.length > 0) {
 }
 
 /* ------------------------------------------------------------------ *
- * The #all list. Spec 4.7 called for 11 rows. It is now the 14 project *
+ * The #all list. Spec 4.7 called for 11 rows. It is now the 17 project *
  * files plus the content row, since every public repository gained a   *
  * case study.                                                          *
  * ------------------------------------------------------------------ */
@@ -206,6 +213,9 @@ export type WorkRow = {
 
 /** Explicit order so the grouping reads Build, Data, Research, Design. */
 const WORK_ROW_ORDER = [
+  "prepo",
+  "joevix",
+  "kerinci-lang",
   "azzifa",
   "portal-publik",
   "watsonx-genai-app",

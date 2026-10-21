@@ -231,12 +231,61 @@ function PhoneFrame() {
   );
 }
 
+/**
+ * A twelve-cell grid with one cell per public repository, up to twelve. It
+ * shows a real count rather than a decorative pattern, and the empty cells make
+ * the ceiling legible instead of implying the grid is the whole account.
+ */
+function RepoGrid({ value }: { value: number }) {
+  const total = 12;
+  const columns = 4;
+  const cellWidth = 30;
+  const cellHeight = 12;
+  const gap = 8;
+  const rows = Math.ceil(total / columns);
+  const width = columns * cellWidth + (columns - 1) * gap;
+  const height = rows * cellHeight + (rows - 1) * gap;
+  const filled = Math.min(Math.max(Math.round(value), 0), total);
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+      {Array.from({ length: total }, (_, index) => {
+        const column = index % columns;
+        const row = Math.floor(index / columns);
+        const x = column * (cellWidth + gap);
+        const y = row * (cellHeight + gap);
+        const isFilled = index < filled;
+
+        return (
+          <rect
+            key={index}
+            x={x}
+            y={y}
+            width={cellWidth}
+            height={cellHeight}
+            fill={isFilled ? "var(--signal)" : "var(--paper-sunken)"}
+            stroke={isFilled ? "var(--ink)" : "var(--line)"}
+            strokeWidth={1}
+            className={isFilled ? "stack-grow" : undefined}
+            style={
+              isFilled
+                ? { animationDelay: `${index * 0.04}s`, transformOrigin: `${x}px center` }
+                : undefined
+            }
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
 export function StatViz({ viz, value }: { viz: Stat["viz"]; value: number }) {
   return (
     <div aria-hidden className="flex min-h-[86px] items-center justify-end">
       {viz === "ring" ? <RingGauge value={value} total={4} /> : null}
       {viz === "ticks" ? <TickAxis /> : null}
       {viz === "stack" ? <StackBar /> : null}
+      {viz === "repos" ? <RepoGrid value={value} /> : null}
       {viz === "platforms" ? <PlatformDots /> : null}
       {viz === "phone" ? <PhoneFrame /> : null}
     </div>

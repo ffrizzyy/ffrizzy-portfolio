@@ -5,6 +5,7 @@ with the actual Bricolage Grotesque the site uses, not a system-font
 approximation, and nothing is fetched while `next build` runs.
 
 Run: python scripts/make-icons.py
+     python scripts/make-icons.py prepo joevix   # only these OG cards
 """
 
 from __future__ import annotations
@@ -207,23 +208,30 @@ def read_projects() -> list[dict[str, str]]:
 
 def main() -> int:
     font_path = ensure_font()
-    print("icons:")
+    only = set(sys.argv[1:])
 
-    # Next.js file conventions: app/icon.png is the favicon, apple-icon.png the
-    # iOS home screen icon, opengraph-image.png the default share card.
-    make_wordmark_icon(font_path, 256, ROOT / "src" / "app" / "icon.png", border=10)
-    make_wordmark_icon(font_path, 180, ROOT / "src" / "app" / "apple-icon.png", border=8)
+    if not only:
+        print("icons:")
 
-    print("open graph:")
-    make_og(
-        font_path,
-        ROOT / "src" / "app" / "opengraph-image.png",
-        headline="I build it, analyze it, and tell the story.",
-        kicker="portfolio 2026",
-        meta="Muhammad Farrel Al-Wafi Frizzy  /  Information Systems graduate",
-    )
+        # Next.js file conventions: app/icon.png is the favicon, apple-icon.png
+        # the iOS home screen icon, opengraph-image.png the default share card.
+        make_wordmark_icon(font_path, 256, ROOT / "src" / "app" / "icon.png", border=10)
+        make_wordmark_icon(font_path, 180, ROOT / "src" / "app" / "apple-icon.png", border=8)
+
+        print("open graph:")
+        make_og(
+            font_path,
+            ROOT / "src" / "app" / "opengraph-image.png",
+            headline="I build it, analyze it, and tell the story.",
+            kicker="portfolio 2026",
+            meta="Muhammad Farrel Al-Wafi Frizzy  /  Information Systems graduate",
+        )
+    else:
+        print("open graph:")
 
     projects = read_projects()
+    if only:
+        projects = [project for project in projects if project["slug"] in only]
     print(f"  {len(projects)} project cards")
     for project in projects:
         make_og(

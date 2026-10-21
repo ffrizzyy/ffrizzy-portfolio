@@ -55,10 +55,10 @@ export type Project = z.infer<typeof projectSchema>;
 
 /** Spec 4.2. */
 export const statSchema = z.object({
-  id: z.enum(["gpa", "events", "projects", "followers", "views"]),
+  id: z.enum(["gpa", "events", "projects", "repos", "followers", "views"]),
   /** Ignored for computed stats, which derive their value from other content. */
   value: z.number(),
-  computedFrom: z.enum(["events", "projects"]).optional(),
+  computedFrom: z.enum(["events", "projects", "repos"]).optional(),
   kind: z.enum(["exact", "lower-bound"]),
   decimals: z.number().int().min(0).max(2).optional(),
   /** A magnitude suffix, kept tight against the number: "K", "M". */
@@ -73,8 +73,15 @@ export const statSchema = z.object({
   detail: z.string(),
   method: z.string(),
   asOf: z.string(),
-  icon: z.enum(["GraduationCap", "CalendarCheck", "Stack", "UserPlus", "Eye"]),
-  viz: z.enum(["ring", "ticks", "stack", "platforms", "phone"]),
+  icon: z.enum([
+    "GraduationCap",
+    "CalendarCheck",
+    "Stack",
+    "GithubLogo",
+    "UserPlus",
+    "Eye",
+  ]),
+  viz: z.enum(["ring", "ticks", "stack", "repos", "platforms", "phone"]),
   /**
    * A `#section` anchor on Home, or an absolute route when the detail lives on
    * another page. GPA now points at /cv, which carries the academic record that
@@ -202,6 +209,22 @@ export const repoSchema = z.object({
   homepage: z.string().url().optional(),
   /** Slug of a matching case study on this site, when one exists. */
   projectSlug: z.string().optional(),
+  /**
+   * GitHub metadata. The committed snapshot supplies a value for every field,
+   * and the daily fetch replaces it when the API answers. Each field defaults
+   * so a hand-written repository cannot fail the build for lacking a star count.
+   */
+  stars: z.number().int().min(0).default(0),
+  forks: z.number().int().min(0).default(0),
+  openIssues: z.number().int().min(0).default(0),
+  topics: z.array(z.string()).default([]),
+  /** ISO 8601 timestamps, straight from the API. */
+  pushedAt: z.string().optional(),
+  createdAt: z.string().optional(),
+  archived: z.boolean().default(false),
+  fork: z.boolean().default(false),
+  /** SPDX id, when the repository declares a licence. */
+  license: z.string().optional(),
 });
 
 export const skillSchema = z.object({

@@ -17,9 +17,9 @@ import { growthSlideSchema } from "./schema";
  * ------------------------------------------------------------------ */
 
 /**
- * Five accumulated numbers. GPA, followers, and views are typed here with a
- * method and an asOf date. Events and projects are computed at load time in
- * lib/content.ts, which is why their `value` is a placeholder.
+ * Six accumulated numbers. GPA, followers, and views are typed here with a
+ * method and an asOf date. Events, projects, and repositories are computed at
+ * load time in lib/content.ts, which is why their `value` is a placeholder.
  */
 export const stats: Stat[] = [
   {
@@ -63,6 +63,20 @@ export const stats: Stat[] = [
     icon: "Stack",
     viz: "stack",
     href: "#work",
+  },
+  {
+    id: "repos",
+    value: 0,
+    computedFrom: "repos",
+    kind: "exact",
+    label: "public repositories",
+    detail: "On GitHub, each with a case study where one exists",
+    method:
+      "Counted from the public GitHub API for @ffrizzyy and cached for a day. When the API is unreachable or rate limited, the count comes from the last committed repository snapshot, so the number never renders as zero.",
+    asOf: "2026",
+    icon: "GithubLogo",
+    viz: "repos",
+    href: "#repos",
   },
   {
     id: "followers",

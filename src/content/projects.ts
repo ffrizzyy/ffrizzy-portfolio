@@ -2,15 +2,151 @@ import type { Project } from "./schema";
 import { kitoArticleUrl } from "./site";
 
 /**
- * The fourteen project records. Spec 7 inventory, with the outcome lines from
+ * The seventeen project records. Spec 7 inventory, with the outcome lines from
  * spec 10.2. `tags` values must match a skill name in site.ts, and the build
  * fails if a skill resolves to no project (spec 7.1 invariant 1).
  *
- * The last three come from the public repositories that previously appeared only
- * in the Open source section, so their case studies now exist and the repository
- * cards link across to them.
+ * The first three are the newest public repositories: Prepo, Joevix, and
+ * KerinciLang. They were added when the Open source section began reading the
+ * GitHub API, so every public repository now has a case study rather than only a
+ * card.
  */
 export const projects: Project[] = [
+  {
+    slug: "prepo",
+    title: "Prepo",
+    type: "build",
+    featured: false,
+    role: "Solo build: product, data model, app, extraction, follow-ups, and desktop shell",
+    period: "Oct 2026",
+    outcome:
+      "An AI project manager that turns a meeting into assigned, grounded tickets, mirrors them into Linear, and chases the work until it is done.",
+    stack: ["Next.js", "TypeScript", "PostgreSQL", "Drizzle", "Tauri 2", "OpenRouter"],
+    tags: [],
+    links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/prepo" }],
+    cover: "/images/prepo.webp",
+    caseStudy: {
+      summary:
+        "Prepo is a proxy project manager. A meeting goes in as a recording, a transcript, or pasted minutes, and comes out as minutes, decisions, open questions, and assigned tickets. It then follows up on those tickets and syncs them with Linear.",
+      problem:
+        "Action items usually die in a notes document. The meeting ends with a list of things somebody said they would do, and the list is never assigned, never scheduled, and never checked again. The gap is not note taking but the follow-through after the notes.",
+      approach:
+        "A pnpm monorepo with a Next.js app, a Tauri 2 desktop shell, shared Zod schemas, and a Postgres schema of 25 tables behind row-level security. Extraction is one model call per meeting through OpenRouter. The transcript is sent as untrusted JSON, the reply has to match a JSON Schema, and every action item must cite a segment token that resolves to a real row. An item that cannot be resolved is dropped, not repaired. Owners resolve only against workspace members, dates land at 17:00 in the owner's timezone, and writes run as a non-owner database role inside a workspace-scoped transaction.",
+      outcome:
+        "The app records or imports a meeting, transcribes it, extracts minutes and action items, and puts them through a review screen with the source quote. Approved items become tickets with an escalation ladder. Tickets mirror into Linear through a queue that never makes a local write wait on the network, and Linear changes come back through a signed webhook.",
+      limitations:
+        "There is no verified Resend sending domain, so email follow-ups only reach the account's own address; refused sends are recorded with Resend's reason. Deepgram is wired but unconfigured, so import-by-transcript is the working path. The Tauri desktop shell is compiled and tested but not packaged or published. Push notifications, PII redaction before the model call, and automated extraction quality evals are not implemented.",
+      bullets: [
+        {
+          label: "Grounding before storage",
+          text: "The model's reply has to pass the same Zod schema the prompt describes. Every action item cites a transcript segment, and the quote shown in review is read from the transcript rather than from the model's prose.",
+        },
+        {
+          label: "Tenant boundary in the database",
+          text: "Row-level security and a non-owner application role enforce the workspace boundary, so a cross-tenant read returns nothing and a cross-tenant write is rejected. Signing in as the second seeded owner and opening the first workspace returns 404.",
+        },
+        {
+          label: "A queue between local and Linear",
+          text: "Local ticket writes commit first. A separate queue performs the Linear call, backs off and retries on failure, and reports sync status on the ticket page.",
+        },
+        {
+          label: "Honest gaps",
+          text: "The README records what is wired but unconfigured, what is built but unpublished, and what is deliberately not implemented, so a demo cannot be mistaken for a finished product.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "joevix",
+    title: "Joevix",
+    type: "build",
+    featured: false,
+    role: "Solo build: extension, theming engine, layout editor, and release",
+    period: "Oct 2026",
+    outcome:
+      "A local-only browser extension that restyles and rearranges any page on your own screen, with themes, per-site layout, and no network code.",
+    stack: ["TypeScript", "WXT", "Preact", "Manifest V3", "Playwright"],
+    tags: [],
+    links: [
+      { label: "GitHub", href: "https://github.com/ffrizzyy/joevix" },
+      { label: "Latest release", href: "https://github.com/ffrizzyy/joevix/releases/latest" },
+    ],
+    cover: "/images/joevix.webp",
+    caseStudy: {
+      summary:
+        "Joevix is a Manifest V3 browser extension for Chrome, Edge, Brave, and Firefox that changes how a page looks and reads without touching the page for anyone else. Themes, custom colors, and per-site layout live in the browser, not on a server.",
+      problem:
+        "Most reading modes make one decision for every site, and most theming extensions ask for broad access up front. A reader who wants a warmer theme on one site, a wider column on another, and no change anywhere else has to trust a permission prompt that grants more than the job needs.",
+      approach:
+        "The extension declares no content scripts and no host permissions at install. A site is enabled one origin at a time, and the content script is registered at runtime. Theming is CSS custom properties applied through a constructed stylesheet, and layout editing writes CSS order, hidden state, and a reading width per site, so no DOM node is moved or rewritten. The content script never touches storage or permissions; typed, Zod-validated messages go through the service worker.",
+      outcome:
+        "Version 1.0.1 ships packaged Chrome and Firefox builds, built-in and custom themes, a contrast matrix, per-site layout editing with a 20-step undo history, import and export, a privacy panel, and a global off switch. The release passes type checking, lint, unit and E2E tests, axe audits, CodeQL, a manifest policy check, and a size budget.",
+      limitations:
+        "Layout presets and the spacing half of the reading-width work are not in this build. Firefox is tested by the automated suite rather than by hand, and the Firefox add-on is a temporary build because store publication is out of scope for v1.0. Theme sync between devices and the persistent diagnostic buffer are deferred.",
+      bullets: [
+        {
+          label: "No standing access",
+          text: "The manifest keeps content_scripts and web_accessible_resources empty and requests only storage, activeTab, and scripting, so a site is reachable only after the reader enables it.",
+        },
+        {
+          label: "No network code",
+          text: "ESLint bans fetch, XMLHttpRequest, WebSocket, EventSource, sendBeacon, dynamic Image, eval, and string timers. The end-to-end suite also asserts that the extension issues no request outside the page's own origin.",
+        },
+        {
+          label: "Layout without moving nodes",
+          text: "Reorder and hide are written as CSS order and display rules against adapter container sections. A reset removes one stylesheet and one attribute.",
+        },
+        {
+          label: "Release checks",
+          text: "Package and content-script size budgets, manifest policy checks, SHA-256 checksums, and a rollback document are part of the release script rather than an afterthought.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "kerinci-lang",
+    title: "KerinciLang",
+    type: "build",
+    featured: false,
+    role: "Solo build: language design, interpreter, tests, and tutorial",
+    period: "Oct 2026",
+    outcome:
+      "A small programming language whose keywords come from Kerinci (Siulak), with a dependency-free Python interpreter and a 13-lesson tutorial.",
+    stack: ["Python", "Language Design", "Parsing", "Interpreters"],
+    tags: [],
+    links: [{ label: "GitHub", href: "https://github.com/ffrizzyy/kerinci-lang" }],
+    cover: "/images/kerinci-lang.webp",
+    caseStudy: {
+      summary:
+        "KerinciLang is a programming language built from Kerinci vocabulary. Variables are barang, functions are guno, printing is nyetak, and the whole interpreter is a single Python file with no dependencies.",
+      problem:
+        "A language is one of the clearest ways to show that a vocabulary can carry modern work. Kerinci has speakers and a dictionary, but almost no presence in software, and a learner who wants to write a first program has to leave the language behind at the door.",
+      approach:
+        "The language was designed around a small set of words reviewed by Kerinci speakers, with a grammar that covers variables, constants, numbers, text, lists, maps, conditionals, loops, functions, recursion, closures, file input and output, error handling, and multi-file programs. The interpreter is a single Python file with no third-party dependencies, so a learner can read the implementation as well as use it. Every tutorial code block runs in the test suite.",
+      outcome:
+        "Version 0.5.0 has 26 special words, 6 comparison words, and 24 built-in functions, with 271 language tests and 550 tutorial code blocks passing. It ships a 13-lesson tutorial in English and Indonesian, a glossary, a krc command, a packaged .pyz, and a REPL.",
+      limitations:
+        "Two vocabulary questions are still open: a Kerinci word for the boolean type, and the reserved word kelihu. Interpreter error messages are still in Indonesian rather than Kerinci. The dictionary title, authors, and speaker credits have to be completed before publication.",
+      bullets: [
+        {
+          label: "Reviewed by speakers",
+          text: "The vocabulary was reviewed and approved by Kerinci speakers, and the worksheet they worked through is in the repository rather than in a private document.",
+        },
+        {
+          label: "Tests as documentation",
+          text: "The 550 tutorial code blocks are executed by the test suite, so an example that stops working fails the build instead of sitting in the tutorial as a broken promise.",
+        },
+        {
+          label: "Small enough to read",
+          text: "The interpreter is one Python file with no dependencies. That is a design constraint, not a shortcut: the point is a language a learner can open and follow.",
+        },
+        {
+          label: "Two languages of explanation",
+          text: "The tutorial exists in English and Indonesian, with the code in Kerinci either way.",
+        },
+      ],
+    },
+  },
   {
     slug: "azzifa",
     title: "Azzifa",
@@ -467,7 +603,7 @@ export const projects: Project[] = [
 
 /** The five bento cells, in the exact order spec 4.3 requires. */
 export const FEATURED_ORDER = [
-  "azzifa",
+  "prepo",
   "portal-publik",
   "aid-dashboard",
   "rice-clustering",

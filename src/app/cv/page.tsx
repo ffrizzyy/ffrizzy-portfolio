@@ -10,6 +10,8 @@ import type { TimelineEntry } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { findMissingAssets } from "@/lib/assets.server";
 import { LAYOUT, SITE } from "@/lib/constants";
+import { getRepos, summarizeRepos } from "@/lib/github.server";
+import { formatMonthYear } from "@/lib/utils";
 import {
   awardList,
   certList,
@@ -91,7 +93,7 @@ function RoleEntry({ entry }: { entry: TimelineEntry }) {
   );
 }
 
-export default function CvPage() {
+export default async function CvPage() {
   // Both CVs are optional assets, so each download button appears on its own once
   // someone drops the file into public/. No dead links until then.
   const missing = findMissingAssets([SITE.cvPath, SITE.cvPathId]);
@@ -109,6 +111,9 @@ export default function CvPage() {
       label: "Download CV, Indonesian",
     },
   ];
+
+  const repos = await getRepos();
+  const repoStats = summarizeRepos(repos);
 
   const contact: { label: string; href: string; external: boolean; icon: IconName }[] = [
     { label: SITE.email, href: `mailto:${SITE.email}`, external: false, icon: "EnvelopeSimple" },
@@ -282,6 +287,54 @@ export default function CvPage() {
               </li>
             ))}
           </ol>
+        </CvSection>
+
+        <CvSection title="Open source" icon="GithubLogo">
+          <div className="flex flex-col gap-4">
+            <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">
+              {repoStats.total} public repositories on GitHub
+            </p>
+
+            <ol className="flex flex-col gap-4">
+              {repos.map((repo) => (
+                <li
+                  key={repo.name}
+                  className="flex flex-col gap-1.5 border-t border-line pt-4 first:border-t-0 first:pt-0"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+                    <a
+                      href={repo.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="touch-target group inline-flex items-center gap-1 text-base font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-signal"
+                    >
+                      {repo.name}
+                      <Icon name="ArrowUpRight" size={14} className="nudge shrink-0" />
+                    </a>
+                    <span className="num text-xs text-ink-muted">
+                      {[
+                        repo.language,
+                        repo.pushedAt ? `updated ${formatMonthYear(repo.pushedAt)}` : undefined,
+                      ]
+                        .filter(Boolean)
+                        .join(" / ")}
+                    </span>
+                  </div>
+
+                  <p className="max-w-[68ch] text-sm text-ink-muted">{repo.description}</p>
+
+                  {repo.projectSlug ? (
+                    <a
+                      href={`/work/${repo.projectSlug}`}
+                      className="touch-target w-fit text-sm font-medium text-ink underline decoration-signal decoration-2 underline-offset-4 hover:decoration-4"
+                    >
+                      Case study
+                    </a>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </div>
         </CvSection>
 
         <CvSection title="Certifications" icon="Certificate">

@@ -28,3 +28,15 @@ export function formatStat(
 export function groupNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(value);
 }
+
+/**
+ * Formats an ISO timestamp as a month and year, for a repository's last push.
+ * Returns an empty string on a missing or malformed value so a card can skip the
+ * line rather than print "Invalid Date".
+ */
+export function formatMonthYear(value?: string): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en", { month: "short", year: "numeric" }).format(date);
+}

@@ -6,27 +6,33 @@ import { IconTile } from "@/components/shared/decor";
 import { Icon } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { StatViz } from "@/components/shared/StatViz";
-import { statsResolved } from "@/lib/content";
+import { resolveStats } from "@/lib/content";
+import { getRepos } from "@/lib/github.server";
 import { LAYOUT } from "@/lib/constants";
 import { cn, formatStat } from "@/lib/utils";
 
 /**
  * Spec 4.2 stat grid. Hairline-divided, no cards, no fills, no shadows.
  *
- * Layout: a 6-column grid where row 1 holds three stats and row 2 holds two, so
- * the five fill both rows with no leftover gap. Everything collapses to one
- * column on small phones.
+ * Layout: a 6-column grid where each stat spans two columns, so six fill two
+ * rows of three with no leftover gap. Everything collapses to two columns on
+ * small screens and one column on the narrowest phones.
  *
  * This stays a Server Component and delegates the two interactive pieces
  * (count-up and the method popover) to client leaves, which is the pattern spec
- * 1.3 asks for.
+ * 1.3 asks for. It is async because the repository count comes from the GitHub
+ * layer; the fetch is cached for a day and falls back to the committed snapshot.
  */
 
-// Spec 4.2: only projects and followers count up. GPA, events, and views show
-// immediately and their illustrations carry the motion.
-const ANIMATED = new Set(["projects", "followers"]);
+// Spec 4.2: projects and followers count up. The repository count joins them
+// because it is a computed number that moves when the account does. GPA, events,
+// and views show immediately and their illustrations carry the motion.
+const ANIMATED = new Set(["projects", "repos", "followers"]);
 
-export function StatGrid() {
+export async function StatGrid() {
+  const repos = await getRepos();
+  const statsResolved = resolveStats(repos.length);
+
   return (
     <section id="stats" className={`${LAYOUT.section} border-t border-line`}>
       <div className={LAYOUT.container}>
@@ -34,7 +40,6 @@ export function StatGrid() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6">
           {statsResolved.map((stat, index) => {
-            const isWide = index >= 3;
             const animates = ANIMATED.has(stat.id);
 
             return (
@@ -43,8 +48,7 @@ export function StatGrid() {
                 key={stat.id}
                 delay={index * 0.06}
                 className={cn(
-                  "group flex flex-col justify-between gap-6 border-t border-line py-8 pr-6",
-                  isWide ? "sm:col-span-2 md:col-span-3" : "md:col-span-2",
+                  "group flex flex-col justify-between gap-6 border-t border-line py-8 pr-6 md:col-span-2",
                   index === 0 && "border-t-0 sm:border-t",
                 )}
               >
