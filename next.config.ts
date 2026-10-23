@@ -10,6 +10,14 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   /**
+   * Records that this app was moved onto a security-patched release by the
+   * upgrade flow, so Next.js stops flagging the install on every build.
+   */
+  experimental: {
+    agentUpgrade: "security",
+  },
+
+  /**
    * OWASP A05. `X-Powered-By: Next.js` advertises the framework and version to
    * anyone probing the site, and nothing depends on it. Suppress it.
    */
