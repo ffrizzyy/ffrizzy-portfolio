@@ -437,7 +437,7 @@ Real images only. No div-based fake screenshots, no gradient blobs standing in f
 |---|---|---|
 | Paper texture | Background image in the current deck (`ppt/media`, likely the large JPEG used as slide background) | One 1600 x 1000 WebP, under 150 KB |
 | Hero portrait | Portrait from deck slide 2 | 4:5 crop, WebP/AVIF, `priority` |
-| Azzifa screenshots | Live app at azzifa.up.railway.app | Light and dark, desktop and phone, plus a short muted loop |
+| Djournl screenshots | Live app at djournl.up.railway.app | Light and dark, desktop and phone, plus a short muted loop |
 | Portal Publik screenshots | Local run of `portal-publik` | Home, list, map, scorecard |
 | Tableau dashboard | Slide 7 image or fresh export | 16:10 |
 | K-Means and TOPSIS charts | Slides 7 and 8 images or the papers | Optional redraw in Recharts only with the real numbers |
@@ -738,7 +738,7 @@ The events stat is the one entry that is **computed, not typed**: its value is t
 
 | Cell | Project | Size (desktop, 12-col) | Treatment |
 |---|---|---|---|
-| A | Azzifa | cols 1-7, row 1 | Real app screenshot, largest cell |
+| A | Djournl | cols 1-7, row 1 | Real app screenshot, largest cell |
 | B | KITO Portal Publik | cols 8-12, row 1 | Real screenshot of the map page |
 | C | Aid Distribution Dashboard | cols 1-4, row 2 | Tableau screenshot |
 | D | Rice Production Clustering | cols 5-9, row 2 | **Signal-filled cell** with the cluster chart |
@@ -815,7 +815,7 @@ Headline: "Everything I have built."
 
 - **Filter chips:** All, Build, Data, Research, Design, Content (pills, selected = signal fill with ink border). The state lives in the URL (`?type=build`) so views are shareable. Chips are a radio group with a visible focus ring.
 - **List rows:** hairline-divided, three columns: title (230 px), one-line outcome (muted), type (mono, right-aligned, 90 px). Hover shifts the row 12 px right. Each row links to `/work/[slug]`.
-- **Rows (11):** Azzifa, KITO Portal Publik, watsonx.ai app, Redesign Challenge backend (Build); Aid Distribution Dashboard (Data); IMDB sentiment capstone, Rice Production Clustering, TOPSIS vs SMART, COBIT 2019 hospital audit (Research); SAT SET (Design); Audience growth stories (Content, links to `#content`).
+- **Rows (11):** Djournl, KITO Portal Publik, watsonx.ai app, Redesign Challenge backend (Build); Aid Distribution Dashboard (Data); IMDB sentiment capstone, Rice Production Clustering, TOPSIS vs SMART, COBIT 2019 hospital audit (Research); SAT SET (Design); Audience growth stories (Content, links to `#content`).
 - **Row text:** the shortened outcome line for each project.
 - **States:** empty ("No projects here yet" with `Reset filters`).
 - **Mobile:** rows stack, type left-aligned.
@@ -886,14 +886,14 @@ Shared structure, driven by the project module's typed fields:
 3. Problem.
 4. Approach (with diagram or screenshots).
 5. Outcome (real numbers only).
-6. Honest limitations: what is untested or would change (Azzifa's README already has a strong version of this, reuse it).
+6. Honest limitations: what is untested or would change (Djournl's README already has a strong version of this, reuse it).
 7. Gallery (scroll-snap).
 8. Next project link.
 
 Featured case studies have extras:
 
-**Azzifa**
-- Live link (azzifa.up.railway.app) and GitHub repo. Because signup is open, show a short muted video loop and screenshots instead of embedding the app.
+**Djournl**
+- Live link (djournl.up.railway.app) and GitHub repo. Because signup is open, show a short muted video loop and screenshots instead of embedding the app.
 - Feature list: daily and check-up journaling, mood dashboard, weekly AI pattern insights, shared streaks with invite codes, tags, favorites, `.json` backup and restore, photo notes (4 per note), guided feature tour, forgot-password via personal question.
 - Architecture block: vanilla HTML/CSS/JS frontend, Express API, SQLite (`better-sqlite3`), a single AI provider abstraction (Anthropic, OpenAI, or any OpenAI-compatible endpoint by changing `.env`), Docker and Fly.io / Railway / Render deploy guides.
 - Security and quality block: scrypt password hashing, HttpOnly session cookies, rate limits, sanitized input, CSP headers, HTTP-level integration tests.
@@ -1015,7 +1015,7 @@ Initial inventory:
 
 | Slug | Type | Stack | Key result |
 |---|---|---|---|
-| `azzifa` | build | Express, SQLite, vanilla JS, multi-provider AI | Journal, weekly AI insights, shared streaks, tested API |
+| `djournl` | build | Express, SQLite, vanilla JS, multi-provider AI | Journal, weekly AI insights, shared streaks, tested API |
 | `portal-publik` | build | Next.js, TypeScript, Tailwind, SWR, Leaflet, Recharts | Public portal of KITO, a Telegram AI complaint system for Palembang: report map, status by tracking code, agency speed scorecard, category trends. Title on the site: "KITO Portal Publik" |
 | `aid-dashboard` | data | Tableau, Excel | Interactive public-transparency dashboard, Musi Banyuasin Regency |
 | `watsonx-genai-app` | build | Python, IBM watsonx.ai, Streamlit | Generative AI app built from local API calls to Streamlit deployment, during IBM Generative AI & ML (Hacktiv8, MSIB Batch 7). Repo: `ffrizzyy/H8-test-genai` (confirmed) |
@@ -1196,7 +1196,7 @@ GitHub "About" field. Each option is about 120 characters or less, so it is not 
 - **C, technical:** Next.js 16 portfolio: nonce-based CSP, Zod-validated content, print-ready CV, generated favicon and share cards.
 - Topics: `portfolio` `nextjs` `typescript` `tailwindcss` `react` `design-system` `personal-website`
 
-**`azzifa`** (set the Website field to azzifa.up.railway.app)
+**`djournl`** (set the Website field to djournl.up.railway.app)
 - **A, concise:** AI-assisted mood journal with weekly pattern insights and shared streaks. Express, SQLite, any major AI provider.
 - **B, outcome-led:** A journal that notices your mood patterns each week. Photo notes, shared streaks, and a swappable AI provider.
 - **C, technical:** Full-stack journaling app: Express API, SQLite, scrypt auth, provider-agnostic AI layer, Docker, integration tests.
@@ -1245,7 +1245,7 @@ GitHub "About" field. Each option is about 120 characters or less, so it is not 
 
 | Slug | Outcome line |
 |---|---|
-| `azzifa` | A private journal that spots mood patterns every week, with shared streaks. Works with Anthropic, OpenAI, or any compatible model. |
+| `djournl` | A private journal that spots mood patterns every week, with shared streaks. Works with Anthropic, OpenAI, or any compatible model. |
 | `portal-publik` | The public face of KITO: residents see reports on a map, check status by tracking code, and compare how fast each agency responds. |
 | `aid-dashboard` | An interactive Tableau dashboard that makes social aid distribution data easy to read for the public. |
 | `watsonx-genai-app` | A generative AI app on IBM watsonx.ai, from local API calls to a deployed Streamlit interface. |
@@ -1539,7 +1539,7 @@ so it never becomes a shipped dependency.
 | Every image slot was a grey `ARTWORK PENDING` frame, and `public/textures/paper.webp` did not exist, so the texture layer 404'd on every page and the zine layer was invisible | `scripts/make-artwork.py` draws the paper texture, one cover per project, the portrait card, and four Instagram cards. These are drawn, not imitations of a screenshot, which is what 2.9 forbids |
 | Section 4.7 was twelve flat rows of text, with the type reduced to dim mono at the far right | Rebuilt as an index: position, a type icon from the set 2.13 already assigns, the outcome, and the type and period together, with the chips carrying their counts |
 | The GPA stat read `3.97 /` on one line and `4.00` on the next | The `/ 4.00` moved into a new `qualifier` field, rendered smaller and muted beside the number, so the digits can never wrap away from their unit |
-| Nine `cover:` paths named files that never existed, including `azzifa-home.webp`, `portal-map.webp`, and `rice-clusters.webp` | One cover per slug, `/images/<slug>.webp`, so the bento and the case studies resolve, and a real screenshot replaces a stand-in by filename alone |
+| Nine `cover:` paths named files that never existed, including `djournl-home.webp`, `portal-map.webp`, and `rice-clusters.webp` | One cover per slug, `/images/<slug>.webp`, so the bento and the case studies resolve, and a real screenshot replaces a stand-in by filename alone |
 
 Two notes on method, because both cost time and both will recur:
 
@@ -1568,7 +1568,7 @@ Seven covers are now real captures or real figures rather than drawn stand-ins.
 
 | Project | Cover now | Source |
 |---|---|---|
-| Azzifa | Live app screenshot | `azzifa.up.railway.app`, captured at 1600x1000, 305 KB PNG to 35 KB WebP |
+| Djournl | Live app screenshot | `djournl.up.railway.app`, captured at 1600x1000, 305 KB PNG to 35 KB WebP |
 | KITO Portal Publik | drawn | the dev server at `192.168.1.106:3000` was not reachable |
 | Aid Distribution Dashboard | Live Tableau dashboard | the `public.tableau.com` embed form, which hides Tableau's own chrome |
 | watsonx Generative AI App | drawn | kept drawn at the author's request |
@@ -1624,15 +1624,15 @@ entirely without it. As shipped, the widget is in the bundle and enforcing nothi
 
 Every image the build expects, with the exact filename and the required size. Until a file exists at the listed path, its slot renders the `PendingImage` frame from section 2.9.
 
-**The table below is the original plan and is superseded for live paths.** What the build actually requests today is in 14.1 and 14.2, where each project's cover is `/images/<slug>.webp`. The names here that differ from that convention, such as `azzifa-home.webp` and `portal-map.webp`, are no longer referenced by any code.
+**The table below is the original plan and is superseded for live paths.** What the build actually requests today is in 14.1 and 14.2, where each project's cover is `/images/<slug>.webp`. The names here that differ from that convention, such as `djournl-home.webp` and `portal-map.webp`, are no longer referenced by any code.
 
 | Path | Size | Source | Notes |
 |---|---|---|---|
 | `public/textures/paper.webp` | 1600 x 1000, under 150 KB | Deck background image | Global texture layer |
 | `public/images/portrait.webp` | 4:5 | Deck slide 2 | Hero, `priority` |
-| `public/images/azzifa-home.webp` | 16:10 | Live app | Bento cell A |
-| `public/images/azzifa-dark.webp` | 16:10 | Live app | Case study gallery |
-| `public/images/azzifa-loop.mp4` | under 2 MB, muted | Live app screen recording | Case study, replaces embedding the app |
+| `public/images/djournl-home.webp` | 16:10 | Live app | Bento cell A |
+| `public/images/djournl-dark.webp` | 16:10 | Live app | Case study gallery |
+| `public/images/djournl-loop.mp4` | under 2 MB, muted | Live app screen recording | Case study, replaces embedding the app |
 | `public/images/portal-map.webp` | 16:10 | Local run | Bento cell B and case study |
 | `public/images/portal-scorecard.webp` | 16:10 | Local run | Case study |
 | `public/images/aid-dashboard.webp` | 16:10 | Deck slide 7 or Tableau export | Bento cell C |
@@ -1668,7 +1668,7 @@ with no code change.
 
 | Drop in at | What to capture |
 |---|---|
-| `public/images/azzifa.webp` | The journal's home screen |
+| `public/images/djournl.webp` | The journal's home screen |
 | `public/images/portal-publik.webp` | The report map and the agency scorecard |
 | `public/images/aid-dashboard.webp` | The Tableau dashboard |
 | `public/images/watsonx-genai-app.webp` | The Streamlit interface |
@@ -1770,7 +1770,7 @@ Section 1.6 set the home page first-load JavaScript budget at 170 KB gzipped. Me
 | `/` | 302 KB | 299 KB |
 | `/cv` | 186 KB | 185 KB |
 | `/work/portal-publik` | 241 KB | 348 KB |
-| `/work/azzifa` | 194 KB | 301 KB |
+| `/work/djournl` | 194 KB | 301 KB |
 
 The case study routes fell by roughly 100 KB once the chart and map panels moved behind dynamic imports. That is the change that worked. The home page did not move, and the reason is structural: the form libraries and Motion share one eager chunk, and Motion is still required on first load by the work list and the carousel. Deferring the contact form removes only its share of a chunk that has to load anyway.
 

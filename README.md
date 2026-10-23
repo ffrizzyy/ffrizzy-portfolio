@@ -218,7 +218,7 @@ renders the favicon, the apple icon, and the share cards. Pass one or more slugs
 to either script to regenerate only those project images.
 
 **To put a real screenshot in, drop the file over the same path.** A project's
-cover is always `/images/<slug>.webp`, so replacing `public/images/azzifa.webp`
+cover is always `/images/<slug>.webp`, so replacing `public/images/djournl.webp`
 with a capture of the app needs no code change. Case study galleries additionally
 look for `<slug>-2.webp` and `<slug>-3.webp`. The spec's section 14.2 lists what
 to capture for each project.
@@ -228,7 +228,7 @@ to capture for each project.
 Seven of the seventeen project covers are now real captures or real figures, and the
 scripts that produced the rest are kept as the record:
 
-- **Live captures**, taken in headless Chrome: the Azzifa app, the Tableau
+- **Live captures**, taken in headless Chrome: the Djournl app, the Tableau
   dashboard (from its embed URL, so Tableau's own chrome is not in frame), and the
   SAT SET Figma prototype.
 - **Figures out of the source files**, not off a screen: `mount-figures.py` puts
@@ -366,7 +366,7 @@ Route (app)
   | `/` | 200 |
   | `/cv` | 200 |
   | `/work/prepo`, `/work/joevix`, `/work/kerinci-lang` | 200 |
-  | `/work/portal-publik`, `/work/azzifa`, `/work/cobit-audit` | 200 |
+  | `/work/portal-publik`, `/work/djournl`, `/work/cobit-audit` | 200 |
   | `/robots.txt`, `/sitemap.xml` | 200 |
   | an unknown path | 404 |
 

@@ -216,7 +216,7 @@ const WORK_ROW_ORDER = [
   "prepo",
   "joevix",
   "kerinci-lang",
-  "azzifa",
+  "djournl",
   "portal-publik",
   "watsonx-genai-app",
   "redesign-challenge",

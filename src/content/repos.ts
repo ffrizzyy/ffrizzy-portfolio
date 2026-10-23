@@ -48,13 +48,13 @@ export const repoOverrides: Record<string, RepoOverride> = {
     topics: ["point-of-sale", "inventory", "cash-flow", "typescript"],
     projectSlug: "frizzy-store-system",
   },
-  azzifa: {
+  djournl: {
     description:
       "Full-stack journaling app with an Express API, SQLite, scrypt auth, a provider-agnostic AI layer, and Docker",
-    homepage: "https://azzifa.up.railway.app",
+    homepage: "https://djournl.up.railway.app",
     language: "JavaScript",
     topics: ["journaling", "express", "sqlite", "ai"],
-    projectSlug: "azzifa",
+    projectSlug: "djournl",
   },
   loopnote: {
     description:

@@ -18,7 +18,7 @@ export const Z = {
  * The site's public origin, normalised.
  *
  * A host dashboard will happily hand over "https://example.com/" with a trailing
- * slash. Concatenating that with a path produced "https://example.com//work/azzifa"
+ * slash. Concatenating that with a path produced "https://example.com//work/djournl"
  * in the sitemap and in robots.txt, and a doubled slash is a different URL to a
  * crawler, so the canonical URL it was told to index was not the one being served.
  * Trimming here means the value can be pasted either way.

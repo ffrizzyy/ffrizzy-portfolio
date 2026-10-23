@@ -10,6 +10,34 @@ import type { Repo } from "./schema";
 
 export const repoSnapshot: Repo[] = [
   {
+    "name": "djournl",
+    "description": "Full-stack journaling app: Express API, SQLite, scrypt auth, provider-agnostic AI layer, Docker, integration tests",
+    "url": "https://github.com/ffrizzyy/djournl",
+    "language": "HTML",
+    "stars": 0,
+    "forks": 0,
+    "openIssues": 0,
+    "topics": [],
+    "pushedAt": "2026-10-23T01:43:57Z",
+    "createdAt": "2026-10-01T05:08:57Z",
+    "archived": false,
+    "fork": false
+  },
+  {
+    "name": "prepo",
+    "description": "AI agent that turns meetings into assigned tickets and follows up until the work is done. The meeting ends. The work starts",
+    "url": "https://github.com/ffrizzyy/prepo",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "openIssues": 0,
+    "topics": [],
+    "pushedAt": "2026-10-22T05:06:16Z",
+    "createdAt": "2026-10-16T12:20:39Z",
+    "archived": false,
+    "fork": false
+  },
+  {
     "name": "joevix",
     "description": "Local-only browser extension for calmer reading: themes, custom colors, and per-site layout. No network, no accounts, no analytics",
     "url": "https://github.com/ffrizzyy/joevix",
@@ -34,22 +62,8 @@ export const repoSnapshot: Repo[] = [
       "typescript",
       "wxt"
     ],
-    "pushedAt": "2026-10-20T08:02:58Z",
+    "pushedAt": "2026-10-20T15:55:12Z",
     "createdAt": "2026-10-20T05:06:51Z",
-    "archived": false,
-    "fork": false
-  },
-  {
-    "name": "prepo",
-    "description": "AI agent that turns meetings into assigned tickets and follows up until the work is done. The meeting ends. The work starts",
-    "url": "https://github.com/ffrizzyy/prepo",
-    "language": "TypeScript",
-    "stars": 0,
-    "forks": 0,
-    "openIssues": 9,
-    "topics": [],
-    "pushedAt": "2026-10-19T02:49:26Z",
-    "createdAt": "2026-10-16T12:20:39Z",
     "archived": false,
     "fork": false
   },
@@ -106,20 +120,6 @@ export const repoSnapshot: Repo[] = [
     "archived": false,
     "fork": false,
     "license": "MIT"
-  },
-  {
-    "name": "azzifa",
-    "description": "Full-stack journaling app: Express API, SQLite, scrypt auth, provider-agnostic AI layer, Docker, integration tests",
-    "url": "https://github.com/ffrizzyy/azzifa",
-    "language": "HTML",
-    "stars": 0,
-    "forks": 0,
-    "openIssues": 0,
-    "topics": [],
-    "pushedAt": "2026-10-04T05:57:46Z",
-    "createdAt": "2026-10-01T05:08:57Z",
-    "archived": false,
-    "fork": false
   },
   {
     "name": "loopnote",

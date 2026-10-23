@@ -148,8 +148,8 @@ export const projects: Project[] = [
     },
   },
   {
-    slug: "azzifa",
-    title: "Azzifa",
+    slug: "djournl",
+    title: "Djournl",
     type: "build",
     featured: true,
     role: "Solo build: product, frontend, API, deployment",
@@ -159,13 +159,13 @@ export const projects: Project[] = [
     stack: ["Express", "SQLite", "Vanilla JS", "Multi-provider AI"],
     tags: ["SQL"],
     links: [
-      { label: "Live app", href: "https://azzifa.up.railway.app" },
-      { label: "GitHub", href: "https://github.com/ffrizzyy/azzifa" },
+      { label: "Live app", href: "https://djournl.up.railway.app" },
+      { label: "GitHub", href: "https://github.com/ffrizzyy/djournl" },
     ],
-    cover: "/images/azzifa.webp",
+    cover: "/images/djournl.webp",
     caseStudy: {
       summary:
-        "Azzifa is a journaling app that treats a mood log as data worth reading back. Entries are private by default, insights are generated weekly, and the AI provider is swappable through an environment variable.",
+        "Djournl is a journaling app that treats a mood log as data worth reading back. Entries are private by default, insights are generated weekly, and the AI provider is swappable through an environment variable.",
       problem:
         "Most journaling apps store entries and stop there. The value in a journal is the pattern across weeks, and reading back through dozens of entries to find that pattern is work nobody does.",
       approach:
