@@ -481,8 +481,12 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 }
 
 /* Timeline progress line. Spec 2.8: scaleY, driven by scroll where supported.
-   Without a scroll timeline the animation has no duration, so it completes
-   immediately and the line renders full, which is the spec's stated fallback. */
+   A scroll-driven animation needs a duration. The `animation` shorthand resets
+   `animation-duration` to 0s, and a zero-length animation is over before the
+   timeline can drive it, which is why this rule sat at scaleY(1) at every scroll
+   position until the longhand named one. `auto` is the value that means "as long
+   as the timeline". Without scroll timeline support the whole block is skipped
+   and the line simply draws full. */
 @keyframes rail-fill {
   from {
     transform: scaleY(0);
@@ -492,11 +496,38 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 }
 
-.rail-progress {
-  transform-origin: top;
-  animation: rail-fill linear both;
-  animation-timeline: view();
-  animation-range: entry 20% cover 70%;
+@supports (animation-timeline: view()) {
+  .rail-progress {
+    transform-origin: top;
+    animation: rail-fill linear both;
+    animation-duration: auto;
+    animation-timeline: view();
+    animation-range: entry 20% cover 70%;
+  }
+}
+
+/* The skills figure's join. It grows down out of the crossbar as the stem
+   arrives, so the T assembles itself instead of appearing finished. The range
+   opens at `contain 0%` rather than during `entry`, so the rule is already on
+   screen when it starts to draw, and closes at 55% of the connector's travel
+   through the viewport: roughly a quarter screen of scroll for a 48px rule. */
+@keyframes t-stem-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .t-stem {
+    transform-origin: top;
+    animation: t-stem-draw linear both;
+    animation-duration: auto;
+    animation-timeline: view();
+    animation-range: contain 0% contain 55%;
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -808,7 +839,8 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 
   /* The progress lines show in full rather than tracking scroll. */
   .rail-progress,
-  .scroll-progress {
+  .scroll-progress,
+  .t-stem {
     animation: none !important;
     transform: none !important;
     scale: 1 !important;

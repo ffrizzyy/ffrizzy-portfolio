@@ -4,21 +4,28 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import type { ReactNode } from "react";
 
 import { Icon } from "@/components/shared/Icon";
+import { cn } from "@/lib/utils";
 
 /**
  * Spec 2.7 accordion: hairline rows, a mono + that rotates 45 degrees when
  * open, hover fills with signal, the open row is --paper-sunken with an ink
  * border, and content fades up in 350ms. Skills allow one open row at a time,
  * which is why `type` is single and collapsible.
+ *
+ * `className` exists for the one place the accordion is not a free-standing
+ * list: inside the skills stem it sits flush in a bordered panel, so the row
+ * rules that would double up against the panel's own border come off.
  */
 export function Accordion({
   items,
   ariaLabel,
   defaultValue,
+  className,
 }: {
   items: { id: string; title: ReactNode; content: ReactNode }[];
   ariaLabel: string;
   defaultValue?: string;
+  className?: string;
 }) {
   return (
     <AccordionPrimitive.Root
@@ -26,7 +33,7 @@ export function Accordion({
       collapsible
       defaultValue={defaultValue}
       aria-label={ariaLabel}
-      className="border-t border-line"
+      className={cn("border-t border-line", className)}
     >
       {items.map((item) => (
         <AccordionPrimitive.Item

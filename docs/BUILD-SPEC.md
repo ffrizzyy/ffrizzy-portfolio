@@ -751,11 +751,11 @@ The events stat is the one entry that is **computed, not typed**: its value is t
 
 Cell D is the only signal-filled surface on the Home page. It is the anchor of the grid and it must stay the only one, or the accent stops meaning anything.
 
-### 4.4 Skills map (two columns plus tools strip)
+### 4.4 Skills map (a T-shaped figure plus tools strip)
 
 Headline: "Broad reach, deep tools."
 
-- **Layout:** two columns (`md:grid-cols-2`, gap 48 px). Left, **Broad**: 7 pill chips (Project Management, Event Coordination, Team Leadership, IT, Critical Thinking, Strategic Planning, Creativity). Right, **Deep**: an accordion of 8 skills. Below both, a full-width tools strip with a 2 px ink border above and below.
+- **Layout:** the section is drawn as the T-shaped profile it describes. The **crossbar** (Breadth) is a full-width 2 px ink panel carrying every broad skill as a pill chip, with a mono header and a count (`11 areas`). A centred 2 px signal rule joins it to the **stem** (Depth), a narrower panel (`max-w-[40rem]`) holding the accordion, with its own header and count (`13 tools and methods`). Both counts are read off the arrays, so the figure cannot claim a number the page does not show. Below the figure, a full-width tools strip with a 2 px ink border above and below.
 - **Deep accordion:** one open at a time. Each skill shows "Used in:" with text links to its projects (they jump to `#all`). The lists are **computed from project `tags`**, so adding a project updates them. Current mapping (confirm each one):
 
 | Skill | Used in |
@@ -771,8 +771,8 @@ Headline: "Broad reach, deep tools."
 
 - **Broad chips:** hover fills the chip with signal.
 - **Tools strip:** Python, Go, Excel, Trello, Meta, Tableau, Streamlit, Google, Figma, Canva. The build uses `simple-icons` marks with accessible names and no captions. It scrolls left in a 30 s loop, pauses on hover and focus, and each tool turns signal on hover. The list is duplicated for a seamless loop, and the copy is `aria-hidden`. This is the only marquee on the site.
-- **Motion:** section reveal only, plus the accordion fade and the strip.
-- **Mobile:** columns stack.
+- **Motion:** section reveal, the accordion fade, the strip, and one scroll-driven draw: the signal join grows down out of the crossbar as the stem arrives. Where `animation-timeline` is unsupported the rule simply draws full, so nothing is ever left missing.
+- **Mobile:** the figure stacks, and the stem goes full width: there is no room to taper below `40rem`, so the T reads as a bar, a rule, and a body.
 
 ### 4.5 Content growth (carousel)
 
@@ -1659,6 +1659,34 @@ Decisions worth keeping:
   writes two custom properties from a pointer handler (no state, no re-render),
   the magnetic pull writes one transform, and both are off on coarse pointers.
   The tools strip is still the only loop on the site.
+
+### 13.11 Round 9b: the skills section as a T
+
+The skills section used to be two columns of equal weight, which said breadth and
+depth were the same size claim. It is now drawn as the T it describes: a
+full-width Breadth bar, a two-pixel signal rule, and a narrower centred Depth
+stem. The shape is read before either heading is.
+
+| Decision | Choice | Why |
+|---|---|---|
+| Breadth as the crossbar | Full-width `border-2 border-ink` panel with chips | Breadth is the widest claim, so it gets the widest surface |
+| Depth as the stem | `max-w-[40rem]`, centred | The taper is the whole point of the figure |
+| The join | 2 px `bg-signal`, `contain 0%` to `contain 55%` of its own view timeline | Draws down out of the bar as the stem arrives, and is already full where scroll timelines are unsupported |
+| The counts | `11 areas`, `13 tools and methods`, read from the arrays | The figure describes itself and cannot drift from the data |
+| Accordion inside the panel | `className="border-t-0 [&>*:last-child]:border-b-0"` | Its own top rule and last row rule would sit a pixel inside the panel border and read as a double line |
+
+Two things this round turned up in the existing CSS:
+
+- A scroll-driven animation needs a duration. The `animation` shorthand leaves
+  `animation-duration` at 0s, and a zero-length animation is finished before the
+  timeline can drive it. `.rail-progress` had shipped this way, so it sat at full
+  for every scroll position; it and `.t-stem` now name `animation-duration: auto`
+  (`auto` meaning "as long as the timeline") inside
+  `@supports (animation-timeline: view())`. `.rail-progress` is currently unused,
+  left correct rather than left broken.
+- An `overflow: hidden` wrapper is a scroll container, and a view timeline is
+  measured against the nearest one. Clipping the join to hide the overdraw pinned
+  it at progress 1 forever, so the wrapper has no overflow rule.
 
 ---
 

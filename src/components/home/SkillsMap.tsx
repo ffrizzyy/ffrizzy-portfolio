@@ -8,10 +8,18 @@ import { skillsMap } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
 
 /**
- * Spec 4.4 skills map. Two columns: Broad as pill chips, Deep as an accordion,
- * with the tools strip full width beneath both. The "Used in" lists are
- * derived from the project tags in lib/content.ts, so adding a project updates
- * them automatically.
+ * Spec 4.4 skills map, drawn as the T-shaped skill profile it describes.
+ *
+ * The crossbar is the breadth: everything the work touches, as labels. The stem
+ * is the depth: the tools and methods worth opening, with "Used in" links back
+ * to the work that proves them. The stem is narrower and centred under the bar,
+ * and a two-pixel rule joins the two, so the shape is read before the headings
+ * are. The counts in each header come from the arrays, so the figure can never
+ * claim a number the page does not show.
+ *
+ * Depth is one open row at a time (spec 2.7), and the "Used in" lists are
+ * derived from project tags in lib/content.ts, so adding a project updates them
+ * automatically.
  */
 export function SkillsMap() {
   const deepItems = skillsMap.map((entry) => ({
@@ -48,17 +56,18 @@ export function SkillsMap() {
           <SectionHeading>Broad reach, deep tools.</SectionHeading>
         </Reveal>
 
-        {/* `items-start` is what keeps the two groups tight. A grid item stretches
-            to the row height by default, so the shorter group (Broad, a dozen
-            chips) was being pulled down to the height of the taller one (the Deep
-            accordion) and trailing tens of rems of empty track beneath itself.
-            With the items at their natural height the row is exactly as tall as
-            the accordion, and the gutter between the groups is the same 3rem the
-            rest of the page uses. */}
-        <div className="mt-12 grid grid-cols-1 items-start gap-12 md:grid-cols-2">
-          <Reveal className="flex flex-col gap-5">
-            <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">Broad</h3>
-            <ul className="flex flex-wrap gap-2.5">
+        <div className="mt-12 flex flex-col">
+          {/* The crossbar. Full width, because breadth is the widest claim on
+              the page and the shape has to start wide. */}
+          <Reveal className="border-2 border-ink bg-paper-raised p-5 md:p-7">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">
+                Breadth
+              </h3>
+              <p className="num text-xs text-ink-muted">{broadSkills.length} areas</p>
+            </div>
+
+            <ul className="mt-5 flex flex-wrap gap-2.5">
               {broadSkills.map((skill) => (
                 <li key={skill}>
                   {/* These are labels, not controls, so they render as a span.
@@ -72,9 +81,40 @@ export function SkillsMap() {
             </ul>
           </Reveal>
 
-          <Reveal delay={0.1} className="flex flex-col gap-5">
-            <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">Deep</h3>
-            <Accordion items={deepItems} ariaLabel="Deep skills" defaultValue={skillsMap[0]?.skill.id} />
+          {/* The join. It only reads as one figure if the rule touches both
+              panels, so it is its own block with no gap above or below it. It
+              draws downward as the stem enters, where the browser has scroll
+              timelines, and is simply already drawn everywhere else.
+
+              No `overflow-hidden` on this wrapper: an overflow-clipped ancestor
+              becomes the subject's scroll container, so the view timeline would
+              be measured against this 48px box and the rule would snap to full
+              instead of drawing. */}
+          <div aria-hidden className="mx-auto h-8 w-0.5 md:h-12">
+            <span className="t-stem block h-full w-full bg-signal" />
+          </div>
+
+          {/* The stem. Narrower and centred, so the T is legible at a glance. */}
+          <Reveal
+            delay={0.1}
+            className="mx-auto w-full max-w-[40rem] border-2 border-ink bg-paper"
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line p-4 md:px-5">
+              <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">
+                Depth
+              </h3>
+              <p className="num text-xs text-ink-muted">{skillsMap.length} tools and methods</p>
+            </div>
+
+            {/* Flush in the panel, so the outer border is the only frame: the
+                accordion's own top rule and the last row's bottom rule would
+                sit a pixel away from it and read as a double line. */}
+            <Accordion
+              items={deepItems}
+              ariaLabel="Deep skills"
+              defaultValue={skillsMap[0]?.skill.id}
+              className="border-t-0 [&>*:last-child]:border-b-0"
+            />
           </Reveal>
         </div>
 
