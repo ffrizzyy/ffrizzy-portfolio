@@ -1618,6 +1618,48 @@ deployment domain must be in the key's allowlist, and `TURNSTILE_SECRET_KEY` mus
 be set in the host environment, because the contact route skips verification
 entirely without it. As shipped, the widget is in the bundle and enforcing nothing.
 
+### 13.10 Round 9: a motion pass
+
+The page was built to a CSS-first motion spec, and that remains the default. This
+round adds motion only where CSS could not carry it, and only where the page had a
+moment worth spending on.
+
+| Motion | Tool | Purpose | Reduced-motion fallback |
+|---|---|---|---|
+| Hero entrance: rule, eyebrow, ten words, photograph, paragraph, two controls | GSAP timeline (`HeroIntro`) | First impression. One gesture instead of fifteen hand-computed delays | Static |
+| Portrait drift on hero exit | GSAP ScrollTrigger | Depth on the one large image above the fold | Static |
+| Card spotlight | CSS radial gradient driven by two custom properties (`Spotlight`) | The pointer is acknowledged on the work and repo bentos | Not shown (fine pointer only) |
+| Magnetic CTA pull | rAF (`Magnetic`) | Tactile hint that the two hero controls are buttons | Disabled, 5px ceiling |
+| Carousel direction | CSS keyframes | "Previous" enters from the left, so direction of travel is legible | Instant switch |
+
+Decisions worth keeping:
+
+- **The hero entrance had to be a timeline, not CSS.** Ten words, a rule, an
+  eyebrow, a paragraph, two controls, a photograph and three stickers that have to
+  arrive as one gesture is fifteen delays in CSS, all of which have to be retimed
+  by hand whenever one of them changes. The timeline states the overlaps once.
+- **ScrollTrigger has exactly one job.** `animation-timeline` is not in the
+  browserslist floor (Chrome 111, Safari 16.4, Firefox 111), so the CSS scroll
+  work is an upgrade rather than a guarantee. Only the portrait drift is moved to
+  JS; the rest of the page keeps its CSS timelines and its zero-JS cost.
+- **The start state is CSS, gated on JavaScript and on reduced motion.** The
+  pre-paint script writes `data-js` on `<html>`, and the hero's hidden state lives
+  inside `@media (prefers-reduced-motion: no-preference) html[data-js="true"]`.
+  Both guards are in the stylesheet, so a no-JS or reduced-motion reader sees the
+  finished hero and cannot be left with a blank one. The timeline uses `fromTo`
+  rather than `from` for exactly this reason: `from` would read the CSS start
+  state as the value to animate to.
+- **The highlight is on the word, not on the sentence.** Each animated word is an
+  inline-block with padding for the marker bar and an equal negative margin, so
+  the bar can reach into the space between words and read as one continuous
+  stroke while the glyph positions and the 1.02 leading are untouched. Putting the
+  marker on the phrase instead would have painted an empty orange bar before the
+  words arrived.
+- **No new infinite loop, no scroll listener, no custom cursor.** The spotlight
+  writes two custom properties from a pointer handler (no state, no re-render),
+  the magnetic pull writes one transform, and both are off on coarse pointers.
+  The tools strip is still the only loop on the site.
+
 ---
 
 ## 14. Asset manifest (new)

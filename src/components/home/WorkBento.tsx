@@ -1,5 +1,5 @@
 import { CoverImage } from "@/components/shared/CoverImage";
-import { Reveal } from "@/components/shared/Reveal";
+import { Spotlight } from "@/components/shared/Spotlight";
 import { Icon } from "@/components/shared/Icon";
 import { TagChip } from "@/components/ui/Chip";
 import { featuredProjects } from "@/lib/content";
@@ -35,11 +35,16 @@ export function WorkBento() {
             const isSunken = layout.tone === "sunken";
 
             return (
-              <Reveal key={project.slug} delay={index * 0.08} className={cn("group", layout.span)}>
+              <Spotlight
+                key={project.slug}
+                delay={index * 0.08}
+                tint={isSignal ? "ink" : "signal"}
+                className={cn("group", layout.span)}
+              >
                 <a
                   href={`/work/${project.slug}`}
                   className={cn(
-                    "flex h-full flex-col border-2 border-ink transition-[transform,box-shadow] duration-200 ease-zine",
+                    "spot-card flex h-full flex-col border-2 border-ink transition-[transform,box-shadow] duration-200 ease-zine",
                     "hover:-translate-y-0.5 hover:shadow-hard focus-visible:shadow-hard",
                     isSignal ? "bg-signal text-on-signal" : isSunken ? "bg-paper-sunken text-ink" : "bg-paper-raised text-ink",
                   )}
@@ -78,7 +83,7 @@ export function WorkBento() {
                     </ul>
                   </div>
                 </a>
-              </Reveal>
+              </Spotlight>
             );
           })}
         </div>

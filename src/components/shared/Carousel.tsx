@@ -35,10 +35,18 @@ export function Carousel({
   className?: string;
 }) {
   const [index, setIndex] = useState(0);
+  // Which way the last move went, so the incoming slide enters from the side the
+  // reader is travelling toward. Reset is unnecessary: every change sets it.
+  const [direction, setDirection] = useState<1 | -1>(1);
   const reduceMotion = useReducedMotion();
   const count = slides.length;
 
-  const go = (next: number) => setIndex(((next % count) + count) % count);
+  const go = (next: number) => {
+    const target = ((next % count) + count) % count;
+    if (target === index) return;
+    setDirection(next > index ? 1 : -1);
+    setIndex(target);
+  };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
@@ -65,7 +73,7 @@ export function Carousel({
       <motion.div
         key={index}
         aria-live="polite"
-        className="slide-panel"
+        className={cn("slide-panel", direction < 0 && "slide-panel-back")}
         drag={reduceMotion ? false : "x"}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.12}
@@ -98,7 +106,7 @@ export function Carousel({
                 type="button"
                 aria-label={`Go to slide ${dotIndex + 1}: ${labels[dotIndex] ?? ""}`}
                 aria-current={dotIndex === index}
-                onClick={() => setIndex(dotIndex)}
+                onClick={() => go(dotIndex)}
                 className={cn(
                   // touch-target-pill widens the hit area to 24px tall without
                   // touching the 6px dot itself. The dots were the other half of

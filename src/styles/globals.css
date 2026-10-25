@@ -302,6 +302,20 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 }
 
+/* Going back one slide enters from the left. Same distance, same curve, mirrored:
+   the direction of travel is the whole point of the animation, and a slide that
+   always arrives from the right makes "previous" read as "next". */
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-40px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes draw-ring {
   from {
     stroke-dashoffset: var(--ring-full);
@@ -335,6 +349,54 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 .reveal {
   animation: reveal-up 620ms var(--ease-out-zine) both;
 }
+
+/* ------------------------------------------------------------------ *
+ * Hero entrance.                                                      *
+ *                                                                     *
+ * The GSAP timeline in HeroIntro owns these elements. Two guards hold *
+ * them at the start state, and both live here rather than in the     *
+ * component: the document has to have been reached with JavaScript    *
+ * running (layout.tsx writes data-js before first paint) and the      *
+ * reader must not have asked for reduced motion. A no-JS or           *
+ * reduced-motion visitor therefore gets the finished hero, never a    *
+ * blank one.                                                          *
+ *                                                                     *
+ * The word is an inline-block so it can carry a transform at all:     *
+ * transforms do not apply to non-replaced inline boxes. Its padding    *
+ * gives the marker bar its full paint height and the matching negative *
+ * margin takes that height back out of the line box, so the headline   *
+ * keeps its 1.02 leading while the highlight is allowed to overhang    *
+ * the text.                                                            *
+ * ------------------------------------------------------------------ */
+.hero-word {
+  display: inline-block;
+  /* Paint room for the marker bar, taken straight back out of the layout by the
+     matching negative margin, so the word spacing and the 1.02 leading are
+     unchanged. The horizontal half of this is what lets two highlighted words
+     reach into the space between them and read as one continuous bar instead of
+     a stripe per word: the space sits outside the padded box, so padding alone
+     would never close the gap. */
+  padding: 0.13em 0.12em;
+  margin: -0.13em -0.12em;
+}
+
+.hero-word-marked {
+  background-color: var(--signal);
+  color: var(--on-signal);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js="true"] [data-hero="eyebrow"],
+  html[data-js="true"] [data-hero="sub"],
+  html[data-js="true"] [data-hero="photo"],
+  html[data-js="true"] [data-hero="rule"],
+  html[data-js="true"] [data-hero="word"],
+  html[data-js="true"] [data-hero="cta"] > * {
+    opacity: 0;
+  }
+}
+
+
 
 @supports (animation-timeline: view()) {
   .reveal {
@@ -373,6 +435,10 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 
 .slide-panel {
   animation: slide-in-right 600ms var(--ease-out-zine) both;
+}
+
+.slide-panel-back {
+  animation: slide-in-left 600ms var(--ease-out-zine) both;
 }
 
 .grow-bar {
@@ -600,6 +666,57 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * Pointer spotlight on cards.                                         *
+ *                                                                     *
+ * React Bits' spotlight card, adapted to this surface. The wash is a  *
+ * pseudo-element at z-index -1 inside an isolated stacking context,   *
+ * so it paints over the card's own background and border and under    *
+ * its text: nothing is ever laid on top of the copy. It is mixed at   *
+ * 20% of one accent, which on paper reads as raking light rather than *
+ * a second colour entering the palette.                               *
+ *                                                                     *
+ * The coordinates arrive as --spot-x / --spot-y, written to the host  *
+ * by Spotlight.tsx. Nothing here animates except the wash's opacity.  *
+ * ------------------------------------------------------------------ */
+.spotlight-host {
+  position: relative;
+}
+
+.spotlight-host .spot-card {
+  position: relative;
+  isolation: isolate;
+  --spot-tint: var(--signal);
+}
+
+/* The one signal-filled cell uses ink, because a signal wash on signal is
+   invisible. */
+.spotlight-host[data-spotlight="ink"] .spot-card {
+  --spot-tint: var(--on-signal);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-host .spot-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      240px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+      color-mix(in srgb, var(--spot-tint) 20%, transparent),
+      transparent 72%
+    );
+    transition: opacity 200ms var(--ease-out-zine);
+  }
+
+  .spotlight-host:hover .spot-card::before,
+  .spotlight-host:focus-within .spot-card::before {
+    opacity: 1;
+  }
+}
+
 /* Micro-interaction: an arrow that steps forward when its row is hovered. */
 .nudge {
   transition: transform 220ms var(--ease-out-zine);
@@ -668,6 +785,7 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   .reveal,
   .reveal-fade,
   .slide-panel,
+  .slide-panel-back,
   .grow-bar,
   .sticker-pop,
   .ring-draw,

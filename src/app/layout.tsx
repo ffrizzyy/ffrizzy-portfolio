@@ -106,6 +106,11 @@ function safeJsonLd(data: unknown): string {
  */
 const themeInitScript = `
 (function () {
+  var root = document.documentElement;
+  // Tells the stylesheet that a JavaScript-rendered entrance is coming. The
+  // hero's start state is gated on this, so a reader without JS (or before this
+  // script exists) sees the finished hero rather than an empty one.
+  root.setAttribute("data-js", "true");
   try {
     var stored = localStorage.getItem("theme");
     var choice =
@@ -114,7 +119,6 @@ const themeInitScript = `
         : "system";
     var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     var theme = choice === "system" ? (prefersDark ? "dark" : "light") : choice;
-    var root = document.documentElement;
     root.setAttribute("data-theme", theme);
     // The switch paints its selected segment from this, so the control does not
     // render with nothing selected for the hydration frame.

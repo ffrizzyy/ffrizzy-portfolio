@@ -1,6 +1,6 @@
 import { Icon } from "@/components/shared/Icon";
 import { SectionHeading } from "@/components/shared/decor";
-import { Reveal } from "@/components/shared/Reveal";
+import { Spotlight } from "@/components/shared/Spotlight";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { TagChip } from "@/components/ui/Chip";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
@@ -68,13 +68,13 @@ export async function ReposSection() {
             const pushed = formatMonthYear(repo.pushedAt);
 
             return (
-              <Reveal
+              <Spotlight
                 as="li"
                 key={repo.name}
                 delay={index * 0.05}
                 className={cn("flex", cellSpan(index))}
               >
-                <article className="flex h-full w-full flex-col border-2 border-ink bg-paper-raised p-5 transition-[transform,box-shadow] duration-200 ease-zine hover:-translate-y-0.5 hover:shadow-hard">
+                <article className="spot-card flex h-full w-full flex-col border-2 border-ink bg-paper-raised p-5 transition-[transform,box-shadow] duration-200 ease-zine hover:-translate-y-0.5 hover:shadow-hard">
                   <TrackedLink
                     href={repo.url}
                     event={ANALYTICS_EVENTS.projectOutbound}
@@ -150,7 +150,7 @@ export async function ReposSection() {
                     ) : null}
                   </div>
                 </article>
-              </Reveal>
+              </Spotlight>
             );
           })}
         </ul>
