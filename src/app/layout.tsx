@@ -8,6 +8,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Nav } from "@/components/layout/Nav";
+import { BackToTop } from "@/components/shared/BackToTop";
+import { Galaxy } from "@/components/shared/Galaxy";
 import { IconProvider } from "@/components/shared/Icon";
 import { LAYOUT, SITE } from "@/lib/constants";
 import "@/styles/globals.css";
@@ -203,6 +205,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 behind everything. It is never applied to a scrolling container. */}
             <div aria-hidden className="texture-layer" />
 
+            {/* The galaxy sits under the paper texture, so the texture still
+                reads as the material and the stars read through it. Canvas
+                painted once at rest under reduced motion; see Galaxy. */}
+            <Galaxy />
+
             <Nav />
 
             {/* The nav floats over the page, so content starts below it. The
@@ -221,6 +228,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 not apply, which is what keeps the desktop render exactly what it
                 was. */}
             <MobileNav />
+
+            {/* Last in the tree so it paints above the page, and after the
+                mobile bar so its own offset clears it. */}
+            <BackToTop />
           </IconProvider>
         </ThemeProvider>
       </body>

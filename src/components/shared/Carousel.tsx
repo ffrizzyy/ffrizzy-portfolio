@@ -66,34 +66,42 @@ export function Carousel({
       aria-roledescription="carousel"
       aria-label={ariaLabel}
       onKeyDown={onKeyDown}
-      className={cn("border border-line bg-paper-raised", className)}
+      className={cn("relative", className)}
     >
-      {/* Keyed on index so the slide-in animation replays on every change, and
-          carries aria-live so the new slide is announced. */}
-      <motion.div
-        key={index}
-        aria-live="polite"
-        className={cn("slide-panel", direction < 0 && "slide-panel-back")}
-        drag={reduceMotion ? false : "x"}
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.12}
-        dragMomentum={false}
-        onDragEnd={(_event, info) => {
-          if (reduceMotion) return;
-          if (info.offset.x < -60 || info.velocity.x < -400) go(index + 1);
-          else if (info.offset.x > 60 || info.velocity.x > 400) go(index - 1);
-        }}
-      >
-        <div
-          role="group"
-          aria-roledescription="slide"
-          aria-label={labels[index] ?? `Slide ${index + 1}`}
+      {/* The stage supplies the perspective and the plate behind the sheet, so
+          the incoming slide travels forward out of the page rather than sliding
+          flat across it. Every control below is unchanged. */}
+      <div className="carousel-stage">
+        {/* Keyed on index so the slide-in animation replays on every change, and
+            carries aria-live so the new slide is announced. */}
+        <motion.div
+          key={index}
+          aria-live="polite"
+          className={cn(
+            "slide-panel carousel-slide",
+            direction < 0 && "slide-panel-back",
+          )}
+          drag={reduceMotion ? false : "x"}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.12}
+          dragMomentum={false}
+          onDragEnd={(_event, info) => {
+            if (reduceMotion) return;
+            if (info.offset.x < -60 || info.velocity.x < -400) go(index + 1);
+            else if (info.offset.x > 60 || info.velocity.x > 400) go(index - 1);
+          }}
         >
-          {slides[index]}
-        </div>
-      </motion.div>
+          <div
+            role="group"
+            aria-roledescription="slide"
+            aria-label={labels[index] ?? `Slide ${index + 1}`}
+          >
+            {slides[index]}
+          </div>
+        </motion.div>
+      </div>
 
-      <div className="flex items-center justify-between gap-4 border-t border-line p-4">
+      <div className="mt-2 flex items-center justify-between gap-4 border border-line bg-paper-raised p-4">
         <p className="num text-sm text-ink-muted">
           {pad(index + 1)} / {pad(count)}
         </p>

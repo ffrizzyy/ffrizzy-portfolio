@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   ArrowUpRight,
   Briefcase,
   CalendarCheck,
@@ -63,6 +64,7 @@ const icons = {
   Trophy,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   ArrowUpRight,
   DownloadSimple,
   CaretLeft,

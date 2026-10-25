@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Icon, type IconName } from "@/components/shared/Icon";
+import { SplitFlap } from "@/components/shared/SplitFlap";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
 import { TagChip } from "@/components/ui/Chip";
@@ -150,7 +151,12 @@ export default async function CvPage() {
         <header className="reveal flex flex-col gap-4 border-b-2 border-ink pb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl md:text-5xl">{SITE.name}</h1>
+              <h1
+                aria-label={SITE.name}
+                className="text-3xl md:text-4xl"
+              >
+                <SplitFlap text={SITE.name} />
+              </h1>
               <p className="mt-2 text-base text-ink-muted">
                 {SITE.role} / AI web apps, data dashboards, and content
               </p>

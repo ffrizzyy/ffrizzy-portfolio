@@ -1688,6 +1688,31 @@ Two things this round turned up in the existing CSS:
   measured against the nearest one. Clipping the join to hide the overdraw pinned
   it at progress 1 forever, so the wrapper has no overflow rule.
 
+### 13.12 Round 10: the React Bits batch
+
+Nine interaction requests were applied across the site. They were explicitly
+asked for and take precedence over the rules they touch, so the table records both
+the build and the guard that keeps each one inside the visual language. The
+palette did not change.
+
+| Request | Build | Guard |
+|---|---|---|
+| Flip portrait | `FlipCard` in `shared`: front is the taped photo, back is the CV summary, two facts, and the location | The frame, tape, and stickers hold still; only the photograph turns. The hidden face is `inert`, so one side is announced |
+| Go up, with a sling | `BackToTop` in `shared`, shown from an IntersectionObserver on `#nav-sentinel` | No scroll listener. The sling class is removed on `animationend` with a timer as backstop. Reduced motion jumps, and the control does not move |
+| Galaxy background | `Galaxy`, a canvas 2D star field with two washes, behind the texture layer | No new dependency and no new hue: paper stars and a signal nebula in dark, sparse ink dust in light. Paused on a hidden tab, one static frame under reduced motion, `pointer-events: none` |
+| Bento becomes an accordion gallery | `WorkGallery` plus `WorkGalleryList`, five Radix accordion rows opening into the cover and the case facts | Same five projects, 2 px ink borders, radius 0, mono index, rotating `+`, type icon in an `IconTile`, 60 ms row stagger |
+| Depth carousel | `.carousel-stage` adds perspective and an offset plate; slide keyframes travel in Z and rotate slightly | Counter, dots, arrows, keyboard, and swipe are untouched. One plate, not a stack |
+| Split-flap name on the CV | `SplitFlap` in `shared`: each tile cycles letters, then settles left to right in about 1.1 s | Runs once, first frame is the settled name for no-JS, `aria-hidden` inside an `aria-label`led `h1`, print CSS flattens the tiles to plain text |
+| Orbit of repositories | `RepoOrbit` beside the Open source heading, one node per primary language mark | Decorative and `aria-hidden`; the complete list stays below. 64 s turn with counter-rotating marks; holds still on hover and under reduced motion |
+| Icons and animated list | Type icon tiles and staggered entry in the gallery rows | Reuses the icon map and type icons the full work index already uses |
+| Remove the KITO section | `KitoSection` and `WorkBento` deleted from `app/page.tsx` and from the tree | `portal-publik` keeps its case study route and all `kito*` copy exports remain |
+
+One existing bug surfaced while mounting the galaxy: the negative-z decorative
+layers were painted behind the opaque `body` background, so the paper texture had
+never actually shown. An `isolation: isolate` on `body` makes it a stacking
+context, which paints its background first and then the negative children above
+it. Both the texture and the galaxy are visible now, and no other rule changed.
+
 ---
 
 ## 14. Asset manifest (new)

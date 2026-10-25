@@ -3,12 +3,14 @@ import { siFigma, siGo, siPython } from "simple-icons";
 
 import { HeroIntro } from "@/components/home/HeroIntro";
 import { CoverImage } from "@/components/shared/CoverImage";
+import { FlipCard } from "@/components/shared/FlipCard";
 import { Icon } from "@/components/shared/Icon";
 import { Magnetic } from "@/components/shared/Magnetic";
 import { Sticker, TapedPhoto } from "@/components/shared/decor";
 import { CvLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
 import { LAYOUT, SITE } from "@/lib/constants";
+import { summary } from "@/lib/content";
 
 /**
  * Spec 4.1 hero. Text in columns 1 to 7, the taped portrait and stickers in
@@ -138,15 +140,57 @@ export function Hero() {
         <div data-hero="portrait" className="relative md:col-span-5">
           <div className="relative mx-auto max-w-sm md:ml-auto md:mr-0">
             <div data-hero="photo">
-              <TapedPhoto rotate={-2}>
-                <div className="relative aspect-[4/5]">
-                  <CoverImage
-                    src="/images/portrait.webp"
-                    alt="Placeholder card standing in for the portrait of Muhammad Farrel Al-Wafi Frizzy"
-                    sizes="(min-width: 768px) 32vw, 80vw"
-                    priority
-                  />
-                </div>
+              <TapedPhoto
+                rotate={-2}
+                caption="Tap the portrait for the short version."
+              >
+                {/* The frame, the tape, and the stickers hold still; only the
+                    photograph turns. The back is the CV summary, so a reader who
+                    does not scroll gets the one-paragraph version here. */}
+                <FlipCard
+                  label="Flip the portrait to show the short summary"
+                  front={
+                    <div className="relative aspect-[4/5]">
+                      <CoverImage
+                        src="/images/portrait.webp"
+                        alt="Placeholder card standing in for the portrait of Muhammad Farrel Al-Wafi Frizzy"
+                        sizes="(min-width: 768px) 32vw, 80vw"
+                        priority
+                      />
+                    </div>
+                  }
+                  back={
+                    <div className="flex flex-col gap-3 p-4 text-left sm:p-6">
+                      <div>
+                        <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink-muted">
+                          Short version
+                        </p>
+                        <p className="mt-2 text-[0.8rem] leading-5 text-ink">{summary}</p>
+                      </div>
+
+                      <dl className="flex flex-col gap-1.5 border-t border-line pt-3 text-[0.7rem]">
+                        <div className="flex gap-3">
+                          <dt className="num w-12 shrink-0 uppercase tracking-[0.14em] text-ink-muted">
+                            Based
+                          </dt>
+                          <dd className="text-ink">{SITE.location}</dd>
+                        </div>
+                        <div className="flex gap-3">
+                          <dt className="num w-12 shrink-0 uppercase tracking-[0.14em] text-ink-muted">
+                            Study
+                          </dt>
+                          <dd className="text-ink">Information Systems, 3.97 GPA</dd>
+                        </div>
+                        <div className="flex gap-3">
+                          <dt className="num w-12 shrink-0 uppercase tracking-[0.14em] text-ink-muted">
+                            Now
+                          </dt>
+                          <dd className="text-ink">AI web apps and data tools</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  }
+                />
               </TapedPhoto>
             </div>
 

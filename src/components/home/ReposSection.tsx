@@ -8,6 +8,8 @@ import { LAYOUT, SITE } from "@/lib/constants";
 import { getRepos, summarizeRepos } from "@/lib/github.server";
 import { cn, formatMonthYear } from "@/lib/utils";
 
+import { RepoOrbit } from "./RepoOrbit";
+
 /**
  * Open source. Every public repository on the GitHub account, in a bento.
  *
@@ -50,18 +52,27 @@ export async function ReposSection() {
   return (
     <section id="repos" className={`${LAYOUT.section} border-t border-line`}>
       <div className={LAYOUT.container}>
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading>Open source.</SectionHeading>
-          <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
-            {stats.total} public repositories / {languageCount}{" "}
-            {languageCount === 1 ? "language" : "languages"}
-          </p>
-        </div>
+        <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <SectionHeading>Open source.</SectionHeading>
+              <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
+                {stats.total} public repositories / {languageCount}{" "}
+                {languageCount === 1 ? "language" : "languages"}
+              </p>
+            </div>
 
-        <p className="mt-4 max-w-[65ch] text-sm text-ink-muted">
-          Public repositories from GitHub, newest push first. Each card names the primary language
-          and the last push, and links to the case study where one exists.
-        </p>
+            <p className="mt-4 max-w-[65ch] text-sm text-ink-muted">
+              Public repositories from GitHub, newest push first. Each card names the primary language
+              and the last push, and links to the case study where one exists.
+            </p>
+          </div>
+
+          {/* The ring is decoration over a list that is already complete below,
+              so it is hidden from assistive tech. It turns once every 64s and
+              holds still on hover. */}
+          <RepoOrbit repos={repos} className="mx-auto md:mx-0" />
+        </div>
 
         <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-8">
           {repos.map((repo, index) => {
