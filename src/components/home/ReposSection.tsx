@@ -48,31 +48,29 @@ export async function ReposSection() {
   const repos = await getRepos();
   const stats = summarizeRepos(repos);
   const languageCount = stats.languages.length;
+  const orbitRepos = repos.map(({ name, language, stars }) => ({ name, language, stars }));
 
   return (
     <section id="repos" className={`${LAYOUT.section} border-t border-line`}>
       <div className={LAYOUT.container}>
-        <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-center">
-          <div>
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <SectionHeading>Open source.</SectionHeading>
-              <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
-                {stats.total} public repositories / {languageCount}{" "}
-                {languageCount === 1 ? "language" : "languages"}
-              </p>
-            </div>
-
-            <p className="mt-4 max-w-[65ch] text-sm text-ink-muted">
-              Public repositories from GitHub, newest push first. Each card names the primary language
-              and the last push, and links to the case study where one exists.
-            </p>
-          </div>
-
-          {/* The ring is decoration over a list that is already complete below,
-              so it is hidden from assistive tech. It turns once every 64s and
-              holds still on hover. */}
-          <RepoOrbit repos={repos} className="mx-auto md:mx-0" />
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <SectionHeading>Open source.</SectionHeading>
+          <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
+            {stats.total} public repositories / {languageCount}{" "}
+            {languageCount === 1 ? "language" : "languages"}
+          </p>
         </div>
+
+        <p className="mt-4 max-w-[65ch] text-sm text-ink-muted">
+          Public repositories from GitHub, newest push first. Each card names the primary language
+          and the last push, and links to the case study where one exists.
+        </p>
+
+        {/* The orbit repeats the repositories that are listed in full below, so
+            the whole band is hidden from assistive tech. It only exists from lg
+            up: below that the cards would be too small to read, and the grid
+            underneath is the actual content. */}
+        <RepoOrbit repos={orbitRepos} className="mt-8" />
 
         <ul className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-8">
           {repos.map((repo, index) => {

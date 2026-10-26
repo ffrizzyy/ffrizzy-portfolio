@@ -1713,6 +1713,56 @@ never actually shown. An `isolation: isolate` on `body` makes it a stacking
 context, which paints its background first and then the negative children above
 it. Both the texture and the galaxy are visible now, and no other rule changed.
 
+### 13.13 Round 11: the official registry components
+
+Round 10 reimplemented the requested effects by hand. This round replaces those
+copies with the React Bits registry payloads, vendored as TypeScript and
+Tailwind into `src/components/reactbits/`. The registry is not an npm package, so
+each component was fetched from `https://reactbits.dev/r/<Name>-TS-TW` and
+committed; `motion` 14 already satisfies the APIs they call, and `gsap` 3.15
+already satisfies the one component that uses it.
+
+| Round 10 build | Round 11 replacement | Change |
+|---|---|---|
+| `shared/Galaxy.tsx`, a canvas 2D field | `reactbits/Galaxy.tsx`, mounted by `shared/Galaxy.tsx` | The shader is the component; the wrapper only supplies the ink or paper palette and disables `clickWarp` so a link click does not warp the page |
+| `shared/FlipCard.tsx` | `reactbits/FlipCard.tsx` | Same front, back, tape, and stickers. The page adds the focus ring the registry card does not ship |
+| `shared/BackToTop.tsx` sling keyframes | `reactbits/SlingButton.tsx` | Same sentinel logic. The registry button owns the pull, flight, and recoil, and its screen-reader hint is rewritten for "back to top" instead of "send" |
+| `shared/SplitFlap.tsx` | `reactbits/SplitFlapText.tsx` | The CV name is split into two stacked lines so a 15-character line fits at 360. Print hides the flaps and shows a plain span |
+| `home/RepoOrbit.tsx`, language marks | `reactbits/OrbitImages.tsx` | The orbit now carries the repositories themselves, drawn as square paper cards with name, language, and stars. The centre GitHub mark and its spin are gone |
+| `WorkGallery` + `WorkGalleryList` | removed | The selected work section is no longer on Home; the hero CTA and stat link to the full index at `#all` |
+| `.carousel-stage` depth CSS | kept | No registry component was substituted. `DepthCarousel` only accepts image sources, its cards are a fixed pixel size, and it cancels wheel events, which would trap the page inside a slide that carries live links and charts. The accessible content carousel from 2.7 remains |
+
+Registry code needed small TypeScript repairs for `noUncheckedIndexedAccess`
+(array and tuple access, uniform lookups), and its one-off sizes needed two
+Tailwind repairs where the compiler did not emit a bracket-style height
+property. The sling's root also sets its width and height inline, because the
+compiler skipped the height utility for that particular custom property. No
+visual rule changed beyond the ones listed above.
+
+The galaxy also needed one lifecycle repair. The registry cleanup called
+`WEBGL_lose_context` on unmount, and React's development StrictMode mounts,
+cleans up, and mounts again on the same canvas, so the second pass inherited a
+dead context and painted a blank field. The cleanup still deletes its programs,
+buffer, and vertex array, but it no longer kills the context, which keeps the
+development and production fields identical.
+
+Two more repairs keep the page honest on slow machines and during hydration.
+The wrapper reads the WebGL renderer once and skips the field entirely on a
+software rasterizer (SwiftShader, llvmpipe, the basic Windows driver): compiling
+this shader there holds the main thread long enough that the rest of the page
+never flushes its effects, and the galaxy is decoration, so those readers get the
+paper. Hardware rendering, including every machine tested headed here, still
+gets the field. The flip card also gates its reduced-motion cross-fade on a
+mounted flag, because the preference is only readable on the client and the
+registry component read it during render, which produced a hydration mismatch
+whenever the reader had motion reduced.
+
+The removed files are `shared/FlipCard.tsx`, `shared/SplitFlap.tsx`,
+`home/WorkGallery.tsx`, `home/WorkGalleryList.tsx`, and the old galaxy, flip,
+sling, orbit, split-flap, and accordion-gallery rules in `globals.css`. The
+content carousel's `.carousel-stage` and `.carousel-slide` rules stay because
+that component stays.
+
 ---
 
 ## 14. Asset manifest (new)

@@ -787,160 +787,39 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 }
 
 /* ------------------------------------------------------------------ *
- * Galaxy. Spec deviation, recorded in 13.12: because section 2.8     *
- * bans a second infinite loop, this one is a fixed decorative layer, *
- * it pauses when the tab is hidden, and it renders one static frame  *
- * under reduced motion. In light mode it is sparse ink dust that     *
- * reads as tooth in the paper; in dark mode it is the real thing.    *
+ * Galaxy. The React Bits shader sits behind the paper texture as a    *
+ * fixed decorative layer. It answers the pointer and the theme, but   *
+ * never takes a click; see components/shared/Galaxy.tsx for why the   *
+ * warp is off. Under reduced motion the shader paints one frame.      *
  * ------------------------------------------------------------------ */
-.galaxy-layer {
+.galaxy-frame {
   position: fixed;
   inset: 0;
   z-index: -11;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
+  opacity: 0.55;
+}
+
+.galaxy-frame canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* ------------------------------------------------------------------ *
- * Flip card. The taped portrait turns to show the summary.           *
+ * React Bits surfaces. The registry components style themselves with *
+ * Tailwind, but one detail belongs to the page: the hero card needs  *
+ * a focus ring the component does not ship.                          *
  * ------------------------------------------------------------------ */
-.flip-scene {
-  position: relative;
-  perspective: 1400px;
-}
-
-/* Both faces share one grid cell, so the taller of the two sets the height and
-   nothing has to be measured. The front is the photo, so it is the front that
-   decides it in practice. */
-.flip-card {
-  position: relative;
-  display: grid;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 720ms var(--ease-out-zine);
-}
-
-.flip-card.is-flipped {
-  transform: rotateY(180deg);
-}
-
-.flip-face {
-  grid-area: 1 / 1;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/* A flipped face must not be reachable by a screen reader or the tab key.
-   `inert` is set in the component; this keeps the hidden face from painting
-   through on browsers that ignore backface-visibility on transformed trees.
-
-   The back paints its own paper so the card never reads as a hole, and its
-   content is centred so the hero stickers, which overlap the frame corners,
-   never sit on top of a line of text. */
-.flip-back {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--paper-sunken);
-  transform: rotateY(180deg);
-}
-
-/* The control covers the card rather than wrapping it, so the front can stay a
-   figure. No fill, no border: the whole face is the target. */
-.flip-trigger {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.flip-trigger:focus-visible {
-  /* Signal, not ink: the ring lands on a dark photograph, where an ink outline
-     disappears. */
+.flip-card-control:focus-visible {
   outline: 3px solid var(--signal);
   outline-offset: 3px;
 }
 
-/* ------------------------------------------------------------------ *
- * Back to top. The sling: the control squashes, throws the arrow up,  *
- * and settles. Kept at 620ms so it finishes before the smooth scroll. *
- * ------------------------------------------------------------------ */
-@keyframes sling-body {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  26% {
-    transform: translateY(7px) scale(0.94, 1.08);
-  }
-  64% {
-    transform: translateY(-12px) scale(1.02, 0.98);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes sling-arrow {
-  0%,
-  30% {
-    transform: translateY(4px);
-  }
-  70% {
-    transform: translateY(-7px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.sling-armed {
-  animation: sling-body 620ms var(--ease-out-zine);
-}
-
-.sling-armed .sling-arrow {
-  animation: sling-arrow 620ms var(--ease-out-zine);
-}
-
-/* ------------------------------------------------------------------ *
- * Accordion gallery. Radix publishes the open panel height as a      *
- * custom property, so the disclosure can be a real height animation  *
- * without measuring anything in JavaScript.                          *
- * ------------------------------------------------------------------ */
-.gallery-content {
-  overflow: hidden;
-}
-
-.gallery-content[data-state="open"] {
-  animation: gallery-open 420ms var(--ease-out-zine);
-}
-
-.gallery-content[data-state="closed"] {
-  animation: gallery-close 240ms var(--ease-out-zine);
-}
-
-@keyframes gallery-open {
-  from {
-    height: 0;
-  }
-  to {
-    height: var(--radix-accordion-content-height);
-  }
-}
-
-@keyframes gallery-close {
-  from {
-    height: var(--radix-accordion-content-height);
-  }
-  to {
-    height: 0;
-  }
-}
-
-.gallery-inner {
-  animation: fade-up 420ms var(--ease-out-zine) both;
+.sling-control button:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 4px;
+  border-radius: 9999px;
 }
 
 /* ------------------------------------------------------------------ *
@@ -974,139 +853,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 }
 
 /* ------------------------------------------------------------------ *
- * Orbit. Decorative language ring around the Open source heading.    *
- * Two counter-rotating animations keep the marks upright while the   *
- * ring turns, so no JavaScript touches it.                           *
- * ------------------------------------------------------------------ */
-@keyframes orbit-turn {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes orbit-counter {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-.orbit {
-  position: relative;
-  width: 15rem;
-  height: 15rem;
-  --orbit-r: 6.1rem;
-  --orbit-node: 2.4rem;
-  /* The spinning square turns under the page edge, and a rotated box reports a
-     bounding box up to its diagonal, which was enough to give the document a
-     horizontal scrollbar at 768. Nothing here paints outside the ring, so the
-     box is clipped rather than allowed to grow. */
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .orbit {
-    width: 19rem;
-    height: 19rem;
-    --orbit-r: 8rem;
-    --orbit-node: 2.6rem;
-  }
-}
-
-.orbit-ring {
-  position: absolute;
-  inset: 0;
-  border: 1px dashed var(--line);
-  border-radius: 9999px;
-}
-
-.orbit-ring-inner {
-  position: absolute;
-  inset: 2.6rem;
-  border: 1px solid var(--line);
-  border-radius: 9999px;
-  opacity: 0.6;
-}
-
-.orbit-spin {
-  position: absolute;
-  inset: 0;
-  animation: orbit-turn 64s linear infinite;
-}
-
-.orbit-node {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  width: var(--orbit-node);
-  height: var(--orbit-node);
-  margin: calc(var(--orbit-node) / -2);
-  place-items: center;
-  transform: rotate(calc(var(--i) * 360deg / var(--n)))
-    translateY(calc(var(--orbit-r) * -1));
-}
-
-.orbit-node-inner {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  place-items: center;
-  border: 2px solid var(--ink);
-  border-radius: 9999px;
-  background: var(--paper-raised);
-  animation: orbit-counter 64s linear infinite;
-}
-
-.orbit:hover .orbit-spin,
-.orbit:hover .orbit-node-inner {
-  animation-play-state: paused;
-}
-
-/* ------------------------------------------------------------------ *
- * Split flap. Each character is a tile with a seam across it; the    *
- * component cycles glyphs and then settles on the real letter.       *
- * ------------------------------------------------------------------ */
-.split-flap {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.18em 0.4em;
-}
-
-.split-flap-word {
-  display: inline-flex;
-  gap: 0.06em;
-}
-
-.split-flap-tile {
-  position: relative;
-  display: inline-grid;
-  min-width: 0.72em;
-  height: 1.15em;
-  padding-inline: 0.08em;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--paper-sunken);
-  line-height: 1;
-}
-
-.split-flap-tile::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: calc(50% - 0.5px);
-  height: 1px;
-  background: var(--line);
-}
-
-/* ------------------------------------------------------------------ *
  * Reduced motion. Spec 2.8 enforcement note: one block, not a check   *
  * scattered through every component.                                  *
  * ------------------------------------------------------------------ */
@@ -1133,12 +879,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 
   .strip-track {
-    animation: none !important;
-  }
-
-  /* The orbit: the ring holds still. */
-  .orbit-spin,
-  .orbit-node-inner {
     animation: none !important;
   }
 
@@ -1219,32 +959,11 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
     text-decoration: none !important;
   }
 
-  /* The split-flap is a screen effect. On paper the name is just the name: no
-     tiles, no seams, no plate. The word gap stays so the printed heading is not
-     a run-on. */
-  .split-flap {
-    gap: 0 0.32em;
-  }
-
-  .split-flap-word {
-    gap: 0;
-  }
-
-  .split-flap-tile {
-    height: auto;
-    min-width: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-  }
-
-  .split-flap-tile::after {
-    display: none;
-  }
-
-  /* The galaxy and the orbit are decoration; neither belongs on the CV. */
-  .galaxy-layer,
-  .orbit {
+  /* The split-flap is a screen effect. On paper the name is the plain span
+     beside each flap block, so the tiles and the seams come out entirely. */
+  .split-flap-text,
+  .galaxy-frame,
+  .repo-orbit {
     display: none !important;
   }
 

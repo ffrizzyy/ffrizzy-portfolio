@@ -62,7 +62,7 @@ export const stats: Stat[] = [
     asOf: "2026",
     icon: "Stack",
     viz: "stack",
-    href: "#work",
+    href: "#all",
   },
   {
     id: "repos",

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import SplitFlapText from "@/components/reactbits/SplitFlapText";
 import { Icon, type IconName } from "@/components/shared/Icon";
-import { SplitFlap } from "@/components/shared/SplitFlap";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
 import { TagChip } from "@/components/ui/Chip";
@@ -151,12 +151,31 @@ export default async function CvPage() {
         <header className="reveal flex flex-col gap-4 border-b-2 border-ink pb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1
+              <div
+                role="heading"
+                aria-level={1}
                 aria-label={SITE.name}
-                className="text-3xl md:text-4xl"
+                className="flex flex-col items-start gap-1"
               >
-                <SplitFlap text={SITE.name} />
-              </h1>
+                {["Muhammad Farrel", "Al-Wafi Frizzy"].map((line) => (
+                  <div key={line}>
+                    <SplitFlapText
+                      text={line}
+                      loop={false}
+                      intro
+                      tileStyle="board"
+                      tileRadius={0}
+                      gap={4}
+                      fontSize="clamp(19px, 5.4vw, 40px)"
+                      textColor="var(--ink)"
+                      tileColor="var(--paper-sunken)"
+                      aria-hidden="true"
+                      className="print:hidden"
+                    />
+                    <span className="hidden text-3xl print:block md:text-4xl">{line}</span>
+                  </div>
+                ))}
+              </div>
               <p className="mt-2 text-base text-ink-muted">
                 {SITE.role} / AI web apps, data dashboards, and content
               </p>

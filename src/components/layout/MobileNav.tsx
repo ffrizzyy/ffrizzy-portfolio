@@ -41,15 +41,9 @@ type MobileEntry = { label: string; href: string; route: boolean };
 /**
  * The section anchors, taken straight from NAV_LINKS, plus the one route entry.
  *
- * It was briefly retargeted so that "Work" opened #work, the bento, on the
- * grounds that NAV_LINKS points the same label at #all. That was reverted: a
- * label has to mean one thing, and "Work" opening a different section depending
- * on the width of the window is a trap, particularly for someone who rotates a
- * phone or sends a link. If the bento deserves its own entry it should get one in
- * NAV_LINKS, so both bars change together.
- *
- * About is the exception that proves the rule: it is a route entry, so it opens
- * /cv on every breakpoint and is not an observer target here.
+ * Both bars read the same list, so a label cannot mean one section on a phone
+ * and another on a desktop. About is the exception: it is a route entry, so it
+ * opens /cv on every breakpoint and is not an observer target here.
  */
 const MOBILE_ENTRIES: MobileEntry[] = NAV_LINKS.map((link) => ({
   label: link.label,

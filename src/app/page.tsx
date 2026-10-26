@@ -4,7 +4,6 @@ import { Hero } from "@/components/home/Hero";
 import { ReposSection } from "@/components/home/ReposSection";
 import { SkillsMap } from "@/components/home/SkillsMap";
 import { StatGrid } from "@/components/home/StatGrid";
-import { WorkGallery } from "@/components/home/WorkGallery";
 import { WorkList } from "@/components/home/WorkList";
 import { WritingSection } from "@/components/home/WritingSection";
 import { reportMissingAssets } from "@/lib/assets.server";
@@ -39,7 +38,6 @@ export default function Home() {
     <>
       <Hero />
       <StatGrid />
-      <WorkGallery />
       <SkillsMap />
       <ContentGrowth />
       {/* Rows are handed down so the client bundle never imports the catalogue. */}

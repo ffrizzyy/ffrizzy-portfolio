@@ -2,8 +2,8 @@ import { Fragment } from "react";
 import { siFigma, siGo, siPython } from "simple-icons";
 
 import { HeroIntro } from "@/components/home/HeroIntro";
+import FlipCard from "@/components/reactbits/FlipCard";
 import { CoverImage } from "@/components/shared/CoverImage";
-import { FlipCard } from "@/components/shared/FlipCard";
 import { Icon } from "@/components/shared/Icon";
 import { Magnetic } from "@/components/shared/Magnetic";
 import { Sticker, TapedPhoto } from "@/components/shared/decor";
@@ -103,7 +103,7 @@ export function Hero() {
               stays where the eye expects it; see Magnetic for the gating. */}
           <div data-hero="cta" className="mt-10 flex flex-wrap items-center gap-4">
             <Magnetic>
-              <ButtonLink href="#work" variant="primary" size="md">
+              <ButtonLink href="#all" variant="primary" size="md">
                 View work
               </ButtonLink>
             </Magnetic>
@@ -146,11 +146,25 @@ export function Hero() {
               >
                 {/* The frame, the tape, and the stickers hold still; only the
                     photograph turns. The back is the CV summary, so a reader who
-                    does not scroll gets the one-paragraph version here. */}
+                    does not scroll gets the one-paragraph version here. The
+                    registry card owns the turn; its width and height props are
+                    overridden by the aspect box so the portrait keeps the 4:5
+                    crop it shares with every other cover on the page. */}
                 <FlipCard
-                  label="Flip the portrait to show the short summary"
+                  ariaLabel="Flip the portrait to show the short summary"
+                  axis="y"
+                  draggable={false}
+                  tilt={false}
+                  glare={false}
+                  hoverScale={1}
+                  background="transparent"
+                  radius={0}
+                  shadow={false}
+                  width={360}
+                  height={450}
+                  className="flip-card-control aspect-[4/5] h-auto! w-full!"
                   front={
-                    <div className="relative aspect-[4/5]">
+                    <div className="relative h-full w-full">
                       <CoverImage
                         src="/images/portrait.webp"
                         alt="Placeholder card standing in for the portrait of Muhammad Farrel Al-Wafi Frizzy"
@@ -160,7 +174,7 @@ export function Hero() {
                     </div>
                   }
                   back={
-                    <div className="flex flex-col gap-3 p-4 text-left sm:p-6">
+                    <div className="flex h-full flex-col justify-center gap-3 overflow-y-auto p-4 text-left sm:p-6">
                       <div>
                         <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink-muted">
                           Short version
