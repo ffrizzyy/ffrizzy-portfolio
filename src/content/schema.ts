@@ -47,7 +47,14 @@ export const projectSchema = z.object({
   /** Skills. Drives the "Used in" lists in the skills map. Spec 4.4. */
   tags: z.array(z.string()),
   links: z.array(linkSchema),
-  cover: z.string().startsWith("/"),
+  /** Absent for a case study derived from a repository that has no artwork. */
+  cover: z.string().startsWith("/").optional(),
+  /**
+   * Set on a record generated from a public repository that has no hand-written
+   * case study yet. The page says so, and curated copy can replace the record
+   * later without changing the route.
+   */
+  generated: z.boolean().optional(),
   caseStudy: caseStudySchema.optional(),
 });
 
@@ -191,10 +198,10 @@ export const writingItemSchema = z.object({
 });
 
 /**
- * A public GitHub repository. Spec 5.5 pattern: the strip of repositories is a
- * typed content module rather than a runtime fetch, so the section renders with
- * no network request and its copy is reviewable in a diff. GitHub metadata
- * fetching stays optional and unwired, as the README records.
+ * A public GitHub repository. The list is discovered from the GitHub API and
+ * cached for a day, with the committed snapshot as the fallback. The curated
+ * overlay in `content/repos.ts` supplies the editorial copy and an optional
+ * `projectSlug`, which is how a repository points at a written case study.
  */
 export const repoSchema = z.object({
   /** Repository name, as GitHub spells it. */

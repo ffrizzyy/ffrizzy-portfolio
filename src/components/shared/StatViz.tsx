@@ -126,17 +126,17 @@ function TickAxis() {
   );
 }
 
-/** Stacked bar split by project type, computed from the project files. */
-function StackBar() {
+/** Stacked bar split by project type, computed from the merged project list. */
+function StackBar({ breakdown }: { breakdown: Record<ProjectType, number> }) {
   const order: ProjectType[] = ["build", "data", "research", "design"];
   const width = 156;
   const height = 22;
-  const total = order.reduce((sum, type) => sum + projectTypeBreakdown[type], 0);
+  const total = order.reduce((sum, type) => sum + breakdown[type], 0);
 
   // Precomputed once so the bars and their labels cannot drift apart.
   let cursor = 0;
   const segments = order.map((type) => {
-    const count = projectTypeBreakdown[type];
+    const count = breakdown[type];
     const size = total === 0 ? 0 : (count / total) * width;
     const start = cursor;
     cursor += size;
@@ -279,12 +279,20 @@ function RepoGrid({ value }: { value: number }) {
   );
 }
 
-export function StatViz({ viz, value }: { viz: Stat["viz"]; value: number }) {
+export function StatViz({
+  viz,
+  value,
+  breakdown = projectTypeBreakdown,
+}: {
+  viz: Stat["viz"];
+  value: number;
+  breakdown?: Record<ProjectType, number>;
+}) {
   return (
     <div aria-hidden className="flex min-h-[86px] items-center justify-end">
       {viz === "ring" ? <RingGauge value={value} total={4} /> : null}
       {viz === "ticks" ? <TickAxis /> : null}
-      {viz === "stack" ? <StackBar /> : null}
+      {viz === "stack" ? <StackBar breakdown={breakdown} /> : null}
       {viz === "repos" ? <RepoGrid value={value} /> : null}
       {viz === "platforms" ? <PlatformDots /> : null}
       {viz === "phone" ? <PhoneFrame /> : null}

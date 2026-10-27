@@ -6,8 +6,9 @@ import { IconTile } from "@/components/shared/decor";
 import { Icon } from "@/components/shared/Icon";
 import { Reveal } from "@/components/shared/Reveal";
 import { StatViz } from "@/components/shared/StatViz";
-import { resolveStats } from "@/lib/content";
+import { resolveProjectTypeBreakdown, resolveStats } from "@/lib/content";
 import { getRepos } from "@/lib/github.server";
+import { getWorkProjects } from "@/lib/work.server";
 import { LAYOUT } from "@/lib/constants";
 import { cn, formatStat } from "@/lib/utils";
 
@@ -30,8 +31,9 @@ import { cn, formatStat } from "@/lib/utils";
 const ANIMATED = new Set(["projects", "repos", "followers"]);
 
 export async function StatGrid() {
-  const repos = await getRepos();
-  const statsResolved = resolveStats(repos.length);
+  const [repos, projects] = await Promise.all([getRepos(), getWorkProjects()]);
+  const statsResolved = resolveStats(repos.length, projects.length);
+  const breakdown = resolveProjectTypeBreakdown(projects);
 
   return (
     <section id="stats" className={`${LAYOUT.section} border-t border-line`}>
@@ -58,7 +60,7 @@ export async function StatGrid() {
                   </IconTile>
 
                   <div className="transition-transform duration-200 ease-zine group-hover:scale-[1.08]">
-                    <StatViz viz={stat.viz} value={stat.value} />
+                    <StatViz viz={stat.viz} value={stat.value} breakdown={breakdown} />
                   </div>
                 </div>
 

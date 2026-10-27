@@ -30,6 +30,7 @@ function galleryAssetExists(src: string): boolean {
  */
 export function CaseStudyLayout({ project, next }: { project: Project; next: Project }) {
   const detail = project.caseStudy;
+  const cover = project.cover;
 
   const sections: { label: string; body?: string }[] = [
     { label: "Summary", body: detail?.summary },
@@ -46,6 +47,7 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
         <Reveal className="flex flex-col gap-5 border-b-2 border-ink pb-10">
           <p className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
             {project.type} · {project.period}
+            {project.generated ? " · Generated from GitHub" : ""}
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl">{project.title}</h1>
           <p className="max-w-[65ch] text-base text-ink-muted">{project.role}</p>
@@ -129,35 +131,53 @@ export function CaseStudyLayout({ project, next }: { project: Project; next: Pro
         <Reveal className="mt-16">
           <h2 className="text-xl md:text-2xl">Gallery</h2>
           <div className="mt-5 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
-            {/* The cover always leads the row. */}
-            <div className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line">
-              <CoverImage
-                src={project.cover}
-                alt={`${project.title} cover artwork`}
-                sizes="520px"
-              />
-            </div>
+            {/* The cover always leads the row. A repository-derived record has no
+                artwork yet, so it leads with a typographic card instead of a
+                broken image. */}
+            {cover ? (
+              <div className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line">
+                <CoverImage
+                  src={cover}
+                  alt={`${project.title} cover artwork`}
+                  sizes="520px"
+                />
+              </div>
+            ) : (
+              <div className="flex aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start flex-col justify-between border-2 border-ink bg-paper-sunken p-6">
+                <span className="num text-xs uppercase tracking-[0.16em] text-ink-muted">
+                  Public repository
+                </span>
+                <span className="font-display text-3xl font-extrabold leading-none tracking-tight text-ink md:text-4xl">
+                  {project.title}
+                </span>
+                <span className="num text-xs uppercase tracking-[0.14em] text-ink-muted">
+                  {project.stack.slice(0, 3).join(" / ")}
+                </span>
+              </div>
+            )}
             {/* Extra shots are read from disk rather than assumed. A slot renders
                 a real image the moment one is dropped at <slug>-2.webp or
                 <slug>-3.webp; while the file is absent the slot renders nothing
                 at all, so the row is the cover plus only the shots that exist
                 rather than a row of pending frames. */}
-            {[2, 3].map((slot) => {
-              const src = project.cover.replace(".webp", `-${slot}.webp`);
-              if (!galleryAssetExists(src)) return null;
-              return (
-                <div
-                  key={slot}
-                  className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line"
-                >
-                  <CoverImage
-                    src={src}
-                    alt={`${project.title} screenshot ${slot}`}
-                    sizes="520px"
-                  />
-                </div>
-              );
-            })}
+            {cover
+              ? [2, 3].map((slot) => {
+                  const src = cover.replace(".webp", `-${slot}.webp`);
+                  if (!galleryAssetExists(src)) return null;
+                  return (
+                    <div
+                      key={slot}
+                      className="relative aspect-[16/10] w-[min(85vw,520px)] shrink-0 snap-start border border-line"
+                    >
+                      <CoverImage
+                        src={src}
+                        alt={`${project.title} screenshot ${slot}`}
+                        sizes="520px"
+                      />
+                    </div>
+                  );
+                })
+              : null}
           </div>
         </Reveal>
 

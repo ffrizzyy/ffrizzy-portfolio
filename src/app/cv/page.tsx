@@ -11,7 +11,8 @@ import type { TimelineEntry } from "@/content/schema";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { findMissingAssets } from "@/lib/assets.server";
 import { LAYOUT, SITE } from "@/lib/constants";
-import { getRepos, summarizeRepos } from "@/lib/github.server";
+import { summarizeRepos } from "@/lib/github.server";
+import { getRepoCards, getWorkProjects } from "@/lib/work.server";
 import { formatMonthYear } from "@/lib/utils";
 import {
   awardList,
@@ -113,8 +114,16 @@ export default async function CvPage() {
     },
   ];
 
-  const repos = await getRepos();
+  const [repos, projects] = await Promise.all([getRepoCards(), getWorkProjects()]);
   const repoStats = summarizeRepos(repos);
+
+  // The five featured projects lead, then any repository that has no written
+  // entry and therefore gets a generated case study. A new repository appears
+  // here on the next daily sync without an edit to this page.
+  const selectedProjects = [
+    ...featuredProjects,
+    ...projects.filter((project) => project.generated),
+  ];
 
   const contact: { label: string; href: string; external: boolean; icon: IconName }[] = [
     { label: SITE.email, href: `mailto:${SITE.email}`, external: false, icon: "EnvelopeSimple" },
@@ -289,7 +298,7 @@ export default async function CvPage() {
 
         <CvSection title="Selected projects" icon="Code">
           <ol className="flex flex-col gap-5">
-            {featuredProjects.map((project) => (
+            {selectedProjects.map((project) => (
               <li key={project.slug} className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <a
@@ -309,6 +318,11 @@ export default async function CvPage() {
                     </li>
                   ))}
                 </ul>
+                {project.generated ? (
+                  <p className="num text-xs uppercase tracking-[0.14em] text-ink-muted">
+                    Auto-generated from GitHub
+                  </p>
+                ) : null}
               </li>
             ))}
           </ol>

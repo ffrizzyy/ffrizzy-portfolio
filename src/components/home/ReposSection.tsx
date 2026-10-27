@@ -5,7 +5,8 @@ import { TrackedLink } from "@/components/shared/TrackedLink";
 import { TagChip } from "@/components/ui/Chip";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { LAYOUT, SITE } from "@/lib/constants";
-import { getRepos, summarizeRepos } from "@/lib/github.server";
+import { getRepoCards } from "@/lib/work.server";
+import { summarizeRepos } from "@/lib/github.server";
 import { cn, formatMonthYear } from "@/lib/utils";
 
 import { RepoOrbit } from "./RepoOrbit";
@@ -19,9 +20,9 @@ import { RepoOrbit } from "./RepoOrbit";
  * the section can say "every repository" and keep saying it after a new push.
  *
  * The layout is a bento rather than a plain grid: two wider cells lead, followed
- * by three equal thirds and a final row of quarters. A repository with a case
- * study links across to it. One without a write-up still gets a card, because
- * the promise here is completeness rather than curation.
+ * by three equal thirds and a final row of quarters. Every repository links
+ * across to a case study: the written one where it exists, otherwise the one
+ * generated from its metadata. A fork keeps a card but is not claimed as work.
  *
  * Values arrive by await because this is a Server Component: the list never
  * reaches the client bundle, and only the card links, which are the shared
@@ -45,7 +46,7 @@ function cellSpan(index: number) {
 }
 
 export async function ReposSection() {
-  const repos = await getRepos();
+  const repos = await getRepoCards();
   const stats = summarizeRepos(repos);
   const languageCount = stats.languages.length;
   const orbitRepos = repos.map(({ name, language, stars }) => ({ name, language, stars }));
@@ -63,7 +64,7 @@ export async function ReposSection() {
 
         <p className="mt-4 max-w-[65ch] text-sm text-ink-muted">
           Public repositories from GitHub, newest push first. Each card names the primary language
-          and the last push, and links to the case study where one exists.
+          and the last push, and links to a case study unless the repository is a fork.
         </p>
 
         {/* The orbit repeats the repositories that are listed in full below, so

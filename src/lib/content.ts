@@ -118,15 +118,17 @@ if (eventList.length > eventsValue) {
  * computed, never typed. The repository count joins them because the Open
  * source section reads the same GitHub list.
  *
- * This takes the live count as an argument rather than reading a module-level
- * constant, so a failed fetch cannot leave a stale number in the grid.
+ * This takes the live counts as arguments rather than reading a module-level
+ * constant, so a failed fetch cannot leave a stale number in the grid. The
+ * project count defaults to the curated list so a caller without the GitHub
+ * layer still gets a valid stat.
  */
 
-export function resolveStats(repoCount: number): Stat[] {
+export function resolveStats(repoCount: number, projectCount: number = projectList.length): Stat[] {
   return z.array(statSchema).parse(
     rawStats.map((stat) => {
       if (stat.computedFrom === "events") return { ...stat, value: eventsValue };
-      if (stat.computedFrom === "projects") return { ...stat, value: projectList.length };
+      if (stat.computedFrom === "projects") return { ...stat, value: projectCount };
       if (stat.computedFrom === "repos") return { ...stat, value: repoCount };
       return stat;
     }),
@@ -134,13 +136,21 @@ export function resolveStats(repoCount: number): Stat[] {
 }
 
 /** Drives the stacked-bar illustration and the "Build 4" style labels. */
-export const projectTypeBreakdown: Record<ProjectType, number> = projectList.reduce(
-  (acc, project) => {
-    acc[project.type] = (acc[project.type] ?? 0) + 1;
-    return acc;
-  },
-  { build: 0, data: 0, research: 0, design: 0, content: 0 } as Record<ProjectType, number>,
-);
+export function resolveProjectTypeBreakdown(
+  projects: Project[] = projectList,
+): Record<ProjectType, number> {
+  return projects.reduce(
+    (acc, project) => {
+      acc[project.type] = (acc[project.type] ?? 0) + 1;
+      return acc;
+    },
+    { build: 0, data: 0, research: 0, design: 0, content: 0 } as Record<ProjectType, number>,
+  );
+}
+
+/** The curated breakdown, for callers that do not have the repository list. */
+export const projectTypeBreakdown: Record<ProjectType, number> =
+  resolveProjectTypeBreakdown(projectList);
 
 /* ------------------------------------------------------------------ *
  * Featured bento cells. Spec 4.3: exactly five, in a fixed order.     *
@@ -195,9 +205,9 @@ if (orphanSkills.length > 0) {
 }
 
 /* ------------------------------------------------------------------ *
- * The #all list. Spec 4.7 called for 11 rows. It is now the 17 project *
- * files plus the content row, since every public repository gained a   *
- * case study.                                                          *
+ * The #all list. Spec 4.7 called for 11 rows. It is now the curated    *
+ * project files plus one row per public repository that has no written *
+ * case study, plus the content row.                                    *
  * ------------------------------------------------------------------ */
 
 export type WorkRow = {
@@ -232,18 +242,16 @@ const WORK_ROW_ORDER = [
   "sdc-2024",
 ];
 
-const projectRows: WorkRow[] = WORK_ROW_ORDER.map((slug) => {
-  const match = projectList.find((project) => project.slug === slug);
-  if (!match) throw new Error(`Work row order references a missing project: ${slug}`);
+function toWorkRow(project: Project): WorkRow {
   return {
-    id: match.slug,
-    title: match.title,
-    outcome: match.outcome,
-    type: match.type,
-    href: `/work/${match.slug}`,
-    period: match.period,
+    id: project.slug,
+    title: project.title,
+    outcome: project.outcome,
+    type: project.type,
+    href: `/work/${project.slug}`,
+    period: project.period,
   };
-});
+}
 
 /** The last row: content work, which has no case study route. */
 const contentRow: WorkRow = {
@@ -254,7 +262,41 @@ const contentRow: WorkRow = {
   href: "#content",
 };
 
-export const workRows: WorkRow[] = [...projectRows, contentRow];
+/**
+ * Curated rows in their explicit order, then any repository-derived records,
+ * then the content row.
+ *
+ * The repository records arrive in the order the caller supplies them, which is
+ * newest push first, so a repository that was just created or pushed appears at
+ * the head of the generated group without an edit to this file. `projects` must
+ * contain every slug in WORK_ROW_ORDER; the build fails rather than dropping a
+ * row when a curated slug is renamed.
+ */
+export function buildWorkRows(projects: Project[]): WorkRow[] {
+  const rows: WorkRow[] = [];
+  const seen = new Set<string>();
+
+  for (const slug of WORK_ROW_ORDER) {
+    const match = projects.find((project) => project.slug === slug);
+    if (!match) throw new Error(`Work row order references a missing project: ${slug}`);
+    rows.push(toWorkRow(match));
+    seen.add(slug);
+  }
+
+  for (const project of projects) {
+    if (seen.has(project.slug)) continue;
+    rows.push(toWorkRow(project));
+    seen.add(project.slug);
+  }
+
+  return [...rows, contentRow];
+}
+
+/**
+ * The curated list on its own. Server callers that can reach GitHub use
+ * `getWorkRows()` from `lib/work.server.ts`, which adds the repository records.
+ */
+export const workRows: WorkRow[] = buildWorkRows(projectList);
 
 // Re-exported so server callers keep a single import for this list. Client
 // Components must import it from work-filters instead, which is why that module

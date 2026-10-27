@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
 
-import { projectList } from "@/lib/content";
+import { getWorkProjects } from "@/lib/work.server";
 import { SITE_URL } from "@/lib/constants";
 
 const baseUrl = SITE_URL;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
+  const projects = await getWorkProjects();
 
   return [
     {
@@ -15,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
-    ...projectList.map((project) => ({
+    ...projects.map((project) => ({
       url: `${baseUrl}/work/${project.slug}`,
       lastModified,
       changeFrequency: "yearly" as const,

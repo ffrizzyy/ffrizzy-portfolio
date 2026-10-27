@@ -7,7 +7,8 @@ import { StatGrid } from "@/components/home/StatGrid";
 import { WorkList } from "@/components/home/WorkList";
 import { WritingSection } from "@/components/home/WritingSection";
 import { reportMissingAssets } from "@/lib/assets.server";
-import { projectList, workRows, writingList } from "@/lib/content";
+import { projectList, writingList } from "@/lib/content";
+import { getWorkRows } from "@/lib/work.server";
 
 /**
  * Spec 3 and 4: one long page with the sections in a fixed order.
@@ -19,7 +20,7 @@ import { projectList, workRows, writingList } from "@/lib/content";
  * About nav entry opens, so there is one copy of that content rather than two
  * that can drift apart.
  */
-export default function Home() {
+export default async function Home() {
   if (process.env.NODE_ENV !== "production") {
     // Spec 7.1 invariant 2: report asset gaps in dev rather than render a
     // silently empty box. The placeholder frame covers the visual side.
@@ -27,12 +28,17 @@ export default function Home() {
       [
         "/textures/paper.webp",
         "/images/portrait.webp",
-        ...projectList.map((project) => project.cover),
+        ...projectList.map((project) => project.cover).filter((cover): cover is string => Boolean(cover)),
         ...writingList.map((item) => item.cover),
       ],
       "Home",
     );
   }
+
+  // Curated projects first, then one row per public repository that has no
+  // written case study. Rows are handed down so the client bundle never imports
+  // the catalogue or the GitHub layer.
+  const rows = await getWorkRows();
 
   return (
     <>
@@ -40,8 +46,7 @@ export default function Home() {
       <StatGrid />
       <SkillsMap />
       <ContentGrowth />
-      {/* Rows are handed down so the client bundle never imports the catalogue. */}
-      <WorkList rows={workRows} />
+      <WorkList rows={rows} />
       <ReposSection />
       <WritingSection />
       <ContactForm />

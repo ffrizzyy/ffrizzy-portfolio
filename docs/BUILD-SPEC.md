@@ -1794,6 +1794,52 @@ long-task time on this machine fell from about 750ms total with a 335ms worst to
 about 490ms total with a 181ms worst, and Android or low-end hardware should see
 a larger share of that, since the widget is the part that scales worst.
 
+### 13.15 Round 13: repositories become work
+
+The Open source band already read every public repository, but a repository
+without a curated record stopped at its card. The work index, the project count,
+the CV, and the case study route all read `content/projects.ts`, so a new
+repository changed one section and nothing else.
+
+`lib/repo-projects.ts` now turns the unclaimed repositories into complete
+`Project` records: the name becomes the title and slug, the description the
+outcome, the language and topics the stack, and the creation and push dates the
+period. `lib/work.server.ts` joins those records to the curated catalogue once
+per render, and that merged list is what the pages read:
+
+| Caller | What it reads | What moves with a new repository |
+|---|---|---|
+| `Home` | `getWorkRows()` | A row at the end of the project group, newest push first, before the content row |
+| `StatGrid` | `getWorkProjects()` | The projects stat, which is curated records plus generated ones |
+| `ReposSection` | `getRepoCards()` | The card already existed; it now carries a "Case study" link |
+| `CvPage` | `getWorkProjects()` and `getRepoCards()` | A "Selected projects" entry marked auto-generated, and a case study link in Open source |
+| `sitemap` | `getWorkProjects()` | One `/work/<slug>` URL |
+| `work/[slug]` | `getWorkProject()` | A rendered case study, generated on demand if it was not in the build |
+
+Curated copy always wins. A repository with a `projectSlug` override is skipped,
+so the nine written case studies are never duplicated, and a repository whose
+slug collides with a curated record is skipped as well. A fork keeps its Open
+source card, where GitHub reports it as a fork, but it does not become a case
+study, because this page attributes what it lists.
+
+The generated case study is deliberately modest. GitHub knows the description,
+language, topics, dates, stars, forks, and open issues; it does not know why the
+thing was built or what was learned. So the page carries the metadata it can
+support, marks itself "Generated from GitHub", and says in Honest limitations
+that a written record replaces it. That record is either a full entry in
+`content/projects.ts` or a `projectSlug` override in `content/repos.ts`. A
+generated record has no artwork, so the gallery leads with a typographic card
+and the share card falls back to the site-wide OG image rather than a path that
+would 404.
+
+No API key is needed. The implementation adds no request: it reuses the one
+repository list call the site already makes, cached for a day, with the committed
+snapshot as the fallback. On the live account when this was written there were 11
+public repositories and 2 without a written case study (`ffrizzy-portfolio` and
+`ayo-sudoku`), so the work index went from 17 to 19 rows, the build from 27 to
+29 pages, the projects stat from 17 to 19, and the sitemap to 19 work URLs.
+Setting `GITHUB_TOKEN` remains optional and only raises the rate limit.
+
 ---
 
 ## 14. Asset manifest (new)

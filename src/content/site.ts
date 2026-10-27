@@ -57,8 +57,9 @@ export const stats: Stat[] = [
     computedFrom: "projects",
     kind: "exact",
     label: "projects delivered",
-    detail: "Build, data, research, and design",
-    method: "Counted automatically from content/projects.ts. It goes up when a project is added.",
+    detail: "Build, data, research, design, and public repositories",
+    method:
+      "Counted automatically from content/projects.ts, plus one entry for each public repository that does not have a written case study yet. A new repository moves the number on the next daily sync.",
     asOf: "2026",
     icon: "Stack",
     viz: "stack",
