@@ -29,6 +29,11 @@ import GalaxyField from "@/components/reactbits/Galaxy";
  * enough that the rest of the page never finishes hydrating, and this layer is
  * decoration, so the paper background is the better answer. Hardware rendering
  * is unaffected.
+ *
+ * The field is a slow drift, so it runs at half resolution and 30 frames a
+ * second. At the registry defaults it repainted a full-viewport shader on every
+ * display frame and held the whole page near 30fps on integrated graphics; see
+ * 13.14 in the build spec for the numbers.
  */
 let softwareField: boolean | null = null;
 
@@ -90,9 +95,11 @@ export function Galaxy() {
         flareIntensity={1}
         twinkleIntensity={0.26}
         starSize={0.9}
-        layers={3}
+        layers={2}
         saturation={0}
         hueShift={0}
+        dpr={0.5}
+        maxFps={30}
       />
     </div>
   );

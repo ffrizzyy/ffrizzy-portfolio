@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
@@ -85,6 +86,35 @@ const ContactFormInner = dynamic(
 );
 
 export function ContactForm() {
+  // `next/dynamic` fetches its chunk as soon as the component mounts, which for
+  // the last section of the page means Turnstile's script and widget start up
+  // while the reader is still at the hero. That widget is the single largest
+  // main-thread cost on first load, and most readers never reach this section.
+  // Arming it when the section comes near the viewport moves that work off the
+  // first paint without changing what the form does when it is reached.
+  const shell = useRef<HTMLDivElement>(null);
+  const [armed, setArmed] = useState(false);
+
+  useEffect(() => {
+    if (armed) return;
+    const node = shell.current;
+    if (!node) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setArmed(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setArmed(true);
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [armed]);
+
   return (
     <section id="contact" className={`${LAYOUT.section} border-t-2 border-ink`}>
       <div className={LAYOUT.container}>
@@ -96,12 +126,12 @@ export function ContactForm() {
           </p>
         </Reveal>
 
-        <div className="mt-12 max-w-[640px]">
+        <div ref={shell} className="mt-12 max-w-[640px]">
           {/* LinkedIn, GitHub, the email address, and the CV all sit in the
               footer a few lines below, so listing them here printed the same
               links twice on one screen. The section is the form now, and the
               footer is the directory. */}
-          <ContactFormInner />
+          {armed ? <ContactFormInner /> : <ContactFormFallback />}
         </div>
       </div>
     </section>

@@ -1763,6 +1763,37 @@ sling, orbit, split-flap, and accordion-gallery rules in `globals.css`. The
 content carousel's `.carousel-stage` and `.carousel-slide` rules stay because
 that component stays.
 
+### 13.14 Round 12: the frame budget
+
+Round 11 shipped the registry components at their registry settings, and the
+galaxy was repainting a full-viewport fragment shader on every display frame,
+forever. On the machine this was measured on (Intel UHD, 144Hz) that cost about
+21ms a frame, so the whole page sat at 36fps even when nothing was moving. The
+field is decoration, so it now has a budget.
+
+| Lever | Registry value | Shipped value | Why |
+|---|---|---|---|
+| `dpr` | device pixel ratio, capped at 2 | `0.5` | The field is soft nebula and star glow. A quarter of the pixels is not visible at reading distance, and it is the single largest saving |
+| `layers` | 4 | `2` | Two depth planes still read as depth at this density; the third cost a third of the fill rate |
+| `maxFps` | none (display rate) | `30` | The drift is slow enough that 30 frames reads the same as 60. The prop is new: the vendored file gains `maxFps` and gates the shader on it, while the request loop still follows the display clock |
+| scroll | always painting | paused while scrolling, 140ms after | The field is fixed, so a scroll frame repainted the same drift under moving content. Stopping it keeps the scroll on the compositor and it resumes when the page settles |
+
+Measured headed at 1280 by 900 on the same machine, sampling 240 frames: idle at
+the hero went from a 27.8ms median with every frame over budget to a 7ms median
+with 1 to 7 frames over 16.8ms; production scroll is now 0 of 180 frames over
+16.8ms, where it was 74 before the pause. Idle and scroll are within noise of the
+same page with the canvas removed, which is the point of the budget.
+
+The contact form had a separate cost. `next/dynamic` fetches its chunk when the
+component mounts, so Turnstile started on first load even though the section is
+the last thing on the page. The widget's script was the longest main-thread task
+in the load trace by a wide margin. `ContactForm` now mounts the form only when
+the section is within 600px of the viewport, using the same observer pattern as
+`BackToTop`, and keeps the existing skeleton as the placeholder. On load,
+long-task time on this machine fell from about 750ms total with a 335ms worst to
+about 490ms total with a 181ms worst, and Android or low-end hardware should see
+a larger share of that, since the widget is the part that scales worst.
+
 ---
 
 ## 14. Asset manifest (new)
