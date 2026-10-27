@@ -144,7 +144,7 @@ export const eventTotals = {
  * ------------------------------------------------------------------ */
 
 export const summary =
-  "Information Systems graduate working across technology, content, and operations. Experience spans web and data tools, content and social media, and leading teams and events. Learns new tools quickly, mostly through self-directed courses in machine learning, SEO, and business process management.";
+  "Information Systems graduate working across technology, content, and operations, with experience in web and data tools, content and social media, and leading teams and events. Learns new tools quickly, mostly through self-directed courses in machine learning, SEO, and business process management.";
 
 /* ------------------------------------------------------------------ *
  * Professional experience. Transcribed from the CV.                   *
@@ -174,7 +174,7 @@ export const experience: TimelineEntry[] = [
     end: "2024-03",
     display: "Feb to Mar 2024",
     bullets: [
-      "Ran a Ramadan digital marketing campaign about doing good deeds with a remote team, from setting the goals and building the timeline to reviewing performance data at the end.",
+      "Ran a Ramadan digital marketing campaign with a remote team, from setting goals and building the timeline to reviewing performance data.",
     ],
   },
   {
@@ -187,8 +187,7 @@ export const experience: TimelineEntry[] = [
     end: "2024-01",
     display: "Dec 2023 to Jan 2024",
     bullets: [
-      "Analyzed business processes in the Operations and Maintenance (OP-HAR) division to find workflow problems and inefficiencies.",
-      "Used questionnaires, interviews, and observations to study the workflows, and applied use cases, user stories, UML diagrams, flowcharts, gap analysis, and prototyping to support recommendations for improvement.",
+      "Analyzed business processes in the OP-HAR division to find workflow problems and inefficiencies, using questionnaires, interviews, observation, UML diagrams, gap analysis, and prototyping to support recommendations.",
     ],
   },
   {
@@ -219,8 +218,7 @@ export const leadership: TimelineEntry[] = [
     end: "2025-10",
     display: "Mar 2024 to Oct 2025",
     bullets: [
-      "Worked across teams on digital outreach programs, using participation data to shape what got prioritized.",
-      "Supported community tech programs focused on digital literacy and local ecosystem growth.",
+      "Worked across teams on digital outreach programs, using participation data to shape priorities. Supported community programs on digital literacy and local tech ecosystem growth.",
     ],
   },
   {
@@ -233,8 +231,7 @@ export const leadership: TimelineEntry[] = [
     end: "2025-04",
     display: "Mar 2023 to Apr 2025",
     bullets: [
-      "Ran the organization's official Instagram account for two years, writing copy and keeping the brand voice consistent.",
-      "Handled how information reached both internal teams and outside audiences.",
+      "Ran the official Instagram account for two years, writing copy, keeping the brand voice consistent, and handling internal and external communication.",
     ],
   },
   {
@@ -247,14 +244,28 @@ export const leadership: TimelineEntry[] = [
     end: "2024-09",
     display: "Sep 2023 to Sep 2024",
     bullets: [
-      "Led a 9-person content team, setting the content and outreach strategy for the year.",
-      "Kept members and audiences engaged through events and a consistent, planned communication.",
+      "Led a 9-person content team, set the year's content and outreach strategy, and spoke at an internal sharing session on media and creative work.",
+      "As a member from Nov 2022 to Sep 2023, wrote GDSC UNSRI Medium articles and Instagram content, then was promoted to the Core Team the following term.",
+    ],
+  },
+  {
+    id: "sdc-concept",
+    title: "Content Writer",
+    org: "Sriwijaya Digital Conference 2024",
+    location: "Palembang, Indonesia",
+    kind: "leadership",
+    start: "2024-10",
+    end: "2024-10",
+    display: "Oct 2024",
+    bullets: [
+      "Wrote the event concept name and the session titles and themes for a national digital conference billed as The Biggest Digital Conference in South Sumatera, held 19 to 20 October 2024 at Hotel Swarna Dwipa.",
+      "Sessions included Career Wireframe: Imagining, Designing, and Living Your Dream Career.",
     ],
   },
   {
     id: "pesta-rakyat",
-    title: "Staff, Social Media Specialist, Pesta Rakyat Sriwijaya 2023",
-    org: "Pesta Rakyat Sriwijaya",
+    title: "Staff, Social Media Specialist",
+    org: "Pesta Rakyat Sriwijaya 2023",
     location: "Palembang, Indonesia",
     kind: "leadership",
     start: "2023-08",
@@ -266,8 +277,8 @@ export const leadership: TimelineEntry[] = [
   },
   {
     id: "techporiafest-pic",
-    title: "PIC of Publication, Technology Euphoria Festival 2023",
-    org: "Technology Euphoria Festival",
+    title: "PIC of Publication",
+    org: "Technology Euphoria Festival 2023",
     location: "Palembang, Indonesia",
     kind: "leadership",
     start: "2023-05",
@@ -275,19 +286,6 @@ export const leadership: TimelineEntry[] = [
     display: "May to Oct 2023",
     bullets: [
       "Led the publication team behind event content across Instagram, TikTok, and Twitter; engagement grew 80% for an event with 2,000+ attendees.",
-    ],
-  },
-  {
-    id: "gdsc-member",
-    title: "Member, Content Writing Division",
-    org: "Google Developer Student Clubs (GDSC), Universitas Sriwijaya",
-    location: "Palembang, Indonesia",
-    kind: "leadership",
-    start: "2022-11",
-    end: "2023-09",
-    display: "Nov 2022 to Sep 2023",
-    bullets: [
-      "Wrote articles for the GDSC UNSRI Medium publication and produced Instagram content, then was promoted into the Core Team the following term.",
     ],
   },
   {
@@ -301,33 +299,6 @@ export const leadership: TimelineEntry[] = [
     display: "Mar 2022 to Jan 2023",
     bullets: [
       "Handled social media end to end, including publishing, copywriting, and event-planning support.",
-    ],
-  },
-  {
-    id: "sdc-concept",
-    title: "Event Concept and Session Author",
-    org: "Sriwijaya Digital Conference 2024",
-    location: "Palembang, Indonesia",
-    kind: "leadership",
-    start: "2024-10",
-    end: "2024-10",
-    display: "Oct 2024",
-    bullets: [
-      "Wrote the event concept name and the session titles and themes for a national conference billed as The Biggest Digital Conference in South Sumatera, held 19 to 20 October 2024 at Hotel Swarna Dwipa.",
-      "Sessions included Career Wireframe: Imagining, Designing, and Living Your Dream Career.",
-    ],
-  },
-  {
-    id: "gdsc-speaker",
-    title: "Speaker, Sharing Session on Media and Creative",
-    org: "Google Developer Student Clubs (GDSC), Universitas Sriwijaya",
-    location: "Palembang, Indonesia",
-    kind: "leadership",
-    start: "2024-05",
-    end: "2024-05",
-    display: "May 2024",
-    bullets: [
-      "One of the speakers for an internal GDSC sharing session on media and creative work.",
     ],
   },
 ];
@@ -346,7 +317,7 @@ export const education = [
     location: "Palembang, Indonesia",
     bullets: [
       "Built web applications and automated data-processing tools through coursework and extracurricular projects.",
-      "Coursework covered system design, digital forensics, machine learning, and data analytics.",
+      "Coursework: system design, digital forensics, machine learning, data analytics.",
     ],
   },
   {
@@ -366,27 +337,26 @@ export const education = [
  * ------------------------------------------------------------------ */
 
 /**
- * Note on the Redesign Challenge: the CV states "3rd Winner" but the spec
- * (section 9.1, marked resolved) and everything published before this says
- * "2nd Winner". The owner confirmed 2nd is correct and the CV carries the typo,
- * so 2nd is what ships.
+ * Note on the Redesign Challenge: an earlier CV listed "3rd Winner" but the
+ * spec (section 9.1, marked resolved) and everything published before this said
+ * "2nd Winner". The owner confirmed 2nd was correct, and the reissued CV now
+ * states 2nd as well, so the conflict is closed.
  */
 export const awards: Award[] = [
-  { id: "best-core-team", title: "The Best Core Team", org: "GDSC", year: 2024 },
-  { id: "redesign-2nd", title: "2nd Winner, Redesign Challenge", org: "GDSC", year: 2024 },
   /**
    * Topindoku win, from the signed certificate: 162/B/S.Ket/Pan-ITFAIRXIII/
    * HIMATIF/II/2024, awarded to team DEUX TEAM as Juara 1 in the UI/UX design
    * competition at IT Fair XIII, UIN Sunan Gunung Djati Bandung.
    */
   { id: "topindoku-uiux-1st", title: "1st Winner, UI/UX Design Competition", org: "Topindoku, IT Fair XIII", year: 2024 },
+  { id: "redesign-2nd", title: "2nd Winner, Redesign Challenge", org: "GDSC", year: 2024 },
+  { id: "best-core-team", title: "The Best Core Team", org: "GDSC UNSRI", year: 2024 },
   { id: "uiux-1st", title: "1st Winner, UI/UX Competition", org: "Technology Euphoria", year: 2023 },
 ];
 
 /* ------------------------------------------------------------------ *
- * Certifications. The Coursera, Hacktiv8, IBM and Dicoding entries    *
- * are transcribed from the CV; the Claude Academy badges were earned   *
- * since and are reported here as well.                                *
+ * Certifications. Transcribed from the CV: two Claude Academy badges, *
+ * four Coursera courses, and the Hacktiv8 / IBM program.              *
  * ------------------------------------------------------------------ */
 
 export const certifications: CertIssuer[] = [
@@ -404,7 +374,7 @@ export const certifications: CertIssuer[] = [
       },
       {
         id: "claude-code-in-action",
-        name: "Claude Code in action",
+        name: "Claude Code in Action",
         year: 2026,
         date: "Oct 2026",
         credentialUrl: "https://academy.claude.com/verify/9d2b7dc3986fe851f19d16431e78dc03",
@@ -441,7 +411,7 @@ export const certifications: CertIssuer[] = [
     ],
   },
   {
-    issuer: "Hacktiv8",
+    issuer: "Hacktiv8 / IBM",
     items: [
       {
         id: "hacktiv8-ibm-genai",
@@ -451,32 +421,10 @@ export const certifications: CertIssuer[] = [
       },
     ],
   },
-  {
-    issuer: "IBM",
-    items: [
-      {
-        id: "ibm-data-science",
-        name: "Data Science and Machine Learning Course",
-        year: 2024,
-        date: "Dec 2024",
-      },
-    ],
-  },
-  {
-    issuer: "Dicoding Indonesia",
-    items: [
-      {
-        id: "dicoding-visualisasi",
-        name: "Belajar Dasar Visualisasi Data",
-        year: 2022,
-        date: "Dec 2022",
-      },
-    ],
-  },
 ];
 
 /* ------------------------------------------------------------------ *
- * Skills, in the CV's own three categories. Used on the CV page.       *
+ * Skills, in the CV's own two categories. Used on the CV page.         *
  * ------------------------------------------------------------------ */
 
 export const skillCategories: SkillCategory[] = [
@@ -505,42 +453,6 @@ export const skillCategories: SkillCategory[] = [
       "Microsoft Excel",
       "Machine Learning",
       "Data Analysis",
-      "Data Visualization",
-      "SEO Analysis",
-      "AI Prompting",
-      "watsonx.ai",
-      "Business Process Analysis",
-    ],
-  },
-  {
-    id: "tools",
-    label: "Tools and Platforms",
-    items: [
-      "Adobe Photoshop",
-      "Visual Studio Code",
-      "Git and GitHub",
-      "Docker",
-      "Google Sheets",
-      "Notion",
-      "Trello",
-      "Jira",
-      "Figma",
-      "Claude",
-      "ChatGPT",
-      "DeepSeek",
-      "Gemini",
-    ],
-  },
-  {
-    id: "leadership",
-    label: "Leadership and Operations",
-    items: [
-      "Team Leadership",
-      "Project Management",
-      "Event Coordination",
-      "Cross-Functional Collaboration",
-      "Critical Thinking",
-      "Problem Solving",
     ],
   },
 ];
@@ -669,9 +581,10 @@ export const writing: WritingItem[] = [
  * ------------------------------------------------------------------ */
 
 /**
- * The Broad column. Spec 4.4 listed seven; these are the CV's own Content and
- * Communications plus Leadership and Operations terms, which supersede the
- * looser originals ("IT", "Creativity") with what the CV actually claims.
+ * The Broad column. Spec 4.4 listed seven; these are the CV's Content and
+ * Communications terms plus the leadership and operations terms its roles
+ * support, which supersede the looser originals ("IT", "Creativity") with
+ * what the CV actually claims.
  */
 export const broadSkills = [
   "Project Management",

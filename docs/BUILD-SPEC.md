@@ -1390,11 +1390,11 @@ conflict.
 | Deep skills: 8 | 11, adding watsonx.ai, AI Prompting, and Data Visualization, each mapped to a project tag | Keeps the orphan check meaningful rather than decorative |
 | No professional summary | The CV's summary, transcribed | |
 
-**The conflict, recorded.** The CV states "3rd Winner, Redesign Challenge, GDSC
-2024". This spec (section 9.1, marked resolved) and everything already published
-say "2nd Winner". The owner confirmed **2nd is correct and the CV carries the
-typo**, so the site, this spec, and the project page all keep 2nd. If the CV is
-reissued, fix the CV rather than the site.
+**The conflict, recorded.** The original CV stated "3rd Winner, Redesign
+Challenge, GDSC 2024". This spec (section 9.1, marked resolved) and everything
+already published said "2nd Winner". The owner confirmed **2nd is correct and
+the CV carried the typo**, so the site, this spec, and the project page kept
+2nd. The CV was reissued in October 2026 with 2nd, which closes the conflict.
 
 **One deliberate omission.** The CV header lists a phone number. Section 9.1 says
 it is not published and the repository is public, so it appears nowhere: not on
@@ -1839,6 +1839,32 @@ public repositories and 2 without a written case study (`ffrizzy-portfolio` and
 `ayo-sudoku`), so the work index went from 17 to 19 rows, the build from 27 to
 29 pages, the projects stat from 17 to 19, and the sitemap to 19 work URLs.
 Setting `GITHUB_TOKEN` remains optional and only raises the rate limit.
+
+### 13.16 Round 14: the CV is reissued
+
+The owner replaced both CV downloads with a tighter two-page edit. The English
+and Indonesian documents were re-read against the page, and the facts had not
+moved: the same four professional roles, education, awards, and languages. What
+changed was the presentation, and the page now follows it rather than keeping
+the older shape.
+
+| Before | Now | Why |
+|---|---|---|
+| Three GDSC timeline entries: core team, member term, speaker | One GDSC entry, with the member term and the sharing session in its bullets | The reissued CV presents the three as one block; the leadership section is back to seven entries, the count the spec recorded before the conference and speaker rows were split out |
+| "Event Concept and Session Author" | "Content Writer" | The role label the CV now uses; the case study keeps the specific description of the work |
+| Nine certification items | Seven: two Claude Academy badges, four Coursera courses, and the Hacktiv8 / IBM program | The CV swapped the older IBM Data Science and Dicoding items for the Claude Academy badges |
+| Four skill groups | The CV's two: Content and Communications, and Data and Technical | The page mirrors the document; the Home skills map keeps the broader tool and leadership lists |
+| The Redesign Challenge recorded as a CV typo | The CV now also says 2nd Winner | The reissue fixed the typo rather than the site |
+| Pesta Rakyat and Technology Euphoria titles repeated the event name | The org line carries the event name | Removes duplication the CV does not have |
+
+The selected projects stay richer than the PDF. The document lists Prepo, KITO
+Portal Publik, and the Aid Distribution Dashboard, then points at the portfolio
+for the rest; the page is that portfolio, so it keeps the five featured
+projects, the generated repository entries, and the Open source section. The
+phone number in the PDF header is still omitted.
+
+Both downloads were replaced in place, so the URLs do not change. The two
+buttons and the print stylesheet were checked after the swap.
 
 ---
 
