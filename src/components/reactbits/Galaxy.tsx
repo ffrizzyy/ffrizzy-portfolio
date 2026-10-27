@@ -456,21 +456,6 @@ const Galaxy = ({
     let raf = 0;
     let last = 0;
     let visible = true;
-    /* The field is fixed, so a scroll frame would repaint the same slow drift
-       underneath moving content. Pausing while the page scrolls keeps scrolling
-       on the compositor; the timer below restarts the drift when the page
-       settles. */
-    let scrolling = false;
-    let scrollTimer = 0;
-    const onScroll = () => {
-      scrolling = true;
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => {
-        scrolling = false;
-        last = 0;
-        wake();
-      }, 140);
-    };
 
     const render = () => {
       const s = settingsRef.current;
@@ -523,7 +508,7 @@ const Galaxy = ({
 
     const frame = (now: number) => {
       raf = 0;
-      if (!visible || document.hidden || scrolling) return;
+      if (!visible || document.hidden) return;
       const s = settingsRef.current;
       /* Paint budget. The field is a slow drift, so a reader cannot tell 60
          frames from 30, but the shader that draws it costs real GPU time. On a
@@ -633,7 +618,6 @@ const Galaxy = ({
     window.addEventListener('pointercancel', onPointerUp, { passive: true });
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     document.addEventListener('visibilitychange', onVisibility);
-    window.addEventListener('scroll', onScroll, { passive: true });
     resize();
 
     const repelling = initial.autoCenterRepulsion > 0 || (initial.mouseInteraction && initial.mouseRepulsion);
@@ -665,8 +649,6 @@ const Galaxy = ({
       window.removeEventListener('pointercancel', onPointerUp);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);
       document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('scroll', onScroll);
-      window.clearTimeout(scrollTimer);
       programs.forEach(found => found.program && gl.deleteProgram(found.program));
       gl.deleteBuffer(buffer);
       gl.deleteVertexArray(vao);

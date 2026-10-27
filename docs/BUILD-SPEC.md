@@ -1776,13 +1776,13 @@ field is decoration, so it now has a budget.
 | `dpr` | device pixel ratio, capped at 2 | `0.5` | The field is soft nebula and star glow. A quarter of the pixels is not visible at reading distance, and it is the single largest saving |
 | `layers` | 4 | `2` | Two depth planes still read as depth at this density; the third cost a third of the fill rate |
 | `maxFps` | none (display rate) | `30` | The drift is slow enough that 30 frames reads the same as 60. The prop is new: the vendored file gains `maxFps` and gates the shader on it, while the request loop still follows the display clock |
-| scroll | always painting | paused while scrolling, 140ms after | The field is fixed, so a scroll frame repainted the same drift under moving content. Stopping it keeps the scroll on the compositor and it resumes when the page settles |
 
 Measured headed at 1280 by 900 on the same machine, sampling 240 frames: idle at
 the hero went from a 27.8ms median with every frame over budget to a 7ms median
-with 1 to 7 frames over 16.8ms; production scroll is now 0 of 180 frames over
-16.8ms, where it was 74 before the pause. Idle and scroll are within noise of the
-same page with the canvas removed, which is the point of the budget.
+with 6 frames over 16.8ms, against 1 for the same page with the canvas removed.
+Scrolling the full page is 0 of 180 frames over 16.8ms in production. The field
+keeps painting while the page scrolls, which is why the resolution and frame
+budget carry the whole saving rather than a scroll pause.
 
 The contact form had a separate cost. `next/dynamic` fetches its chunk when the
 component mounts, so Turnstile started on first load even though the section is
