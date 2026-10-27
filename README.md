@@ -94,7 +94,7 @@ empty box.
 Experience, education, certifications, the professional summary, and the CV
 page's skill categories are transcribed from the owner's CV document (two
 education entries, including high school). The Home About rail is a curated
-subset of eight; the CV page carries the full list of eleven roles in the CV's
+subset of eight; the CV page carries the full list of thirteen roles in the CV's
 own two sections.
 
 **The phone number in the CV header is deliberately not published.** Spec 9.1
