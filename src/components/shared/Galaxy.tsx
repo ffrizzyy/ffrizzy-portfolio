@@ -34,6 +34,11 @@ import GalaxyField from "@/components/reactbits/Galaxy";
  * second. At the registry defaults it repainted a full-viewport shader on every
  * display frame and held the whole page near 30fps on integrated graphics; see
  * 13.14 in the build spec for the numbers.
+ *
+ * The light star tone is a mid grey, not ink. In light mode the shader draws the
+ * sky as ink coverage, and that coverage scales with the star's own luminance,
+ * so an ink-coloured star lands almost invisible on paper. A mid grey keeps the
+ * marks the same ink colour but gives them enough coverage to read.
  */
 let softwareField: boolean | null = null;
 
@@ -81,7 +86,7 @@ export function Galaxy() {
       <GalaxyField
         lightMode={light}
         transparent
-        starColors={light ? ["#111214"] : ["#e9eaea"]}
+        starColors={light ? ["#b3b8bf"] : ["#e9eaea"]}
         backgroundColor={light ? "#eceded" : "#0f1012"}
         clickWarp={false}
         mouseInteraction
