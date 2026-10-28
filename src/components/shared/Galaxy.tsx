@@ -30,10 +30,12 @@ import GalaxyField from "@/components/reactbits/Galaxy";
  * decoration, so the paper background is the better answer. Hardware rendering
  * is unaffected.
  *
- * The field is a slow drift, so it runs at half resolution and 30 frames a
- * second. At the registry defaults it repainted a full-viewport shader on every
- * display frame and held the whole page near 30fps on integrated graphics; see
- * 13.14 in the build spec for the numbers.
+ * The field is a slow drift, so it runs at one canvas pixel per CSS pixel and
+ * 30 frames a second. At the registry defaults it repainted a full-viewport
+ * shader on every display frame and held the whole page near 30fps on integrated
+ * graphics; see 13.14 in the build spec for the numbers. Half resolution kept
+ * that budget but softened the stars, and the sky is the one place on the page
+ * where a soft edge shows.
  *
  * The light star tone is a mid grey, not ink. In light mode the shader draws the
  * sky as ink coverage, and that coverage scales with the star's own luminance,
@@ -103,7 +105,7 @@ export function Galaxy() {
         layers={2}
         saturation={0}
         hueShift={0}
-        dpr={0.5}
+        dpr={1}
         maxFps={30}
       />
     </div>
