@@ -201,13 +201,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               Skip to content
             </a>
 
-            {/* Spec 2.6: the texture is a fixed, pointer-events-none layer
-                behind everything. It is never applied to a scrolling container. */}
-            <div aria-hidden className="texture-layer" />
-
-            {/* The galaxy sits under the paper texture, so the texture still
-                reads as the material and the stars read through it. Canvas
-                painted once at rest under reduced motion; see Galaxy. */}
+            {/* The galaxy is the page background. It sits behind every section,
+                so nothing filters it, and it stays pointer-events-none through
+                its own wrapper. Canvas painted once at rest under reduced
+                motion; see Galaxy. */}
             <Galaxy />
 
             <Nav />

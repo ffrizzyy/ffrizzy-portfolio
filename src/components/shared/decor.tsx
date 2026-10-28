@@ -3,8 +3,8 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The zine layer. Spec 2.6 allows texture, tape, stickers, and the marker
- * highlight in exactly four places, and none of them may sit behind or over
+ * The zine layer. Spec 2.6 allows tape, stickers, and the marker
+ * highlight in exactly three places, and none of them may sit behind or over
  * body text, forms, or the experience timeline.
  */
 

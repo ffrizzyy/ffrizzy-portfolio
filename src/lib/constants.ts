@@ -6,7 +6,6 @@
  */
 
 export const Z = {
-  texture: -10,
   content: 0,
   nav: 40,
   sheet: 50,

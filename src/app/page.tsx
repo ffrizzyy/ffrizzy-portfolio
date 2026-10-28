@@ -26,7 +26,6 @@ export default async function Home() {
     // silently empty box. The placeholder frame covers the visual side.
     reportMissingAssets(
       [
-        "/textures/paper.webp",
         "/images/portrait.webp",
         ...projectList.map((project) => project.cover).filter((cover): cover is string => Boolean(cover)),
         ...writingList.map((item) => item.cover),

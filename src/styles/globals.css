@@ -23,12 +23,6 @@
   --on-signal: #111214;
   /* feedback */
   --danger: #b3261e;
-  /* texture layer. Held low on purpose: at 0.55 the fibre texture was legible as
-     grain across every surface, which made the page read as noisy rather than as
-     paper. At 0.15 it is a faint tooth you notice only if you look for it, and
-     the background reads as smooth. */
-  --texture-opacity: 0.15;
-  --texture-filter: none;
   /* shape. --shadow-color is separate so the hard shadow can switch from ink
      to signal in dark mode without restating the whole shadow. */
   --shadow-color: var(--ink);
@@ -46,8 +40,6 @@
   --signal: #e2683a;
   --on-signal: #111214;
   --danger: #f2b8b5;
-  --texture-opacity: 0.05;
-  --texture-filter: invert(1);
   --hard-shadow: 4px 4px 0 0 var(--signal);
 }
 
@@ -97,10 +89,9 @@
     font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.65;
-    /* Makes <body> a stacking context so the negative-z layers inside it (the
-       paper texture at -10 and the galaxy at -11) paint above its own
-       background instead of behind it. Without this the body's opaque
-       background covers both, which is why the texture never showed. */
+    /* Makes <body> a stacking context so the negative-z galaxy inside it paints
+       above its own background instead of behind it. Without this the body's
+       opaque background covers the canvas. */
     isolation: isolate;
   }
 
@@ -197,18 +188,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 /* ------------------------------------------------------------------ *
  * Zine layer. Spec 2.6: exactly three allowed places.                 *
  * ------------------------------------------------------------------ */
-.texture-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -10;
-  pointer-events: none;
-  background-image: url("/textures/paper.webp");
-  background-size: cover;
-  background-position: center;
-  opacity: var(--texture-opacity);
-  filter: var(--texture-filter);
-}
-
 .marker {
   background-color: var(--signal);
   color: var(--on-signal);
@@ -821,10 +800,10 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 }
 
 /* ------------------------------------------------------------------ *
- * Galaxy. The React Bits shader sits behind the paper texture as a    *
- * fixed decorative layer. It answers the pointer and the theme, but   *
- * never takes a click; see components/shared/Galaxy.tsx for why the   *
- * warp is off. Under reduced motion the shader paints one frame.      *
+ * Galaxy. The React Bits shader is the page's fixed decorative        *
+ * backdrop. It answers the pointer and the theme, but never takes a   *
+ * click; see components/shared/Galaxy.tsx for why the warp is off.    *
+ * Under reduced motion the shader paints one frame.                   *
  * ------------------------------------------------------------------ */
 .galaxy-frame {
   position: fixed;
@@ -954,7 +933,7 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 
 /* ------------------------------------------------------------------ *
  * Print. The CV page is meant to be saved as a PDF from the browser,   *
- * so the chrome, the texture, and anything interactive come out.       *
+ * so the chrome and anything interactive come out.                     *
  * ------------------------------------------------------------------ */
 @media print {
   /* Only the site chrome. The CV's own <header> carries the name and contact
@@ -963,7 +942,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   header.fixed,
   footer,
   nav.fixed,
-  .texture-layer,
   .no-print {
     display: none !important;
   }
