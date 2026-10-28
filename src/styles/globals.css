@@ -341,6 +341,40 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 }
 
+/* Copy-name confirmation. The icon is keyed on the copy state, so every copy
+   remounts the glyph and replays the pop, including a check that replaces a
+   check. The tag animates `translate` rather than `transform`, because the
+   utility that centres it above the button already owns `transform`. */
+@keyframes copy-icon-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.35) rotate(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes copy-tip-rise {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.copy-icon {
+  animation: copy-icon-pop 300ms var(--ease-out-zine) both;
+}
+
+.copy-tip {
+  animation: copy-tip-rise 220ms var(--ease-out-zine) both;
+}
+
 /* Default reveal: a plain on-load animation. Upgraded to a
    scroll-driven timeline wherever the browser supports it.
 

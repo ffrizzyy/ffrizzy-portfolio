@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import SplitFlapText from "@/components/reactbits/SplitFlapText";
+import { CopyNameButton } from "@/components/shared/CopyNameButton";
 import { Icon, type IconName } from "@/components/shared/Icon";
 import { TrackedLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
@@ -160,30 +161,36 @@ export default async function CvPage() {
         <header className="reveal flex flex-col gap-4 border-b-2 border-ink pb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div
-                role="heading"
-                aria-level={1}
-                aria-label={SITE.name}
-                className="flex flex-col items-start gap-1"
-              >
-                {["Muhammad Farrel", "Al-Wafi Frizzy"].map((line) => (
-                  <div key={line}>
-                    <SplitFlapText
-                      text={line}
-                      loop={false}
-                      intro
-                      tileStyle="board"
-                      tileRadius={0}
-                      gap={4}
-                      fontSize="clamp(19px, 5.4vw, 40px)"
-                      textColor="var(--ink)"
-                      tileColor="var(--paper-sunken)"
-                      aria-hidden="true"
-                      className="print:hidden"
-                    />
-                    <span className="hidden text-3xl print:block md:text-4xl">{line}</span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-start gap-3">
+                <div
+                  role="heading"
+                  aria-level={1}
+                  aria-label={SITE.name}
+                  className="flex flex-col items-start gap-1"
+                >
+                  {["Muhammad Farrel", "Al-Wafi Frizzy"].map((line) => (
+                    <div key={line}>
+                      <SplitFlapText
+                        text={line}
+                        loop={false}
+                        intro
+                        tileStyle="board"
+                        tileRadius={0}
+                        gap={4}
+                        fontSize="clamp(19px, 5.4vw, 40px)"
+                        textColor="var(--ink)"
+                        tileColor="var(--paper-sunken)"
+                        aria-hidden="true"
+                        className="print:hidden"
+                      />
+                      <span className="hidden text-3xl print:block md:text-4xl">{line}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* The name is long and hyphenated, so a form or an email wants
+                    it copied verbatim rather than retyped. Hidden in print,
+                    where there is nothing to click. */}
+                <CopyNameButton name={SITE.name} className="no-print mt-1 shrink-0" />
               </div>
               <p className="mt-2 text-base text-ink-muted">
                 {SITE.role} / AI web apps, data dashboards, and content
