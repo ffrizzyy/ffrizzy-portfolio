@@ -177,17 +177,18 @@ export function Nav() {
 
           <div className="flex items-center gap-2">
             {/* The two work accounts, so a reader can open the profile without
-                leaving for the footer. Instagram and WhatsApp stay in the hero
-                and the footer: four marks would crowd the bar, and below lg the
-                section links already fill the available width. */}
-            <div className="hidden items-center gap-1.5 lg:flex">
+                leaving for the footer. They sit in one segmented pill, the same
+                shape as the theme switch beside them, so the right end of the
+                bar reads as one control cluster. Instagram and WhatsApp stay in
+                the hero and the footer. */}
+            <div className="hidden items-center gap-0.5 rounded-pill border-2 border-ink p-0.5 lg:flex">
               {SOCIAL_LINKS.filter(
                 (link) => link.key === "github" || link.key === "linkedin",
               ).map((link) => (
                 <SocialIconLink
                   key={link.key}
                   link={link}
-                  className="grid size-9 place-items-center rounded-pill border-2 border-ink text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
+                  className="grid size-[34px] place-items-center rounded-pill text-ink-muted transition-[background-color,color,transform] duration-200 ease-zine hover:bg-signal hover:text-on-signal active:scale-90"
                 />
               ))}
             </div>

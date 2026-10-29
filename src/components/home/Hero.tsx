@@ -102,37 +102,39 @@ export function Hero() {
 
           {/* A 5px magnetic pull on each control. Small enough that the target
               stays where the eye expects it; see Magnetic for the gating. */}
-          <div data-hero="cta" className="mt-10 flex flex-wrap items-center gap-4">
-            <Magnetic>
-              <ButtonLink href="#all" variant="primary" size="md">
-                View work
-              </ButtonLink>
-            </Magnetic>
+          <div data-hero="cta" className="mt-10 flex flex-col items-start gap-5">
+            <div className="flex flex-wrap items-center gap-4">
+              <Magnetic>
+                <ButtonLink href="#all" variant="primary" size="md">
+                  View work
+                </ButtonLink>
+              </Magnetic>
 
-            {/* The CV control leads with the name rather than the action. The
-                aria-label keeps the CV as the accessible name, and the mono CV
-                badge is what tells a reader the pill opens the CV. The icon is
-                an arrow, not a download: the pill opens the /cv page, and the
-                PDF downloads live on that page. */}
-            <Magnetic>
-              <CvLink
-                ariaLabel={`Open the CV page, ${SITE.name}`}
-                className="group inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-5 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]"
-              >
-                <Icon name="ArrowRight" size={18} className="nudge-right" />
-                <span>{SITE.name}</span>
-                <span
-                  aria-hidden
-                  className="num rounded-pill bg-paper-sunken px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em] text-ink-muted"
+              {/* The CV control leads with the name rather than the action. The
+                  aria-label keeps the CV as the accessible name, and the mono CV
+                  badge is what tells a reader the pill opens the CV. The icon is
+                  an arrow, not a download: the pill opens the /cv page, and the
+                  PDF downloads live on that page. */}
+              <Magnetic>
+                <CvLink
+                  ariaLabel={`Open the CV page, ${SITE.name}`}
+                  className="group inline-flex h-11 select-none items-center justify-center gap-2 rounded-pill border-2 border-ink bg-transparent px-5 text-[0.95rem] font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-paper-sunken active:translate-y-px active:scale-[0.98]"
                 >
-                  CV
-                </span>
-              </CvLink>
-            </Magnetic>
+                  <Icon name="ArrowRight" size={18} className="nudge-right" />
+                  <span>{SITE.name}</span>
+                  <span
+                    aria-hidden
+                    className="num rounded-pill bg-paper-sunken px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em] text-ink-muted"
+                  >
+                    CV
+                  </span>
+                </CvLink>
+              </Magnetic>
+            </div>
 
-            {/* The four public accounts sit beside the CV pill, so every route
-                to the owner is reachable before the first scroll. Icon-only,
-                matching the footer's directory. */}
+            {/* The four public accounts sit under the two controls, so every
+                route to the owner is reachable before the first scroll without
+                widening the CTA row. Icon-only, matching the footer. */}
             <ul className="flex items-center gap-2">
               {SOCIAL_LINKS.map((link) => (
                 <li key={link.key}>
