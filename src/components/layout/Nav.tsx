@@ -176,15 +176,12 @@ export function Nav() {
           </nav>
 
           <div className="flex items-center gap-2">
-            {/* The two work accounts, so a reader can open the profile without
-                leaving for the footer. They sit in one segmented pill, the same
-                shape as the theme switch beside them, so the right end of the
-                bar reads as one control cluster. Instagram and WhatsApp stay in
-                the hero and the footer. */}
-            <div className="hidden items-center gap-0.5 rounded-pill border-2 border-ink p-0.5 lg:flex">
-              {SOCIAL_LINKS.filter(
-                (link) => link.key === "github" || link.key === "linkedin",
-              ).map((link) => (
+            {/* Every public account, in one segmented pill that matches the
+                theme switch beside it. From xl up there is room for all four;
+                below that the hero and the footer carry them so the section
+                links keep their width. */}
+            <div className="hidden items-center gap-0.5 rounded-pill border-2 border-ink p-0.5 xl:flex">
+              {SOCIAL_LINKS.map((link) => (
                 <SocialIconLink
                   key={link.key}
                   link={link}
