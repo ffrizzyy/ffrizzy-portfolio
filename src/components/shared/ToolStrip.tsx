@@ -32,15 +32,18 @@ import { EXTRA_BRAND_ICONS } from "@/lib/brand-icons";
 import { toolList } from "@/lib/content";
 
 /**
- * Spec 4.4 tools strip: logo marks with accessible names and no captions, in a
- * 30s linear loop that pauses on hover and on focus. This is the only infinite
- * loop on the site.
+ * Spec 4.4 tools strip: logo marks with accessible names and no captions.
  *
- * Most marks come straight from simple-icons. A few brands the strip now
- * carries are not in that set (Microsoft Excel, Adobe Photoshop, Visual Studio
- * Code, OpenAI/ChatGPT); those live in lib/brand-icons.ts, copied from other
- * public icon sets rather than hand-drawn, so spec 1.1's rule about not drawing
- * a missing brand is kept. A slug missing from both maps is still dropped
+ * This used to run as a marquee. A perpetual loop in the middle of a reading
+ * page pulled the eye away from the skills panels above it, and the marks are
+ * reference material rather than something to watch, so the strip now sits
+ * still and wraps into a centred wall. Every tool keeps its accessible name.
+ *
+ * Most marks come straight from simple-icons. A few brands the strip carries
+ * are not in that set (Microsoft Excel, Adobe Photoshop, Visual Studio Code,
+ * OpenAI/ChatGPT); those live in lib/brand-icons.ts, copied from other public
+ * icon sets rather than hand-drawn, so spec 1.1's rule about not drawing a
+ * missing brand is kept. A slug missing from both maps is still dropped
  * silently, which is what lets the tools list carry a name before its mark
  * exists.
  *
@@ -94,57 +97,35 @@ const BRAND_ICONS: Record<string, BrandMark> = {
 };
 
 /**
- * The track is duplicated and translated by exactly -50%, so the loop is
- * seamless only while half the track is at least as wide as the viewport.
- *
- * That is why this is six copies and not two. With two, the whole track came to
- * roughly 1230px against a container of about 1216px, so half of it was barely
- * one viewport wide: as the animation ran, the track ran out and left a few
- * hundred pixels of empty space at the trailing edge. Six copies put half the
- * track well past the widest the container can get, with room for the marks
- * added since.
+ * The marks are reference material, so the wall is static. An eight column grid
+ * holds the current 31 tools in four near even rows, and drops to four columns
+ * on a phone. A wrapping flex row was tried first and left the last mark alone
+ * on a line of its own, which read as an accident rather than a wall.
  */
-const COPIES = 6;
-
 export function ToolStrip() {
   const available = toolList.filter((tool) => tool.slug in BRAND_ICONS);
 
   return (
-    /* Borders sit on the outer element and the mask on the inner one, so the
-       fade applies to the logos but not to the rules above and below them. */
-    <div className="border-y-2 border-ink">
-      <div className="strip-viewport strip-mask overflow-hidden py-7">
-        <div className="strip-track">
-          {Array.from({ length: COPIES }, (_, copy) => (
-            <ul
-              key={copy}
-              // Only the first copy is exposed to assistive tech, so the tool
-              // names are announced once rather than six times.
-              aria-hidden={copy > 0}
-              className="flex shrink-0 items-center gap-14 pr-14"
-            >
-              {available.map((tool) => {
-                const brand = BRAND_ICONS[tool.slug];
-                if (!brand) return null;
-                return (
-                  <li key={tool.slug} className="text-ink transition-colors hover:text-signal">
-                    <svg
-                      viewBox={brand.viewBox}
-                      role={copy === 0 ? "img" : undefined}
-                      aria-label={copy === 0 ? tool.name : undefined}
-                      aria-hidden={copy > 0 ? true : undefined}
-                      className="size-8"
-                      fill="currentColor"
-                    >
-                      <path d={brand.path} />
-                    </svg>
-                  </li>
-                );
-              })}
-            </ul>
-          ))}
-        </div>
-      </div>
+    <div className="border-y-2 border-ink py-8">
+      <ul className="grid grid-cols-4 place-items-center gap-x-6 gap-y-7 md:grid-cols-8 md:gap-x-10">
+        {available.map((tool) => {
+          const brand = BRAND_ICONS[tool.slug];
+          if (!brand) return null;
+          return (
+            <li key={tool.slug} className="text-ink transition-colors hover:text-signal">
+              <svg
+                viewBox={brand.viewBox}
+                role="img"
+                aria-label={tool.name}
+                className="size-8"
+                fill="currentColor"
+              >
+                <path d={brand.path} />
+              </svg>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

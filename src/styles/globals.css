@@ -257,15 +257,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
   }
 }
 
-@keyframes marquee-left {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 @keyframes bar-grow {
   from {
     transform: scaleY(0);
@@ -425,30 +416,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
 
 .reveal-fade {
   animation: fade-up 350ms var(--ease-out-zine) both;
-}
-
-.strip-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-left 30s linear infinite;
-}
-
-/* Fades both ends of the strip. Without this a logo is sliced mid-letterform at
-   the container edge, which reads as a rendering bug rather than a marquee. */
-.strip-mask {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 5%,
-    #000 95%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
-}
-
-.strip-viewport:hover .strip-track,
-.strip-viewport:focus-within .strip-track {
-  animation-play-state: paused;
 }
 
 .slide-panel {
@@ -889,10 +856,6 @@ html[data-theme-choice="dark"] .theme-option-dark svg {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .strip-track {
-    animation: none !important;
   }
 
   /* Revealed elements must land in their final state, not at opacity 0, and
