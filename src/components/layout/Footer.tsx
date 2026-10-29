@@ -1,4 +1,5 @@
 import { Icon } from "@/components/shared/Icon";
+import { SOCIAL_LINKS, SocialIconLink } from "@/components/shared/SocialLinks";
 import { CvLink, TrackedLink } from "@/components/shared/TrackedLink";
 import { ANALYTICS_EVENTS } from "@/lib/analytics";
 import { LAYOUT, SITE } from "@/lib/constants";
@@ -9,11 +10,11 @@ import { LAYOUT, SITE } from "@/lib/constants";
  *
  * The email address lives here rather than in the contact section, so every
  * route to reach the owner sits in one place: a mail icon with the address,
- * then LinkedIn and GitHub as icon-only links, then the CV. The social links
- * are icon-only because a reader recognises the marks faster than the words,
- * and each carries an aria-label so the name is still announced. The email and
- * the CV keep their text: an address a reader may want to copy, and an action
- * an icon alone would not explain.
+ * then GitHub, LinkedIn, Instagram, and WhatsApp as icon-only links, then the
+ * CV. The social links are icon-only because a reader recognises the marks
+ * faster than the words, and each carries an aria-label so the name is still
+ * announced. The email and the CV keep their text: an address a reader may want
+ * to copy, and an action an icon alone would not explain.
  */
 export function Footer() {
   return (
@@ -36,30 +37,14 @@ export function Footer() {
               </span>
             </TrackedLink>
           </li>
-          <li>
-            <TrackedLink
-              href={SITE.linkedin}
-              event={ANALYTICS_EVENTS.projectOutbound}
-              eventProps={{ target: "linkedin" }}
-              external
-              ariaLabel="LinkedIn"
-              className="touch-target grid size-9 place-items-center rounded-pill border-2 border-ink text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
-            >
-              <Icon name="LinkedinLogo" size={18} />
-            </TrackedLink>
-          </li>
-          <li>
-            <TrackedLink
-              href={SITE.github}
-              event={ANALYTICS_EVENTS.projectOutbound}
-              eventProps={{ target: "github" }}
-              external
-              ariaLabel="GitHub"
-              className="touch-target grid size-9 place-items-center rounded-pill border-2 border-ink text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
-            >
-              <Icon name="GithubLogo" size={18} />
-            </TrackedLink>
-          </li>
+          {SOCIAL_LINKS.map((link) => (
+            <li key={link.key}>
+              <SocialIconLink
+                link={link}
+                className="touch-target grid size-9 place-items-center rounded-pill border-2 border-ink text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
+              />
+            </li>
+          ))}
           <li>
             <CvLink
               ariaLabel="Download CV"

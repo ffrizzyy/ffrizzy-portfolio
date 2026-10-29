@@ -5,7 +5,9 @@ import {
   certIssuerSchema,
   educationSchema,
   eventSchema,
+  growthAccountSchema,
   growthSlideSchema,
+  mediumArticleSchema,
   projectSchema,
   repoSchema,
   skillCategorySchema,
@@ -17,6 +19,8 @@ import {
   type Award,
   type CertIssuer,
   type Education,
+  type GrowthAccount,
+  type MediumArticle,
   type PortfolioEvent,
   type Project,
   type ProjectType,
@@ -40,9 +44,11 @@ import {
   events as rawEvents,
   experience as rawExperience,
   extraSkillUsage,
+  growthAccounts as rawGrowthAccounts,
   growthSlides as rawGrowth,
   languages as rawLanguages,
   leadership as rawLeadership,
+  mediumArticles as rawMedium,
   skillCategories as rawSkillCategories,
   stats as rawStats,
   summary as rawSummary,
@@ -68,7 +74,13 @@ export const educationList: Education[] = z.array(educationSchema).parse(rawEduc
 export const certList: CertIssuer[] = z.array(certIssuerSchema).parse(rawCerts);
 export const languages = rawLanguages;
 export const growthList = z.array(growthSlideSchema).parse(rawGrowth);
+export const growthAccountList: GrowthAccount[] = z
+  .array(growthAccountSchema)
+  .parse(rawGrowthAccounts);
 export const writingList: WritingItem[] = z.array(writingItemSchema).parse(rawWriting);
+export const mediumArticleList: MediumArticle[] = z
+  .array(mediumArticleSchema)
+  .parse(rawMedium);
 export const skillList: Skill[] = z.array(skillSchema).parse(rawSkills);
 export const toolList: Tool[] = z.array(toolSchema).parse(rawTools);
 export const repoList: Repo[] = z.array(repoSchema).parse(repoFallback);

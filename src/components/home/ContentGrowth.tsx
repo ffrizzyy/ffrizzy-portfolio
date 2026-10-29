@@ -1,7 +1,10 @@
 import { Carousel } from "@/components/shared/Carousel";
+import { Icon } from "@/components/shared/Icon";
 import { SectionHeading } from "@/components/shared/decor";
 import { Reveal } from "@/components/shared/Reveal";
-import { growthList } from "@/lib/content";
+import { TrackedLink } from "@/components/shared/TrackedLink";
+import { ANALYTICS_EVENTS } from "@/lib/analytics";
+import { growthAccountList, growthList } from "@/lib/content";
 import { LAYOUT } from "@/lib/constants";
 
 /**
@@ -81,6 +84,35 @@ export function ContentGrowth() {
             labels={growthList.map((slide) => slide.org)}
             slides={slides}
           />
+        </Reveal>
+
+        {/* The carousel tells three stories, but five accounts carry the work.
+            The links below cover all five, including the two the copy does not
+            give its own slide. */}
+        <Reveal delay={0.16} className="mt-10">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-muted">
+            Accounts I helped grow
+          </p>
+
+          <ul className="mt-4 flex flex-wrap gap-2.5">
+            {growthAccountList.map((account) => (
+              <li key={account.id}>
+                <TrackedLink
+                  href={account.url}
+                  event={ANALYTICS_EVENTS.projectOutbound}
+                  eventProps={{ target: account.id }}
+                  external
+                  className="group inline-flex h-10 items-center gap-2 rounded-pill border-2 border-ink px-4 text-sm text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
+                >
+                  <Icon name="InstagramLogo" size={16} className="shrink-0" />
+                  <span className="font-medium">{account.handle}</span>
+                  <span className="text-xs text-ink-muted transition-colors group-hover:text-on-signal">
+                    {account.org}
+                  </span>
+                </TrackedLink>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </div>
     </section>

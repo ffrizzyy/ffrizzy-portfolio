@@ -6,6 +6,7 @@ import FlipCard from "@/components/reactbits/FlipCard";
 import { CoverImage } from "@/components/shared/CoverImage";
 import { Icon } from "@/components/shared/Icon";
 import { Magnetic } from "@/components/shared/Magnetic";
+import { SOCIAL_LINKS, SocialIconLink } from "@/components/shared/SocialLinks";
 import { Sticker, TapedPhoto } from "@/components/shared/decor";
 import { CvLink } from "@/components/shared/TrackedLink";
 import { ButtonLink } from "@/components/ui/Button";
@@ -128,6 +129,20 @@ export function Hero() {
                 </span>
               </CvLink>
             </Magnetic>
+
+            {/* The four public accounts sit beside the CV pill, so every route
+                to the owner is reachable before the first scroll. Icon-only,
+                matching the footer's directory. */}
+            <ul className="flex items-center gap-2">
+              {SOCIAL_LINKS.map((link) => (
+                <li key={link.key}>
+                  <SocialIconLink
+                    link={link}
+                    className="grid size-11 place-items-center rounded-pill border-2 border-ink text-ink transition-[background-color,transform] duration-200 ease-zine hover:bg-signal hover:text-on-signal active:translate-y-px active:scale-[0.98]"
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 

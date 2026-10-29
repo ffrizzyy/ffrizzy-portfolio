@@ -197,6 +197,26 @@ export const writingItemSchema = z.object({
   featured: z.boolean().optional(),
 });
 
+/** A story published on Medium, mirrored from the account's public RSS feed. */
+export const mediumArticleSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  url: z.string().url(),
+  date: z.string(),
+});
+
+/**
+ * An Instagram account the owner helped grow. The list sits under the growth
+ * carousel so every account named in the copy has a real destination.
+ */
+export const growthAccountSchema = z.object({
+  id: z.string(),
+  handle: z.string(),
+  org: z.string(),
+  url: z.string().url(),
+});
+
 /**
  * A public GitHub repository. The list is discovered from the GitHub API and
  * cached for a day, with the committed snapshot as the fallback. The curated
@@ -257,6 +277,8 @@ export type Skill = z.infer<typeof skillSchema>;
 export type SkillCategory = z.infer<typeof skillCategorySchema>;
 export type Tool = z.infer<typeof toolSchema>;
 export type WritingItem = z.infer<typeof writingItemSchema>;
+export type MediumArticle = z.infer<typeof mediumArticleSchema>;
+export type GrowthAccount = z.infer<typeof growthAccountSchema>;
 export type GrowthSlide = z.infer<typeof growthSlideSchema>;
 export type CaseStudy = z.infer<typeof caseStudySchema>;
 export type ProjectLink = z.infer<typeof linkSchema>;

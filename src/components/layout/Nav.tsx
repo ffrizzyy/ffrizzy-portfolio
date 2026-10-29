@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Icon } from "@/components/shared/Icon";
+import { SOCIAL_LINKS, SocialIconLink } from "@/components/shared/SocialLinks";
 import { ThemeSwitch } from "@/components/shared/ThemeSwitch";
 import { isRouteHref, LAYOUT, NAV_LINKS, SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -175,6 +176,22 @@ export function Nav() {
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* The two work accounts, so a reader can open the profile without
+                leaving for the footer. Instagram and WhatsApp stay in the hero
+                and the footer: four marks would crowd the bar, and below lg the
+                section links already fill the available width. */}
+            <div className="hidden items-center gap-1.5 lg:flex">
+              {SOCIAL_LINKS.filter(
+                (link) => link.key === "github" || link.key === "linkedin",
+              ).map((link) => (
+                <SocialIconLink
+                  key={link.key}
+                  link={link}
+                  className="grid size-9 place-items-center rounded-pill border-2 border-ink text-ink transition-colors duration-200 ease-zine hover:bg-signal hover:text-on-signal"
+                />
+              ))}
+            </div>
+
             <div className="hidden md:block">
               <ThemeSwitch />
             </div>

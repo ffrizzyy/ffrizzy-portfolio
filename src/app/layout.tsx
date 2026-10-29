@@ -72,7 +72,7 @@ const personJsonLd = {
   jobTitle: SITE.role,
   email: `mailto:${SITE.email}`,
   url: siteUrl,
-  sameAs: [SITE.linkedin, SITE.github],
+  sameAs: [SITE.linkedin, SITE.github, SITE.instagram, SITE.medium, SITE.substack],
 };
 
 /**

@@ -1,6 +1,9 @@
 import type {
   Award,
   CertIssuer,
+  GrowthAccount,
+  GrowthSlide,
+  MediumArticle,
   PortfolioEvent,
   Skill,
   SkillCategory,
@@ -9,8 +12,6 @@ import type {
   Tool,
   WritingItem,
 } from "./schema";
-import type { z } from "zod";
-import { growthSlideSchema } from "./schema";
 
 /* ------------------------------------------------------------------ *
  * Stat grid. Spec 4.2.                                                *
@@ -554,7 +555,7 @@ export const languages = [
  * Content growth carousel. Spec 4.5.                                  *
  * ------------------------------------------------------------------ */
 
-export const growthSlides: z.infer<typeof growthSlideSchema>[] = [
+export const growthSlides: GrowthSlide[] = [
   {
     id: "technology-euphoria",
     org: "Technology Euphoria 2023",
@@ -591,6 +592,39 @@ export const growthSlides: z.infer<typeof growthSlideSchema>[] = [
     subLine: "followers, up from 13.1k. 160+ posts.",
     sentence: "Coordinated event content across platforms. Engagement grew 30%.",
     posts: 160,
+  },
+];
+
+export const growthAccounts: GrowthAccount[] = [
+  {
+    id: "gdsc-unsri",
+    handle: "@gdgunsri",
+    org: "GDSC UNSRI",
+    url: "https://www.instagram.com/gdgunsri/",
+  },
+  {
+    id: "technology-euphoria",
+    handle: "@techporiafest",
+    org: "Technology Euphoria",
+    url: "https://www.instagram.com/techporiafest/",
+  },
+  {
+    id: "pesta-rakyat-sriwijaya",
+    handle: "@bhawasenasriwijaya",
+    org: "Pesta Rakyat Sriwijaya",
+    url: "https://www.instagram.com/bhawasenasriwijaya/",
+  },
+  {
+    id: "sriwijaya-digital",
+    handle: "@sriwijaya.digital",
+    org: "Sriwijaya Digital",
+    url: "https://www.instagram.com/sriwijaya.digital/",
+  },
+  {
+    id: "mvs-lim",
+    handle: "@mvslim",
+    org: "MVS LIM",
+    url: "https://www.instagram.com/mvslim/",
   },
 ];
 
@@ -661,6 +695,32 @@ export const writing: WritingItem[] = [
     date: "03 Dec 2023",
     cover: "/images/ig-translate.webp",
     language: "id",
+  },
+];
+
+/**
+ * Medium stories, mirrored from https://ffrizzy.medium.com/feed.
+ *
+ * The feed carries the whole post body, which the writing section does not
+ * need, so the titles, dates, and URLs are copied here rather than fetched at
+ * build time. Add a story by reading the feed and appending one entry.
+ */
+export const mediumArticles: MediumArticle[] = [
+  {
+    id: "knowledgekeeper-prologue",
+    title: "The Knowledgekeeper (prologue)",
+    description:
+      "A speculative fiction prologue that asks what the world would look like if nothing ever learned was forgotten.",
+    url: "https://ffrizzy.medium.com/the-knowledgekeeper-1a3ab2ec2fc0",
+    date: "27 Oct 2026",
+  },
+  {
+    id: "art-of-acronyms",
+    title: "The Art of Acronyms",
+    description:
+      "An essay on why we turn names, event themes, and ideas into initials, and what those shortcuts give us.",
+    url: "https://ffrizzy.medium.com/the-art-of-acronyms-81a6fe8aebb4",
+    date: "01 Sep 2023",
   },
 ];
 

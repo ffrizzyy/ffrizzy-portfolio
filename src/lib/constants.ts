@@ -99,6 +99,11 @@ export const SITE = {
   email: "m.farrel2222@gmail.com",
   linkedin: "https://www.linkedin.com/in/ffrizzy/",
   github: "https://github.com/ffrizzyy",
+  instagram: "https://www.instagram.com/farrel_blablablabla/",
+  medium: "https://ffrizzy.medium.com/",
+  substack: "https://ffrizzy.substack.com/",
+  /** Wa.me wants the number in international form, digits only. */
+  whatsapp: "https://wa.me/628117441165",
   /** The deployed site, as the CV header lists it. */
   website: "https://ffrizzy.vercel.app",
   /** The English CV. Offered first, and the one the hero button leads to. */
